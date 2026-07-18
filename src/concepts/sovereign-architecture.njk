@@ -1,0 +1,99 @@
+---
+layout: layouts/base.njk
+title: The Sovereign Runtime — From One Workstation to a Full Air Gap
+description: The deployment shapes behind "runs where your data lives" — workstation-class single-GPU servers, multi-GPU nodes, confidential compute with attestation, the small-model-first escalation router, and how air-gapped systems stay updated.
+faq:
+  - q: What does the hardware actually cost?
+    a: The workstation shape — a single-GPU server that runs a task-tuned 4–8B — is typically a CHF 5,000–15,000 machine that lives in your existing rack or a locked office cabinet. The node shape for 70B-class models is a mid-five-figure investment or a rental in your Swiss cloud tenancy. Exact sizing (and committed throughput numbers) is part of every proposal — and a Pilot can run on hardware we bring, so you spend nothing on infrastructure before value is proven.
+  - q: What is confidential compute, concretely?
+    a: Hardware-encrypted virtual machines — AMD SEV-SNP or Intel TDX — where memory is encrypted with keys the cloud operator never holds, and remote attestation lets you cryptographically verify the launch state (firmware, image, configuration) before any data enters. Practical meaning — you can rent Swiss infrastructure while shifting the provider out of the data-confidentiality trust boundary. One caveat we raise before your security team does — a CPU enclave alone doesn't cover the GPU where inference actually runs; extending the boundary to the accelerator takes confidential-computing-capable GPUs (NVIDIA H100 class, with encrypted transfers and GPU attestation), and we size for exactly that when the threat model requires it.
+  - q: How do air-gapped systems get updates?
+    a: Deliberately and verifiably — never over a wire. Model updates, retrieval-index rebuilds and software patches arrive as signed, checksummed offline bundles on scheduled maintenance windows, installed from documented runbooks your own staff can execute. Every update is re-validated against your evaluation set before it replaces the running version. Slower than cloud auto-update — which is exactly what your security team wants.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts · Sovereign runtime</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      From one workstation to a full air gap.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      "Runs where your data lives" is a claim about hardware, networks and trust boundaries. Here are the actual deployment shapes — and the routing pattern that keeps small models fast without ever calling a cloud.
+    </p>
+  </div>
+</section>
+
+<!-- Deployment shapes -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("The shapes", "Three deployment envelopes, one principle.", "Every shape keeps data, model and orchestration inside a single trust boundary you control. They differ in where that boundary sits.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {% set shapes = [
+      {t:"Workstation class", w:"Task-tuned 4–8B, quantized", d:"One GPU server in your rack — or a locked cabinet in your office. Runs a fine-tuned small model with retrieval at interactive speed for a team or a document pipeline. This is the shape that makes sovereign AI a line item instead of a project."},
+      {t:"Node class", w:"70B-class, or several models", d:"A multi-GPU server in your datacentre or your Swiss cloud tenancy. Runs larger models, multiple concurrent workloads, and the escalation tier of the router below. The shape for organisation-wide rollouts."},
+      {t:"Air-gapped / confidential", w:"Any size, maximum isolation", d:"Either physically disconnected infrastructure with offline update runbooks, or confidential-compute VMs (AMD SEV-SNP / Intel TDX, paired with confidential-computing GPUs, with remote attestation) that shift the infrastructure operator out of the data-confidentiality trust boundary."}
+    ] %}
+    {% for s in shapes %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
+      <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">What makes the workstation shape possible at all is aggressive, evaluation-verified <a class="link-underline" href="/concepts/quantization/">quantization</a>.</p>
+</section>
+
+<!-- Router -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    <div class="grid gap-12 md:grid-cols-12">
+      <div class="md:col-span-5">
+        {{ sectionHead("The pattern", "Small-first, escalate local.", "The routing architecture that gets small-model economics without giving up on the hard tail — or on sovereignty.") }}
+      </div>
+      <div class="md:col-span-6 md:col-start-7">
+        <ol class="space-y-4">
+          {% set steps = [
+            {n:"01", t:"The small model sees every request first", d:"The task-tuned 4–8B answers first — fast, cheap, on the workstation-class shape. For a well-scoped workflow, that's the overwhelming majority of volume."},
+            {n:"02", t:"A router watches for trouble", d:"Schema violations and failed tool calls are unambiguous triggers. Confidence and out-of-distribution signals are harder — we calibrate them per task against your evaluation set, and the escalation threshold is a measured trade-off, not a default we trust blindly."},
+            {n:"03", t:"Escalation goes to a larger local model", d:"Flagged requests re-run on the node-class tier: a bigger open-weight model on your own infrastructure. The cloud version of this pattern escalates to a US API — ours never does. On workstation-only deployments, flagged requests route to a human review queue instead: a small system that knows when to hand off beats a large one that never does."},
+            {n:"04", t:"Everything is logged and re-scored", d:"Escalation rates and outcomes feed the evaluation loop: a rising rate means the task drifted or the small model needs a refresh — visible in the metrics weeks before users would notice."}
+          ] %}
+          {% for s in steps %}
+          <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
+            <span class="font-mono text-sm text-swiss">{{ s.n }}</span>
+            <div>
+              <div class="font-semibold text-ink-900 dark:text-white">{{ s.t }}</div>
+              <p class="mt-1 text-sm prose-muted">{{ s.d }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Zero egress -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("The boundary", "Zero egress is a design property, not a promise.", "You shouldn't have to trust a vendor's word for \"nothing leaves\". You should be able to verify it at the firewall.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>The runtime is containerised and self-contained: model weights, retrieval index, orchestration and monitoring all run inside your network segment. No component calls out — no telemetry, no license pings, no "anonymous usage statistics". Your firewall rules can say <em>deny all egress</em>, and the system keeps working. That's the test, and you can run it yourself.</p>
+      <p>Monitoring stays inside too: dashboards, logs and evaluation scores are served locally, and log retention follows your policy — because inference logs contain your data, and shipping them to a vendor's observability cloud would quietly undo the whole point.</p>
+      <p>On the workstation and air-gapped shapes, this is also a demo we like giving: pull the network cable, keep working.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Runtime questions.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Which shape fits your constraints?", "Describe your data-governance constraints in the scoping call — we'll map them to a deployment shape and put the sizing and throughput in the proposal.") }}

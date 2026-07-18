@@ -20,6 +20,7 @@
   },
   "nav": [
     { "label": "Platform", "url": "/platform/" },
+    { "label": "Concepts", "url": "/concepts/" },
     { "label": "Industries", "url": "/industries/" },
     { "label": "Pricing", "url": "/pricing/" },
     { "label": "About", "url": "/about/" },

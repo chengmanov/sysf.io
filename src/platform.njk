@@ -13,7 +13,7 @@ faq:
   - q: How do you handle evaluation and guardrails?
     a: Every engagement includes a use-case-specific evaluation set and metrics agreed with you, plus guardrails for safety, PII handling and output constraints. We report quality against those metrics before go-live and monitor them continuously in production.
   - q: Where does it run?
-    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute (AMD SEV-SNP or Intel TDX with remote attestation, so even the infrastructure operator sits outside the trust boundary). Nothing depends on external US LLM APIs.
+    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute (AMD SEV-SNP or Intel TDX with remote attestation, shifting the infrastructure operator out of the data-confidentiality trust boundary). Nothing depends on external US LLM APIs.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 
@@ -76,6 +76,7 @@ faq:
         {% endfor %}
       </ul>
       <p class="mt-6 text-sm text-ink-500">Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on your evaluation set. The evaluation decides, not the logo.</p>
+      <p class="mt-3 text-sm text-ink-500">Want the depth behind each layer? The <a class="link-underline" href="/concepts/">concepts pages</a> cover small models, quantization, evaluation and the sovereign runtime in detail.</p>
     </div>
     <div class="md:col-span-5 md:col-start-8">
       {% include "partials/diagram.njk" %}

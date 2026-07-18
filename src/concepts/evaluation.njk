@@ -1,0 +1,105 @@
+---
+layout: layouts/base.njk
+title: Evaluation-First Delivery — If We Can't Measure It, We Don't Ship It
+description: How sysf.io builds evaluation sets from your own documents, runs the base-vs-RAG-vs-fine-tune ablation, gates go-live on agreed metrics, and monitors drift in production.
+faq:
+  - q: How big does an evaluation set need to be?
+    a: Smaller than you'd fear, bigger than a demo. Fifty carefully chosen tasks with gold answers already separate "works" from "impresses"; 150–300 buy per-category breakdowns — document types, languages, edge cases — large enough to act on. We report confidence intervals alongside the scores — on samples this size a two-point difference is noise, and we'd rather tell you that than sell it. Your domain experts spend hours on this, not weeks, and the set becomes a durable asset that outlives any particular model.
+  - q: Who defines what "correct" means?
+    a: Your experts, in writing, before anything is built. For extraction tasks that's exact-match on fields; for drafting it's a rubric your reviewers apply; for Q&A it's answer accuracy plus citation faithfulness — the answer must be right and grounded in the retrieved source. We refuse vague success criteria because they're how pilots end up "successful" and unused.
+  - q: What happens if the system misses the bar?
+    a: The report says so, with the failure categories broken out — and the production roadmap explains what would close the gap and what it would cost, or recommends stopping. A fixed-scope Pilot that can end in a documented "no" is precisely what makes its "yes" worth something.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      If we can't measure it, we don't ship it.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Every AI vendor promises quality. We define it with you as a number, on your documents, before we build — and gate go-live on it. This page explains the machinery behind that promise.
+    </p>
+  </div>
+</section>
+
+<!-- Building the eval set -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Step one", "The evaluation set comes before the model.", "Built from your documents, with your experts, in your languages — it's the contract the system is built against.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>We sit with your domain experts and extract what "done correctly" looks like: real inputs from your workflow — contracts, claims, notes, letters — paired with gold answers and graded on criteria you sign off. Typically 50–300 tasks across your document types, languages (DE/FR/IT as needed) and known edge cases, including the ugly ones: scanned faxes, mixed-language files, the exceptions your team handles on autopilot.</p>
+      <p>This set is deliberately built <em>before</em> modelling starts, so it can't be quietly tuned toward what the model happens to do well. It stays yours — versioned, documented, and reusable against every future model or vendor, including our replacement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The ablation -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Step two", "The four-way ablation.", "One table that kills hype in both directions — ours included.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set arms = [
+        {n:"A", t:"Base model", d:"The open model, unmodified. The honest floor — and occasionally a surprise: if this already clears the bar, you shouldn't pay for fine-tuning."},
+        {n:"B", t:"+ Retrieval", d:"Base model grounded in your corpus. Shows what better access to your documents buys — usually the biggest single jump."},
+        {n:"C", t:"+ Fine-tune", d:"Model trained on your task without retrieval. Shows what learned behaviour buys: format, terminology, tone, refusal discipline."},
+        {n:"D", t:"Both", d:"The production candidate. If D isn't clearly better than B and C, the report says so and you buy the cheaper system."}
+      ] %}
+      {% for a in arms %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="font-mono text-sm text-swiss">{{ a.n }}</div>
+        <h3 class="mt-3 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-3xl text-base prose-muted">The same ablation covers model choice — Apertus vs. Llama vs. Mistral on your set, and full-precision vs. quantized builds — so every architectural decision in your system traces to a measured difference, not a preference. (Why we're strict about what fine-tuning can and can't do: <a class="link-underline" href="/concepts/small-models/">small models, measured</a>.)</p>
+  </div>
+</section>
+
+<!-- Metrics & guardrails -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Step three", "Metrics with teeth, guardrails with tests.", "\"It feels good\" is not a metric. Neither is a benchmark score from someone else's task.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Task metrics</strong> match the work: exact-match accuracy for extracted fields, rubric scores for drafting, answer accuracy <em>plus citation faithfulness</em> for Q&A — a correct answer with a fabricated source counts as a failure, because in regulated work it is one.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Guardrails are tested like features:</strong> PII handling, out-of-scope refusals, prompt-injection resistance and output constraints each get adversarial test cases in the eval set. A guardrail that isn't tested is a wish.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">The gate:</strong> the bar is agreed in the proposal. Above it, go-live. Below it, a documented gap analysis and a decision — close it, or stop. Either way you know before production money is spent.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Production -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("In production", "Evaluation doesn't end at go-live.", "Models drift, documents change, users find the gaps. The eval set keeps watching.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set prod = [
+        {t:"Continuous scoring", d:"Production samples are scored against the same metrics on a fixed cadence, so quality regressions surface as numbers on a dashboard — not as complaints three months later."},
+        {t:"Drift & data change", d:"New document types, new policy wording, new edge cases get added to the eval set as they appear. The set grows with your reality; the system is re-validated against it."},
+        {t:"Versioned everything", d:"Eval sets, model builds and their scores are versioned together. Every logged answer traces to the model build and eval version that produced it — for as long as your retention policy keeps the log. That trace is what your auditors will ask for."}
+      ] %}
+      {% for p in prod %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Evaluation questions.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Define the bar with us.", "Bring one workflow and the experts who know it. We'll shape the evaluation set and the metrics in the scoping call.") }}

@@ -1,0 +1,116 @@
+---
+layout: layouts/base.njk
+title: Orchestration in Production — LangChain & LangGraph, Hardened for Regulated Work
+description: How sysf.io takes LangChain and LangGraph to production in regulated environments — what the framework provides, what it deliberately doesn't (RBAC, audit trails, PII discipline, evaluation), and the hardening that turns an agent demo into an operable system.
+faq:
+  - q: Why LangGraph, and not CrewAI, Microsoft's Agent Framework (formerly AutoGen), or an SDK from a model vendor?
+    a: Because its primitives — explicit graphs, checkpointing, human-in-the-loop interrupts — map most directly onto how regulated workflows actually run, and it is among the most widely deployed orchestrators in production today. But it's a default we revisit per engagement, not a doctrine — nothing in how we build makes switching expensive. And while model-vendor SDKs will nominally run against any compatible endpoint, their centre of gravity — hosted tools, tracing, evals, roadmap — is the vendor's cloud, which is exactly the dependency we're hired to remove.
+  - q: Is LangChain actually production-ready?
+    a: The framework is; production-readiness is a property of the system around it. LangChain and LangGraph give you orchestration primitives that are widely used and well exercised. What makes a system production-ready is everything around them — schema validation at the boundaries, bounded loops, retries and timeouts on every tool, access control, audit logging, evaluation gates and versioning discipline. That layer doesn't come from any framework; it's engineered per system, and it's most of the work.
+  - q: Will our team need to learn LangChain to operate the system?
+    a: To operate it — no; runbooks cover deployment, monitoring and recovery without framework internals. To extend it — some familiarity helps, and the handover includes a walkthrough of the graph, the tools and the tests. The graph definitions are ordinary, readable code in your repository, not vendor configuration — which is also your exit route from us, by design.
+  - q: How do tools connect to our systems — do you support MCP?
+    a: Both natively and via the Model Context Protocol, an open standard for connecting models to tools and data sources. Where an MCP server already exists for a system you run, we can use it behind the same schema-validation and least-privilege discipline as any hand-built tool; where none exists, we write the tool directly. The standard matters less than the wrapper — every tool call is validated, logged and permission-scoped regardless of transport.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts · Orchestration</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Where the demo becomes a system.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      We orchestrate with LangChain and LangGraph — and we'll tell you exactly what that buys, what it doesn't, and where the real production engineering happens. The framework is plumbing. The hardening is the product.
+    </p>
+  </div>
+</section>
+
+<!-- What the framework provides -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("The plumbing", "What LangGraph actually gives you.", "Good primitives for stateful workflows — free, widely known, and heavily used in production. Which is exactly why it's plumbing, not differentiation.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <ul class="space-y-4">
+        {% set gives = [
+          {t:"Explicit graphs, not free-running agents", d:"Workflows are defined as graphs — nodes, edges, conditions — so the system's possible control paths are enumerable and reviewable. An auditor can read the graph; nobody can read an agent loop's mood."},
+          {t:"State & checkpointing", d:"Long-running workflows persist their state, survive restarts, and can resume mid-process — table stakes for document pipelines that run for hours. Token streaming comes with it, so users see output as it generates."},
+          {t:"Human-in-the-loop interrupts", d:"The graph can pause at defined points and wait for a person — which is how consequential actions (send, submit, pay, file) stay under human authority by construction."},
+          {t:"Tool calling & integrations", d:"A mature interface for calling into your systems, with LangChain's integration ecosystem where it helps and hand-built tools where it doesn't."}
+        ] %}
+        {% for g in gives %}
+        <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <div>
+            <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
+            <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- What it doesn't do -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The gap", "What the framework deliberately doesn't ship.", "This list is why \"we use LangChain\" tells you nothing about whether a vendor can put AI into a bank. It's also the part you're actually buying.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {% set gaps = [
+        {t:"Access control & RBAC", d:"Who may invoke which workflow, which tools a workflow may touch, and with whose permissions. The paid platform tier bolts some of this on — inside its own walls. We integrate with your identity provider and scope every tool to least privilege, in your infrastructure."},
+        {t:"Audit trails", d:"A decision-grade record: who asked what, which documents were retrieved, which model version answered, which tools fired with what arguments. Built into every system we ship, retained per your policy."},
+        {t:"PII discipline", d:"Redaction and minimisation at the boundaries — including logs, traces and checkpointed state: tracing captures full inputs and outputs once enabled, and every checkpoint persists the full conversation state. Inference logs are personal data; we treat them that way."},
+        {t:"Evaluation & guardrails", d:"The framework will execute whatever graph you give it, good or bad. Quality gates, adversarial guardrail tests and go/no-go thresholds come from our evaluation harness, not the orchestrator."},
+        {t:"Trace & telemetry residency", d:"The ecosystem's default observability is a hosted SaaS — traces full of your data, shipped out; self-hosting it is an enterprise-tier product. We deploy self-hosted tracing inside your boundary instead — Langfuse with its own usage telemetry switched off, or an OpenTelemetry backend."},
+        {t:"Versioning discipline", d:"Prompts, graph definitions, model builds and eval scores versioned together, so every production answer traces to the exact configuration that produced it."}
+      ] %}
+      {% for g in gaps %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">The quality gates come from the evaluation harness, which has its own page: <a class="link-underline" href="/concepts/evaluation/">evaluation-first delivery</a>.</p>
+  </div>
+</section>
+
+<!-- Hardening practices -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("The hardening", "Bounded autonomy, validated boundaries.", "The difference between an agent demo and an operable system is a list of boring engineering decisions. These are ours.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Bounded where it matters:</strong> we prefer explicit graph flows over open-ended agent loops, and every loop that does exist has a hard iteration budget. A system that can wander is a system nobody will certify.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Schemas at every boundary:</strong> model outputs are validated against typed schemas before they touch a downstream system; tool arguments are validated before execution. A malformed answer is a handled error, not a surprise in your core system.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Tools that fail well:</strong> timeouts, bounded retries with backoff, idempotent writes, and circuit breakers on every integration — because your core systems have maintenance windows even if the model doesn't.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Humans on the consequential path:</strong> actions with external effect — sending, filing, paying, deciding — sit behind interrupt points with named approvers. The model drafts; a person disposes.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Pinned and re-validated:</strong> framework versions are pinned, and every upgrade — routine or CVE-driven — is re-validated against your evaluation set before it reaches production, on the same change-management cadence as a model update.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Framework-agnostic honesty -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The commitment", "A choice we re-earn, not a marriage.", "The same rule we apply to models applies to frameworks.") }}
+    <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
+      <p>LangGraph is our current default: of the orchestrators built for stateful, tool-calling work, it has the most production miles, and its primitives fit regulated workflows best. The field is moving — and if a better orchestrator earns the spot, the switch is deliberately cheap: your graph design, your tools' business logic, your evaluation set and guardrails are the durable assets, and they port — the framework bindings are the only thing rewritten. The framework is the one layer of the stack we'd swap without ceremony.</p>
+      <p>That's also what you inherit at handover: the whole graph as plain code your engineers can review and change — portable to whatever comes next, and never a reason you're locked to us or to any framework vendor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Orchestration questions.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Show us your integration map.", "Core systems, identity provider, approval chains — one scoping call, and you'll see the graph sketched with the trust boundaries drawn in.") }}

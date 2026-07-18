@@ -2,7 +2,7 @@
 layout: layouts/base.njk
 order: 3
 title: Pricing & Engagement
-description: How sysf.io engagements work — a land-and-expand path from a fixed-scope Pilot to a production Deploy to a fully Sovereign, on-prem rollout. Pricing is scoped per engagement. Book a call to get a proposal.
+description: How sysf.io engagements work — a land-and-expand path from a fixed-scope Pilot to Production to a fully Air-gapped, on-prem rollout. Every tier is sovereign; pricing is scoped per engagement. Book a call to get a proposal.
 extraSchema:
   "@context": "https://schema.org"
   "@type": "Service"
@@ -12,7 +12,7 @@ extraSchema:
     name: "sysf.io"
     url: "https://sysf.io"
   areaServed: ["CH", "EU"]
-  description: "Custom fine-tuned AI models built on Apertus and productized end-to-end with LangChain and LangGraph, deployed in Swiss/EU jurisdiction or on-premise. Engagements range from a fixed-scope Pilot to production Deploy to fully Sovereign on-prem rollout."
+  description: "Custom fine-tuned AI models built on Apertus with retrieval, agents and guardrails, deployed in Swiss/EU jurisdiction or on-premise. Engagements range from a fixed-scope Pilot to Production to a fully air-gapped on-prem rollout."
   offers:
     "@type": "Offer"
     priceSpecification:
@@ -24,11 +24,13 @@ faq:
   - q: Why don't you list fixed prices?
     a: Every engagement differs in data, use cases, deployment target and compliance scope, so we price per engagement after a short scoping conversation. You get a clear, fixed-scope proposal before any commitment — no open-ended time-and-materials.
   - q: What does a Pilot typically involve?
-    a: "A fixed-scope engagement on a single high-value use case — private data preparation, fine-tuning on Apertus, an evaluation report against agreed metrics, and a production roadmap, hosted in Swiss cloud. It's designed to prove value on your own data and de-risk the decision to go to production."
+    a: "A fixed-scope engagement on a single high-value use case — private data preparation, fine-tuning on Apertus, an evaluation report against agreed metrics (including a fine-tune vs. retrieval ablation), and a production roadmap. It's designed to prove value on your own data and de-risk the decision to go to production."
+  - q: What happens to our data in a Pilot?
+    a: If the Pilot runs in your environment, nothing ever leaves it. If you opt for our dedicated single-tenant Swiss cloud environment, your data is processed under a data-processing agreement and, at project end, all data and derived weights are deleted or handed over to you — your choice at scoping. Production and Air-gapped systems always run inside your own environment.
   - q: Is there an ongoing cost after we deploy?
-    a: Production systems include an ongoing platform and support component — hosting or on-prem support, monitoring, evaluation and a maintenance cadence with SLAs. We scope this transparently as part of the Deploy or Sovereign proposal.
+    a: Production systems include an ongoing platform and support component — hosting or on-prem support, monitoring, evaluation and a maintenance cadence under a support agreement. We scope this transparently as part of the Production or Air-gapped proposal.
   - q: Do we own the model?
-    a: Yes. Because we build on the open Apertus model and fine-tune on your data inside your environment, you retain ownership and control of the resulting model and can run it independently.
+    a: Yes. Because we build on the open Apertus model and fine-tune on your data inside your environment, you retain ownership and control of the resulting model and can run it independently. A documented handover is a deliverable in every engagement — your exit strategy is part of the scope.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 
@@ -36,10 +38,10 @@ faq:
   <div class="container-x py-16 md:py-24">
     <p class="eyebrow">Pricing &amp; engagement</p>
     <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Start small. Prove value. Scale to sovereign.
+      Start small. Prove value. Scale to air-gapped.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      A land-and-expand path that de-risks adoption. Pricing is scoped per engagement — you get a fixed-scope proposal before any commitment.
+      Every tier is sovereign — your data stays in your jurisdiction. Tiers differ in deployment depth, not in principle. Pricing is scoped per engagement — you get a fixed-scope proposal before any commitment.
     </p>
   </div>
 </section>
@@ -52,40 +54,46 @@ faq:
         t:"Pilot",
         for:"Prove value on one use case",
         d:"A fixed-scope engagement to validate sovereign AI on your own data.",
+        price:"Fixed scope",
+        pnote:"Priced after a 30-minute scoping call — no open-ended time-and-materials.",
         inc:[
           "One high-value use case",
           "Private, in-jurisdiction data prep",
-          "Fine-tuning on Apertus",
+          "Fine-tuning & retrieval on Apertus",
           "Evaluation report vs. agreed metrics",
           "Production roadmap",
-          "Hosted in Swiss cloud"
+          "Your environment or dedicated Swiss cloud"
         ]
       },
       {
-        t:"Deploy",
-        for:"Production productization",
+        t:"Production",
+        for:"The pilot, hardened for daily use",
         featured:true,
         d:"Take the proven use case to a maintained production system.",
+        price:"Fixed build + support",
+        pnote:"Build priced per scope; support & maintenance as a transparent ongoing component.",
         inc:[
           "Everything in Pilot",
-          "LangGraph agents, RAG & tools",
+          "Agents, RAG & tools wired to your systems",
           "Safety & PII guardrails",
           "Swiss cloud or on-prem deployment",
           "Monitoring & evaluation",
-          "Support & maintenance (SLAs)"
+          "Support & maintenance agreement"
         ]
       },
       {
-        t:"Sovereign",
-        for:"Regulated / air-gapped enterprise",
-        d:"A fully sovereign rollout for the most sensitive environments.",
+        t:"Air-gapped",
+        for:"Regulated / most sensitive environments",
+        d:"A fully isolated rollout for environments where nothing crosses the wire.",
+        price:"Individually scoped",
+        pnote:"Scoped with your infrastructure and compliance teams.",
         inc:[
-          "Everything in Deploy",
+          "Everything in Production",
           "Fully on-prem / confidential compute",
           "Multiple models & agents",
-          "Dedicated MLOps",
+          "Dedicated operations",
           "Compliance & audit documentation",
-          "Enterprise SLAs"
+          "Enterprise support commitments"
         ]
       }
     ] %}
@@ -96,8 +104,8 @@ faq:
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.for }}</p>
       <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
       <div class="mt-6 border-t border-ink-900/10 pt-6 dark:border-white/10">
-        <div class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">Scoped per engagement</div>
-        <p class="mt-1 text-xs text-ink-500">Fixed-scope proposal, no surprises.</p>
+        <div class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ s.price }}</div>
+        <p class="mt-1 text-xs text-ink-500">{{ s.pnote }}</p>
       </div>
       <ul class="mt-6 space-y-2.5">
         {% for i in s.inc %}
@@ -113,11 +121,14 @@ faq:
   </div>
 
   <!-- Add-ons -->
-  <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border border-ink-900/10 p-6 text-sm dark:border-white/10">
-    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Add-ons</span>
-    {% for a in ["Compliance & audit pack", "Additional languages", "Additional use cases", "Managed hosting"] %}
-    <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 bg-swiss"></span>{{ a }}</span>
-    {% endfor %}
+  <div class="mt-10 border border-ink-900/10 p-6 dark:border-white/10">
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Add-ons</span>
+      {% for a in ["Compliance & audit pack", "Additional languages", "Additional use cases", "Managed hosting"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 bg-swiss"></span>{{ a }}</span>
+      {% endfor %}
+    </div>
+    <p class="mt-4 text-xs text-ink-500">The compliance &amp; audit pack includes: model card, training-data lineage record, data-processing agreement template, technical &amp; organisational measures (TOMs), EU AI Act risk-classification worksheet, and the evaluation report.</p>
   </div>
 </section>
 

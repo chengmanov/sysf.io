@@ -1,80 +1,98 @@
 # sysf.io — full profile
 
-> sysf.io is a Swiss sovereign-AI productization studio. We fine-tune Switzerland's open Apertus model on client data and ship it as a real, maintained product — orchestrated with LangChain and LangGraph, deployed inside the client's jurisdiction or on-premise, compliant by design. Clients own the resulting model.
+> sysf.io is a Swiss sovereign-AI engineering studio. We fine-tune Apertus — Switzerland's fully open LLM from EPFL, ETH Zurich and CSCS — on a client's own documents and run it inside their infrastructure: on-premise, Swiss cloud, or fully air-gapped. Open weights the client's auditors can inspect, no US API in the loop. Clients own the resulting model and receive a documented handover.
 
 ## Positioning
 
-Sovereign AI, productized in Switzerland. The most capable AI historically lived behind closed US
-APIs, which is a dead end for a Swiss bank, hospital or public authority whose data cannot leave.
-Switzerland answered with Apertus, a fully open, sovereign, multilingual model (open weights,
-documented training data) from EPFL, ETH Zurich and the Swiss National Supercomputing Centre
-(CSCS). sysf.io turns that open foundation into working products.
+AI for the data you can't send away. For regulated Swiss and EU organizations, external AI isn't
+forbidden — it's slow and residual-risk-heavy: months of legal review, DPAs, sub-processor chains,
+and at the end a model the organization still doesn't control. Most projects die at the pilot
+stage. Switzerland answered with Apertus, a fully open, sovereign, multilingual model (open
+weights, documented training data) from EPFL, ETH Zurich and the Swiss National Supercomputing
+Centre (CSCS), trained on the Alps supercomputer in Lugano. sysf.io turns that open foundation
+into working systems that clear compliance review.
 
-## Five pillars
+The approach is proven in production: the Canton of Ticino runs a fine-tuned Apertus-8B
+translation service on its own cantonal infrastructure, reaching 94% accuracy after fine-tuning.
+
+## Six pillars
 
 1. Swiss by foundation — built on Apertus, Switzerland's sovereign open LLM (open weights, documented training data).
-2. Compliant by design — aligned to Swiss FADP/nFADP, EU GDPR and the EU AI Act; transparency and auditability from the architecture.
+2. Compliant by design — built for Swiss FADP/nFADP and EU GDPR, with documentation supporting EU AI Act obligations; transparency and auditability from the architecture.
 3. Sovereign & private — data never leaves the client's jurisdiction; on-prem, Swiss cloud or confidential compute; no US API dependency; zero data egress.
 4. Customized on your data — domain fine-tuning plus RAG and agentic tools on the client's corpus, systems and terminology.
-5. End-to-end productization — data → fine-tune → evaluate → deploy → monitor → maintain, with SLAs. A product, not a proof-of-concept.
+5. End-to-end delivery — data → fine-tune → evaluate → deploy → monitor → maintain. A maintained production system, not a proof-of-concept.
+6. Multilingual, incl. Swiss — native German, French, Italian and Romansh, including Swiss German.
 
-Bonus: multilingual coverage of 1,000+ languages including Swiss German, French, Italian and Romansh.
+## Ownership — built to be fired
+
+Everything sysf.io builds belongs to the client: the fine-tuned weights, the data pipelines, the
+evaluation harness and the operational runbooks. A documented handover is a deliverable in every
+engagement — the client can run the system without sysf.io, or hand it to any team they choose.
+No rented model, no lock-in.
 
 ## The platform pipeline (seven steps, one jurisdiction)
 
 1. Discovery & compliance scoping — map use case, data sources and regulatory frame (FADP, GDPR, EU AI Act); define success metrics and guardrails.
 2. Private, in-jurisdiction data prep — curate and structure data where it lives; design PII handling in; no external services.
-3. Fine-tuning on Apertus — teach domain, terminology, formats and tasks; full transparency over weights and data lineage.
-4. Agent & RAG orchestration — LangGraph orchestrates agents, retrieval-augmented generation and tool calls into the client's systems.
+3. Fine-tuning on Apertus — teach domain, terminology, formats and tasks; validated against a retrieval-only baseline; full transparency over weights and data lineage.
+4. Agent & RAG orchestration — agents, retrieval-augmented generation and tool calls into the client's systems.
 5. Evaluation & guardrails — use-case-specific eval set, safety and PII guardrails, output constraints; quality reported against agreed metrics before go-live.
-6. Sovereign deployment — containerised deployment to Swiss cloud, on-premise hardware or a confidential-compute enclave.
-7. Monitoring & iteration — continuous monitoring of quality, drift and usage; maintenance cadence and SLAs.
+6. Sovereign deployment — containerised deployment to Swiss cloud, on-premise hardware, or confidential-compute VMs (AMD SEV-SNP / Intel TDX with remote attestation).
+7. Monitoring & iteration — continuous monitoring of quality, drift and usage; maintenance cadence under a support agreement.
 
 ## Technical stack
 
-Fine-tuned Apertus at the core; LangChain and LangGraph for agents; RAG over client knowledge;
-tool calling into client systems; evaluation harnesses and guardrails; container-based deployment
-to Swiss cloud, on-prem, or confidential compute. Fine-tuning, RAG and agentic tools are combined
-per use case. No dependency on external US LLM APIs.
+Fine-tuned Apertus at the core; LangChain and LangGraph for agent orchestration; RAG over client
+knowledge; tool calling into client systems; evaluation harnesses and guardrails; container-based
+deployment to Swiss cloud, on-prem, or confidential compute. RAG first; fine-tuning where it earns
+its keep — every Pilot includes an ablation on the client's evaluation set (base model vs. RAG vs.
+fine-tune vs. both). Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on the
+evaluation set. No dependency on external US LLM APIs.
+
+Hardware: a quantized, fine-tuned Apertus-8B runs at interactive speed on a single
+workstation-class GPU server (roughly 24–48 GB VRAM); the 70B needs a multi-GPU node or a
+confidential-compute instance. Pilots can run on hardware sysf.io brings.
 
 ## Industries and sample use cases
 
-- Banking & Finance (banking secrecy, FINMA): advisory copilots; KYC/AML document processing; regulatory and policy Q&A (DE/FR/IT/EN); research/reporting assistants. On-prem, zero data egress, full audit trail.
-- Healthcare & Pharma: clinical documentation and letter drafting; patient triage/intake; research and literature assistants; coding and admin automation. Patient data stays in Switzerland; FADP/GDPR by design.
-- Legal & Professional Services: contract analysis and clause extraction; multilingual legal research; drafting grounded in templates/precedent; due-diligence and data-room summarisation. Privilege-safe, in-jurisdiction.
-- Government & Public Sector: multilingual citizen-service assistants (DE/FR/IT/RM); internal knowledge assistants; document/application processing; plain-language drafting. Runs on national infrastructure; data never leaves the country.
-- Insurance: claims intake/triage/document automation; policy and coverage Q&A copilots; underwriting research; correspondence drafting. Traceable, grounded, on-prem option.
+- Banking & Finance (CID, Art. 47 banking secrecy, FINMA outsourcing due diligence): advisory copilots; KYC/AML document processing; regulatory and policy Q&A (DE/FR/IT/EN); research/reporting assistants. On-prem or confidential compute, zero data egress, audit rights and exit plan documented.
+- Healthcare & Pharma (Art. 5 nFADP / Art. 9 GDPR, cantonal data-protection law, KIS integration via HL7/FHIR): discharge letters and clinical reports from structured notes (DE/FR/IT); clinical coding support (CHOP/ICD-10); research and literature assistants; administrative automation. Deliberately outside MDR/MepV scope — no diagnostic or triage functionality.
+- Legal & Professional Services: contract analysis and clause extraction; multilingual legal research; drafting grounded in the firm's templates and precedent; due-diligence and data-room summarisation. Privilege-safe, in-jurisdiction.
+- Government & Public Sector: multilingual citizen-service assistants (DE/FR/IT/RM); internal knowledge assistants; document/application processing; plain-language drafting. Proven playbook — the Canton of Ticino's fine-tuned Apertus-8B runs on its own infrastructure at 94% accuracy.
+- Insurance (FINMA outsourcing-ready): claims intake and document automation against core systems (Guidewire, Syrius, SAP FS-CM); policy and coverage Q&A copilots; underwriting research; correspondence drafting. Traceable, grounded, on-prem option.
 - Manufacturing & Industrial: maintenance/troubleshooting copilots; knowledge assistants over manuals/SOPs/specs; quality and compliance documentation; supplier/procurement processing. On-prem/edge-friendly; protects operational IP.
 
 ## Compliance
 
 Compliance is engineered into the architecture: in-jurisdiction processing and data lineage for
 Swiss FADP/nFADP; data minimisation, purpose limitation and residency for EU GDPR; documented
-training data, transparency and guardrails for the EU AI Act. Compliance and audit documentation
-is delivered with the system. This is not legal advice; sysf.io works with the client's compliance
-and legal teams.
+training data, transparency and guardrails supporting EU AI Act obligations. Compliance and audit
+documentation is delivered with the system. This is not legal advice; sysf.io works with the
+client's compliance and legal teams.
 
 ## Engagement model and pricing
 
-Land-and-expand across three stages; pricing is scoped per engagement, delivered as a fixed-scope
-proposal before commitment.
+Land-and-expand across three stages. Every tier is sovereign — the client's data stays in their
+jurisdiction; tiers differ in deployment depth. Pricing is scoped per engagement, delivered as a
+fixed-scope proposal before commitment — no open-ended time-and-materials.
 
-- Pilot — prove value on one use case: private data prep, fine-tuning on Apertus, evaluation report vs. agreed metrics, production roadmap, hosted in Swiss cloud.
-- Deploy — production productization: everything in Pilot plus LangGraph agents, RAG and tools, guardrails, Swiss-cloud or on-prem deployment, monitoring and evaluation, support and maintenance with SLAs.
-- Sovereign — regulated/air-gapped enterprise: everything in Deploy plus fully on-prem/confidential compute, multiple models and agents, dedicated MLOps, compliance and audit documentation, enterprise SLAs.
-- Add-ons: compliance & audit pack, additional languages, additional use cases, managed hosting.
+- Pilot — prove value on one use case: private data prep, fine-tuning and retrieval on Apertus, evaluation report vs. agreed metrics (with ablation), production roadmap. Runs in the client's environment or a dedicated single-tenant Swiss cloud under a DPA; at project end all data and derived weights are deleted or handed over — the client's choice.
+- Production — the pilot hardened for daily use: everything in Pilot plus agents, RAG and tools wired to the client's systems, guardrails, Swiss-cloud or on-prem deployment, monitoring and evaluation, support and maintenance agreement.
+- Air-gapped — regulated / most sensitive environments: everything in Production plus fully on-prem/confidential compute, multiple models and agents, dedicated operations, complete compliance and audit documentation, enterprise support commitments.
+- Add-ons: compliance & audit pack (model card, training-data lineage record, DPA template, TOMs, EU AI Act risk-classification worksheet, evaluation report), additional languages, additional use cases, managed hosting.
 
 Clients own the resulting model, because sysf.io builds on the open Apertus model and fine-tunes
-inside the client's environment.
+inside the client's environment. A documented handover is a deliverable in every engagement.
 
-## Differentiation vs. a generic API integrator
+## Three ways to get sovereign AI — honest comparison
 
-- Data location: client's jurisdiction / on-prem vs. third-party US servers.
-- Model weights: open (Apertus), auditable vs. closed, opaque.
-- Ownership: client owns the model vs. rented access.
-- Compliance: engineered in by design vs. left to the client.
-- Customization: fine-tuned on client data vs. prompting a shared model.
-- Deliverable: maintained product with SLAs vs. an integration.
+- sysf.io (studio): data on the client's infrastructure; open weights fine-tuned on the client's corpus; sysf.io builds the product against an agreed eval plan; accuracy measured before go-live; client owns the model, handover is a deliverable; compliance documentation delivered with the system.
+- Sovereign platform (hosted endpoint): data in the provider's Swiss datacentre; shared base model; the client's team builds on the endpoint; subscription access ends with the contract; platform-level compliance only. Right answer for organizations with their own AI engineering team that want infrastructure only.
+- US cloud API (Swiss region): closed weights under US legal reach; the client's team builds on the API; rented access; shared-responsibility compliance. Right answer when the data can leave.
+
+sysf.io is the answer when the data can't leave and the client wants the system built, measured
+and handed over.
 
 ## Contact
 

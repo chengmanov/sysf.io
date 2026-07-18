@@ -7,9 +7,9 @@ faq:
   - q: Which industries do you serve?
     a: We focus on regulated and data-sensitive sectors in Switzerland and the EU — banking and finance, healthcare and pharma, legal and professional services, government and the public sector, insurance, and manufacturing. These are the organisations for whom sovereignty, privacy and compliance are non-negotiable.
   - q: Can you work with our existing systems?
-    a: Yes. Agents built with LangGraph call into your existing systems and data sources through tools and RAG, so the AI works with your core banking, EHR, DMS, ERP or case-management systems rather than replacing them.
+    a: Yes. Agents call into your existing systems and data sources through tools and retrieval, so the AI works with your core banking, KIS/EHR, DMS, ERP, claims or case-management systems rather than replacing them.
   - q: We operate across languages — is that supported?
-    a: Apertus is multilingual across 1,000+ languages, including Swiss German, French, Italian and Romansh. That makes it well suited to Swiss and EU organisations operating across national languages.
+    a: Apertus is multilingual by construction — native German, French, Italian and Romansh, including Swiss German, plus 1,000+ further languages. That makes it well suited to Swiss and EU organisations operating across national languages.
 ---
 {% from "partials/components.njk" import sectionHead, cta %}
 
@@ -29,29 +29,29 @@ faq:
   {% set industries = [
     {
       k:"Banking & Finance",
-      p:"Swiss banking secrecy and FINMA expectations rule out sending client data to external APIs. We deploy fine-tuned models on-prem so confidential data never moves.",
+      p:"Client-identifying data (CID) and Art. 47 banking secrecy don't forbid external AI — they make it a months-long legal project. We deploy fine-tuned models inside your environment instead, with the data residency, audit trail and documented exit plan your second line of defence and FINMA outsourcing due diligence will actually test.",
       cases:[
         "Client-advisory copilots grounded in your product and policy documents",
         "KYC / AML document processing and screening support",
         "Regulatory and internal-policy Q&A across DE/FR/IT/EN",
         "Research and reporting assistants over your own market data"
       ],
-      note:"On-prem or confidential compute · zero data egress · full audit trail"
+      note:"On-prem or confidential compute · zero data egress · audit rights & exit plan documented"
     },
     {
       k:"Healthcare & Pharma",
-      p:"Patient and clinical data must stay protected and in-jurisdiction. Models run inside your environment, keeping sensitive data under Swiss and EU law.",
+      p:"Hospital AI fails in the review, not in the demo. Special-category data under Art. 5 nFADP and Art. 9 GDPR stays inside your clinical network — integrated with your KIS via HL7/FHIR, and designed to your cantonal data-protection law, not only the federal FADP. We deliberately stay outside MDR/MepV scope: no diagnostic or triage functionality.",
       cases:[
-        "Clinical documentation and letter drafting from structured notes",
-        "Patient triage and intake support assistants",
+        "Discharge letters and clinical reports drafted from structured notes (DE/FR/IT)",
+        "Clinical coding support (CHOP / ICD-10)",
         "Research and literature assistants over internal knowledge",
-        "Coding and administrative workflow automation"
+        "Administrative workflow and correspondence automation"
       ],
-      note:"Patient data stays in Switzerland · FADP / GDPR by design"
+      note:"Patient data stays in Switzerland · outside MDR/MepV scope by design"
     },
     {
       k:"Legal & Professional Services",
-      p:"Privilege and confidentiality demand tools that don't leak. Multilingual models reason over your matters without exposing them to third parties.",
+      p:"Privilege and confidentiality demand tools that don't leak. Your associates lose hours to first drafts, clause hunting and cross-language research memos — we install assistants trained on your own templates and precedent that run inside the firm. Nothing leaves your control.",
       cases:[
         "Contract analysis, review and clause extraction",
         "Multilingual legal research (DE / FR / IT / EN)",
@@ -62,7 +62,7 @@ faq:
     },
     {
       k:"Government & Public Sector",
-      p:"Sovereign infrastructure and multilingual service delivery are prerequisites. Apertus's Swiss origin and language coverage make it a natural fit for public bodies.",
+      p:"This already works: the Canton of Ticino runs a fine-tuned Apertus-8B translation system on its own infrastructure — 94% accuracy after fine-tuning on cantonal data. The same playbook applies to your canton or municipality: sovereign, multilingual services on infrastructure you control.",
       cases:[
         "Multilingual citizen-service assistants (DE / FR / IT / RM)",
         "Internal knowledge and procedure assistants for staff",
@@ -73,14 +73,14 @@ faq:
     },
     {
       k:"Insurance",
-      p:"Claims and policy data are sensitive and high-volume. Grounded models automate routine work while keeping decisions traceable and auditable.",
+      p:"Your claims teams re-key data from scanned forms, medical reports and broker mail all day — documents too sensitive for a US API. We deploy grounded models inside your environment that classify, extract and draft against your core systems (Guidewire, Syrius, SAP FS-CM), structured as a FINMA-compliant outsourcing from day one.",
       cases:[
         "Claims intake, triage and document automation",
         "Policy and coverage Q&A copilots for agents and customers",
         "Underwriting research and summarisation support",
         "Correspondence drafting grounded in your policies"
       ],
-      note:"Traceable outputs · grounded in your documents · on-prem option"
+      note:"Traceable outputs · FINMA outsourcing-ready · on-prem option"
     },
     {
       k:"Manufacturing & Industrial",

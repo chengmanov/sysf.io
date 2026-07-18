@@ -2,21 +2,21 @@
 layout: layouts/base.njk
 order: 0
 eleventyNavigation: Home
-title: Swiss Sovereign AI, Productized
-description: sysf.io builds custom fine-tuned AI models on Apertus — Switzerland's sovereign open LLM — and productizes them end-to-end with LangChain and LangGraph. Compliant by design, data-private, deployed in Swiss/EU jurisdiction or fully on-prem.
+title: Swiss Sovereign AI — Fine-Tuned Apertus, Run in Your Jurisdiction
+description: sysf.io fine-tunes Apertus — Switzerland's open LLM from EPFL, ETH Zurich and CSCS — on your documents and runs it inside your infrastructure. Open weights your auditors can inspect, no US API in the loop, and you own the model.
 faq:
   - q: What is sysf.io?
-    a: sysf.io is a Swiss sovereign-AI productization studio. We fine-tune Switzerland's open Apertus model on your data and ship it as a real product — orchestrated with LangChain and LangGraph, deployed in Swiss or EU jurisdiction, or fully on-premise. The result is a compliant, private, customized AI system you own — not a demo.
-  - q: Why build on Apertus instead of OpenAI or Anthropic APIs?
-    a: Apertus is Switzerland's fully open, multilingual LLM from EPFL, ETH Zurich and CSCS, with open weights and documented training data. Because the weights are open, we can fine-tune it on your data, run it entirely inside your jurisdiction, and give you full transparency for audits. With closed US APIs, your data leaves your control and you cannot inspect or own the model. For regulated Swiss and EU organizations, sovereignty and auditability are the difference between a pilot and production.
+    a: sysf.io is a Swiss sovereign-AI engineering studio. We fine-tune Switzerland's open Apertus model on your data and ship it as a production system — retrieval, agents and guardrails wired to your systems, deployed in Swiss or EU jurisdiction, or fully on-premise. The result is a compliant, private, customized AI system you own — not a demo.
+  - q: Which model do you use — is it always Apertus?
+    a: Apertus is our foundation of choice — Switzerland's fully open, multilingual LLM from EPFL, ETH Zurich and CSCS, with open weights and documented training data, which is exactly what auditors and regulators want to see. But we're not dogmatic — we test open-weight models against an evaluation set built from your documents and deploy whichever wins. Apertus, Llama or Mistral — the evaluation decides, not the logo. All of them run fully inside your jurisdiction with weights you can inspect and own.
   - q: Does our data ever leave our environment?
-    a: No. We can deploy inside your Swiss or EU cloud tenancy, on-premise, or in an air-gapped environment with confidential compute. Training and inference happen where your data already lives. There is no dependency on third-party US LLM APIs and no data egress by design.
+    a: For Production and Air-gapped engagements — no. Training and inference run inside your tenancy or your datacentre, with no third-party LLM APIs and no data egress. Pilots run either in your environment or in a dedicated single-tenant Swiss cloud environment under a data-processing agreement, with all data and derived weights deleted or handed over to you at project end — your choice at scoping.
   - q: How is this "compliant by design"?
-    a: Compliance is built into the architecture rather than bolted on. Open weights give you transparency and auditability; in-jurisdiction deployment addresses the Swiss Federal Act on Data Protection (FADP/nFADP) and EU GDPR; and documented data lineage plus guardrails support EU AI Act obligations. We deliver the compliance and audit documentation alongside the model.
-  - q: What does "end-to-end productization" mean?
-    a: We take a use case from data preparation and fine-tuning through evaluation, guardrails, deployment, monitoring and ongoing iteration — with SLAs. You get a maintained production system with agent orchestration (LangGraph), retrieval (RAG) and tools wired to your systems, not a proof-of-concept that stalls.
+    a: Compliance is built into the architecture rather than bolted on. Open weights give you transparency and auditability; in-jurisdiction deployment addresses the Swiss Federal Act on Data Protection (FADP/nFADP) and EU GDPR; and documented data lineage plus guardrails support your EU AI Act obligations. We deliver the compliance and audit documentation alongside the model.
+  - q: What does "end-to-end" mean here?
+    a: We take a use case from data preparation and fine-tuning through evaluation, guardrails, deployment, monitoring and ongoing iteration. You get a maintained production system with agent orchestration, retrieval (RAG) and tools wired to your systems — plus a support and maintenance agreement — not a proof-of-concept that stalls.
   - q: How do we start?
-    a: Most clients begin with a fixed-scope Pilot on a single high-value use case to prove value on their own data, then expand to a production Deploy and, where needed, a fully sovereign on-prem rollout. Book a call and we'll scope it with you.
+    a: Engagements start with a fixed-scope Pilot on a single high-value use case — prove the numbers on your own data, then decide about production with an evaluation report in hand. Where needed, we take the system fully on-prem. Book a call and we'll scope it with you.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 
@@ -27,17 +27,17 @@ faq:
     <div class="md:col-span-7">
       <p class="eyebrow">Swiss Sovereign AI</p>
       <h1 class="mt-4 text-4xl font-bold leading-[1.05] tracking-tightest text-ink-900 md:text-6xl dark:text-white">
-        Sovereign AI,<br />productized in Switzerland.
+        AI for the data<br />you can't send away.
       </h1>
       <p class="mt-6 max-w-xl text-lg prose-muted md:text-xl">
-        We fine-tune <strong class="font-semibold text-ink-900 dark:text-white">Apertus</strong> — Switzerland's open, sovereign LLM — on your data, and ship it as a real product with LangChain &amp; LangGraph. Compliant by design. Data-private. Deployed in your jurisdiction or fully on-prem.
+        We fine-tune <strong class="font-semibold text-ink-900 dark:text-white">Apertus</strong> — Switzerland's open LLM from EPFL, ETH Zurich and CSCS — on your documents and run it inside your infrastructure: your datacentre, your Swiss cloud tenancy, or fully air-gapped. Open weights your auditors can inspect. No US API in the loop. You own the model.
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/contact/" class="btn-primary">Book a call</a>
         <a href="/platform/" class="btn-ghost">How it works</a>
       </div>
       <p class="mt-6 text-sm text-ink-500">
-        Built on <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> by EPFL, ETH Zurich &amp; CSCS — open weights, 1,000+ languages, trained on the Alps supercomputer in Lugano.
+        Built on <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> by EPFL, ETH Zurich &amp; CSCS — open weights, trained on the Alps supercomputer in Lugano, already running in production in the Swiss public sector.
       </p>
     </div>
     <div class="md:col-span-5">
@@ -50,7 +50,7 @@ faq:
 <section class="border-b border-ink-900/10 bg-white dark:border-white/10 dark:bg-ink-950">
   <div class="container-x flex flex-wrap items-center gap-x-8 gap-y-3 py-6 text-sm">
     <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Compliant by design</span>
-    {% for b in ["Swiss FADP / nFADP", "EU GDPR", "EU AI Act aligned", "Swiss jurisdiction", "No data egress", "Open weights"] %}
+    {% for b in ["Swiss FADP / nFADP", "EU GDPR", "EU AI Act documentation", "Swiss jurisdiction", "No data egress", "Open weights"] %}
     <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300">
       <span class="h-1.5 w-1.5 bg-swiss"></span>{{ b }}
     </span>
@@ -62,7 +62,7 @@ faq:
 <section class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
-      {{ sectionHead("The problem", "Frontier APIs weren't built for regulated teams.", "Banks, hospitals, insurers and public bodies can't send confidential data to a US LLM API. So they get stuck at the pilot stage — impressive demos that never reach production because they can't clear compliance.") }}
+      {{ sectionHead("The problem", "Frontier APIs weren't built for regulated teams.", "For banks, hospitals, insurers and public bodies, external AI isn't forbidden — it's slow and residual-risk-heavy: months of legal review, DPAs, sub-processor chains, and at the end a model you still don't control. Most projects get stuck at the pilot stage — impressive demos that never clear the review.") }}
     </div>
     <div class="md:col-span-6 md:col-start-7">
       <div class="grid gap-5 sm:grid-cols-2">
@@ -80,6 +80,7 @@ faq:
         {% endfor %}
       </div>
       <p class="mt-6 text-base prose-muted">sysf.io removes the blocker: a model you <strong class="font-semibold text-ink-900 dark:text-white">own</strong>, running where your data already lives.</p>
+      <p class="mt-4 text-base prose-muted">And this isn't theoretical — the Canton of Ticino runs a fine-tuned Apertus-8B translation service in production on its own infrastructure, reaching <strong class="font-semibold text-ink-900 dark:text-white">94% accuracy after fine-tuning</strong> on cantonal data. The same playbook applies to your workflows.</p>
     </div>
   </div>
 </section>
@@ -87,15 +88,15 @@ faq:
 <!-- Five pillars -->
 <section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
-    {{ sectionHead("Why sysf.io", "Five reasons regulated teams choose us.") }}
+    {{ sectionHead("Why sysf.io", "Six reasons this architecture clears compliance review.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {% set pillars = [
         {n:"01", t:"Swiss by foundation", d:"Built on Apertus, Switzerland's sovereign open LLM — open weights and documented training data, not a black box."},
-        {n:"02", t:"Compliant by design", d:"Aligned to Swiss FADP/nFADP, EU GDPR and the EU AI Act. Transparency and auditability come from the architecture."},
+        {n:"02", t:"Compliant by design", d:"Built for Swiss FADP/nFADP and EU GDPR, with the documentation your EU AI Act obligations demand. Transparency and auditability come from the architecture."},
         {n:"03", t:"Sovereign & private", d:"Your data never leaves your jurisdiction. On-prem, Swiss cloud or confidential compute — no US API dependency."},
         {n:"04", t:"Customized on your data", d:"Domain fine-tuning plus RAG and agentic tools on your own corpus, systems and terminology."},
-        {n:"05", t:"End-to-end productization", d:"Data → fine-tune → evaluate → deploy → monitor → maintain. A product with SLAs, not a proof-of-concept."},
-        {n:"06", t:"Multilingual, incl. Swiss", d:"Apertus covers 1,000+ languages including Swiss German, French, Italian and Romansh — built for Switzerland."}
+        {n:"05", t:"End-to-end delivery", d:"Data → fine-tune → evaluate → deploy → monitor → maintain. A maintained production system, not a proof-of-concept."},
+        {n:"06", t:"Multilingual, incl. Swiss", d:"Native German, French, Italian and Romansh — including Swiss German — from a model built for Switzerland, not translated to it."}
       ] %}
       {% for p in pillars %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -108,15 +109,40 @@ faq:
   </div>
 </section>
 
-<!-- How it works teaser -->
+<!-- Ownership / exit -->
 <section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Ownership", "Built to be fired.", "Everything we build is yours. That's the point of open weights: no rented model, no lock-in, no hostage negotiation at renewal time.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="grid gap-5 sm:grid-cols-3">
+        {% set owns = [
+          {t:"You own the weights", d:"The fine-tuned model is yours — run it with us, without us, or with any team you choose."},
+          {t:"You hold the runbooks", d:"Data pipelines, evaluation harness and operational runbooks are deliverables, not secrets."},
+          {t:"Handover is a deliverable", d:"Every engagement includes a documented handover. Your exit strategy is part of the scope, not a negotiation."}
+        ] %}
+        {% for o in owns %}
+        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ o.t }}</h3>
+          <p class="mt-2 text-sm prose-muted">{{ o.d }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works teaser -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x">
   {{ sectionHead("The platform", "From your data to a product in production.", "A repeatable, end-to-end pipeline — every step runs inside your jurisdiction.") }}
   <ol class="mt-12 grid gap-6 md:grid-cols-4">
     {% set steps = [
       {n:"1", t:"Scope & comply", d:"Use-case discovery and compliance scoping (FADP, GDPR, EU AI Act)."},
       {n:"2", t:"Fine-tune on Apertus", d:"Private, in-jurisdiction data prep and domain fine-tuning."},
-      {n:"3", t:"Orchestrate", d:"LangGraph agents, RAG and tools wired to your systems, with guardrails."},
-      {n:"4", t:"Deploy & operate", d:"Sovereign deployment, monitoring, evaluation and iteration with SLAs."}
+      {n:"3", t:"Orchestrate", d:"Agents, RAG and tools wired to your systems, with guardrails."},
+      {n:"4", t:"Deploy & operate", d:"Sovereign deployment, monitoring, evaluation and iteration with support agreements."}
     ] %}
     {% for s in steps %}
     <li class="relative border-t-2 border-swiss pt-5">
@@ -127,6 +153,7 @@ faq:
     {% endfor %}
   </ol>
   <div class="mt-10"><a href="/platform/" class="btn-ghost">Explore the platform</a></div>
+  </div>
 </section>
 
 <!-- Industries teaser -->
@@ -136,7 +163,7 @@ faq:
     <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {% set inds = [
         {t:"Banking & Finance", d:"Advisory copilots, KYC/AML document processing, regulatory Q&A — on-prem, zero data egress."},
-        {t:"Healthcare & Pharma", d:"Clinical documentation, triage and research assistants — patient data stays in Switzerland."},
+        {t:"Healthcare & Pharma", d:"Clinical documentation and research assistants — patient data stays in Switzerland."},
         {t:"Legal & Compliance", d:"Multilingual contract analysis and legal research (DE/FR/IT), privilege-safe."},
         {t:"Government & Public", d:"Sovereign, multilingual citizen services on national infrastructure."},
         {t:"Insurance", d:"Claims automation and policy Q&A copilots grounded in your documents."},
@@ -157,12 +184,12 @@ faq:
 
 <!-- Engagement teaser -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("Engagement", "Start small. Prove value. Scale to sovereign.", "A land-and-expand path that de-risks adoption. Pricing is scoped per engagement — <a class='link-underline' href='/pricing/'>see the model</a>.") }}
+  {{ sectionHead("Engagement", "Start small. Prove value. Scale to air-gapped.", "Every tier is sovereign — your data stays in your jurisdiction; tiers differ in deployment depth. Pricing is scoped per engagement — <a class='link-underline' href='/pricing/'>see the model</a>.") }}
   <div class="mt-12 grid gap-5 md:grid-cols-3">
     {% set tiers = [
-      {t:"Pilot", for:"Prove value on one use case", d:"Fine-tune on your data, evaluation report and a production roadmap — hosted in Swiss cloud."},
-      {t:"Deploy", for:"Production productization", d:"Fine-tuned model, LangGraph agents, RAG, guardrails, deployment and monitoring with support."},
-      {t:"Sovereign", for:"Regulated / air-gapped", d:"Fully on-prem or confidential compute, dedicated MLOps, compliance documentation and SLAs."}
+      {t:"Pilot", for:"Prove value on one use case", d:"Fine-tuning and retrieval on your data, an evaluation report against agreed metrics, and a production roadmap."},
+      {t:"Production", for:"The pilot, hardened for daily use", d:"Agents, RAG and guardrails wired into your systems, with deployment, monitoring and support."},
+      {t:"Air-gapped", for:"Regulated / most sensitive", d:"Fully on-prem or confidential compute, dedicated operations, and complete compliance documentation."}
     ] %}
     {% for t in tiers %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">

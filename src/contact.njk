@@ -25,7 +25,7 @@ ogType: website
         <div>
           <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">What to expect</div>
           <ul class="mt-2 space-y-2 text-sm prose-muted">
-            {% for x in ["A 30-minute scoping call", "A fixed-scope Pilot proposal on your data", "Clear answers on compliance & deployment"] %}
+            {% for x in ["A 30-minute call with the engineer who will build your system", "A fixed-scope Pilot proposal on your data — within one week", "A clear no by minute 20 if a fine-tuned open model isn't the right fit"] %}
             <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
             {% endfor %}
           </ul>
@@ -38,11 +38,13 @@ ogType: website
     <div class="md:col-span-6 md:col-start-7">
       <div class="border border-ink-900/10 p-6 md:p-8 dark:border-white/10">
         <!--
-          This static site has no backend. To receive submissions, either:
-          (1) create a free form endpoint at https://formspree.io and paste its URL below, or
-          (2) delete this form and rely on the mailto link on the left.
+          TODO: this static site has no backend yet. The form below composes an email via
+          the visitor's mail client (works everywhere, no data leaves the page). To switch to
+          hosted submissions instead: create a free endpoint at https://formspree.io, set
+          action="https://formspree.io/f/YOUR-ID" method="POST" on the form, and delete the
+          enquiryForm <script> block at the bottom of this file.
         -->
-        <form action="https://formspree.io/f/your-form-id" method="POST" class="space-y-5">
+        <form id="enquiryForm" action="#" class="space-y-5">
           <div class="grid gap-5 sm:grid-cols-2">
             <label class="block">
               <span class="text-sm font-medium text-ink-900 dark:text-white">Name</span>
@@ -75,9 +77,24 @@ ogType: website
                       class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white"></textarea>
           </label>
           <button type="submit" class="btn-primary w-full">Send enquiry</button>
-          <p class="text-xs text-ink-500">By sending, you agree we may contact you about your enquiry. We don't share your details.</p>
+          <p class="text-xs text-ink-500">Sending opens your email client — your enquiry goes directly to {{ site.email }}, nowhere else. We don't share your details.</p>
         </form>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // Compose the enquiry as an email — no backend, no third-party form handler.
+  (function () {
+    var form = document.getElementById("enquiryForm");
+    if (!form) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = function (n) { var el = form.elements[n]; return el && el.value ? el.value.trim() : ""; };
+      var subject = "Sovereign AI enquiry — " + (v("organization") || v("name"));
+      var body = "Name: " + v("name") + "\nWork email: " + v("email") + "\nOrganization: " + v("organization") + "\nSector: " + v("sector") + "\n\nWhat we'd like to build:\n" + v("message");
+      window.location.href = "mailto:{{ site.email }}?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    });
+  })();
+</script>

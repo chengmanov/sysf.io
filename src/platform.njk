@@ -2,16 +2,18 @@
 layout: layouts/base.njk
 order: 1
 title: Platform
-description: How sysf.io productizes sovereign AI end-to-end — compliance scoping, private fine-tuning on Apertus, LangGraph agent orchestration with RAG and tools, guardrails, and sovereign deployment with monitoring and SLAs.
+description: How sysf.io ships sovereign AI end-to-end — compliance scoping, private fine-tuning on Apertus, agent orchestration with RAG and tools, guardrails, and sovereign deployment with monitoring and support.
 faq:
   - q: What is the technical stack?
     a: A fine-tuned Apertus model at the core, orchestrated with LangChain and LangGraph for agents, retrieval-augmented generation (RAG) over your knowledge, and tool calling into your systems. We add evaluation harnesses and guardrails, and deploy via containers to your Swiss cloud, on-premise hardware, or a confidential-compute enclave.
   - q: Do you fine-tune, or just do RAG?
-    a: Both, matched to the problem. RAG grounds the model in your current knowledge; fine-tuning teaches your domain, tone, formats and tasks. Most production systems combine fine-tuning, RAG and agentic tools — we choose the mix during scoping and validate it against your evaluation set.
+    a: RAG first; fine-tuning where it earns its keep. Retrieval grounds answers in your current documents and is where most accuracy comes from. Fine-tuning teaches your domain's terminology, formats and task behaviour — it does not reliably memorise facts, so we never use it as a substitute for retrieval. Every Pilot ships with an ablation on your evaluation set — base model vs. RAG vs. fine-tune vs. both — so you see exactly what each component buys before you invest in production.
+  - q: What does on-prem actually require?
+    a: Less than you'd think. A quantized, fine-tuned Apertus-8B runs at interactive speed on a single workstation-class GPU server (roughly 24–48 GB of VRAM) that lives in your existing rack. The 70B needs a multi-GPU node or a confidential-compute instance. We size the deployment during scoping and commit to throughput numbers — and a Pilot can run on hardware we bring, so you spend nothing on infrastructure before value is proven.
   - q: How do you handle evaluation and guardrails?
     a: Every engagement includes a use-case-specific evaluation set and metrics agreed with you, plus guardrails for safety, PII handling and output constraints. We report quality against those metrics before go-live and monitor them continuously in production.
   - q: Where does it run?
-    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute. Nothing depends on external US LLM APIs.
+    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute (AMD SEV-SNP or Intel TDX with remote attestation, so even the infrastructure operator sits outside the trust boundary). Nothing depends on external US LLM APIs.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 
@@ -19,7 +21,7 @@ faq:
   <div class="container-x py-16 md:py-24">
     <p class="eyebrow">The platform</p>
     <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      End-to-end productization of sovereign AI.
+      From your documents to a system in production.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
       Not a model handed over in a notebook — a maintained production system. Every step of the pipeline runs inside your jurisdiction, from data preparation to monitoring.
@@ -34,11 +36,11 @@ faq:
     {% set steps = [
       {n:"01", t:"Discovery & compliance scoping", d:"We map the use case, data sources and the regulatory frame (FADP/nFADP, GDPR, EU AI Act), and define success metrics and guardrail requirements up front."},
       {n:"02", t:"Private, in-jurisdiction data prep", d:"Data is curated, cleaned and structured where it already lives. Nothing is shipped to an external service. PII handling is designed in from the start."},
-      {n:"03", t:"Fine-tuning on Apertus", d:"We fine-tune Switzerland's open Apertus model on your corpus to teach your domain, terminology, formats and tasks — with full transparency over weights and data lineage."},
-      {n:"04", t:"Agent & RAG orchestration", d:"LangGraph orchestrates agents, retrieval-augmented generation and tool calls into your systems, so the model reasons over live knowledge and takes real actions."},
+      {n:"03", t:"Fine-tuning on Apertus", d:"We fine-tune Switzerland's open Apertus model on your corpus to teach your domain, terminology, formats and tasks — validated against a retrieval-only baseline, with full transparency over weights and data lineage."},
+      {n:"04", t:"Agent & RAG orchestration", d:"Agents, retrieval-augmented generation and tool calls into your systems, so the model reasons over live knowledge and takes real actions."},
       {n:"05", t:"Evaluation & guardrails", d:"A use-case-specific eval set, safety and PII guardrails, and output constraints. We report quality against agreed metrics before go-live."},
-      {n:"06", t:"Sovereign deployment", d:"Containerised deployment to your Swiss cloud, on-premise hardware, or a confidential-compute enclave. Zero dependency on US LLM APIs."},
-      {n:"07", t:"Monitoring & iteration", d:"Continuous monitoring of quality, drift and usage, with a maintenance cadence and SLAs. The system improves as your data and needs evolve."}
+      {n:"06", t:"Sovereign deployment", d:"Containerised deployment to your Swiss cloud, your own hardware, or confidential-compute VMs (AMD SEV-SNP / Intel TDX with remote attestation). Zero dependency on US LLM APIs."},
+      {n:"07", t:"Monitoring & iteration", d:"Continuous monitoring of quality, drift and usage, with a maintenance cadence and a support agreement. The system improves as your data and needs evolve."}
     ] %}
     {% for s in steps %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -58,7 +60,7 @@ faq:
       <ul class="mt-8 space-y-4">
         {% set arch = [
           {t:"Apertus core", d:"Fine-tuned Swiss open LLM — open weights, auditable, yours to run."},
-          {t:"LangChain + LangGraph", d:"Stateful agents, routing and tool use over your systems."},
+          {t:"Agent orchestration", d:"Stateful agents, routing and tool use over your systems (LangChain + LangGraph)."},
           {t:"RAG layer", d:"Retrieval over your knowledge bases, grounded and cited."},
           {t:"Guardrails & eval", d:"Safety, PII and quality checks, monitored in production."},
           {t:"Sovereign runtime", d:"On-prem, Swiss cloud, or confidential compute."}
@@ -73,6 +75,7 @@ faq:
         </li>
         {% endfor %}
       </ul>
+      <p class="mt-6 text-sm text-ink-500">Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on your evaluation set. The evaluation decides, not the logo.</p>
     </div>
     <div class="md:col-span-5 md:col-start-8">
       {% include "partials/diagram.njk" %}

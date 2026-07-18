@@ -1,5 +1,5 @@
 <figure class="relative">
-  <figcaption class="sr-only">Architecture: your data stays inside your jurisdiction. sysf.io fine-tunes Apertus and orchestrates agents with LangGraph, with no data sent to third-party US LLM APIs.</figcaption>
+  <figcaption class="sr-only">Architecture: your data stays inside your jurisdiction. sysf.io fine-tunes Apertus and orchestrates agents, retrieval and tools, with no data sent to third-party US LLM APIs.</figcaption>
 
   <!-- Excluded external API -->
   <div class="mb-3 flex items-center justify-end gap-2 text-xs text-ink-500">
@@ -17,8 +17,8 @@
       {% set nodes = [
         {t:"Your data", d:"Documents, records, systems — never leaves"},
         {t:"Fine-tuned Apertus", d:"Swiss open model, trained on your corpus"},
-        {t:"LangGraph orchestration", d:"Agents · RAG · tools · guardrails"},
-        {t:"Your product", d:"Copilots & workflows, with SLAs"}
+        {t:"Agent orchestration", d:"Agents · RAG · tools · guardrails"},
+        {t:"Your product", d:"Copilots & workflows — yours to run"}
       ] %}
       {% for n in nodes %}
       <li>

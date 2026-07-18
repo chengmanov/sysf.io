@@ -1,37 +1,39 @@
 # sysf.io
 
-> sysf.io is a Swiss sovereign-AI productization studio. We build custom fine-tuned AI models on Apertus — Switzerland's fully open, sovereign LLM from EPFL, ETH Zurich and CSCS — and productize them end-to-end with LangChain and LangGraph. Everything is compliant by design, data-private, and deployed inside your Swiss or EU jurisdiction, or fully on-premise. Clients own the resulting model.
+> sysf.io is a Swiss sovereign-AI engineering studio. We fine-tune Apertus — Switzerland's fully open LLM from EPFL, ETH Zurich and CSCS — on a client's own documents and run it inside their infrastructure: on-premise, Swiss cloud, or fully air-gapped. Open weights the client's auditors can inspect, no US API in the loop, and the client owns the resulting model.
 
 ## What we do
 
-- Fine-tune the open Apertus model on a client's own data (domain, terminology, tasks).
-- Orchestrate agents, retrieval-augmented generation (RAG) and tools with LangChain/LangGraph.
-- Add evaluation and guardrails (safety, PII, quality) with agreed metrics.
-- Deploy sovereignly: on-premise, Swiss cloud, or confidential compute — no US LLM API dependency, zero data egress.
-- Operate the system: monitoring, iteration and maintenance with SLAs.
+- Fine-tune the open Apertus model on a client's own data (domain, terminology, tasks) — validated against a retrieval-only baseline with a published ablation on the client's evaluation set.
+- Orchestrate agents, retrieval-augmented generation (RAG) and tools wired into the client's systems.
+- Add evaluation and guardrails (safety, PII, quality) with agreed metrics, reported before go-live.
+- Deploy sovereignly: on-premise, Swiss cloud, or confidential compute (AMD SEV-SNP / Intel TDX with remote attestation) — no US LLM API dependency, zero data egress.
+- Operate the system: monitoring, iteration and maintenance under a support agreement.
+- Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on the client's evaluation set.
 
 ## Why it matters
 
-- Regulated Swiss and EU organizations cannot send confidential data to closed US LLM APIs; sysf.io removes that blocker.
-- Compliant by design: aligned to Swiss FADP/nFADP, EU GDPR, and the EU AI Act.
-- Open weights mean transparency, auditability, ownership and no vendor lock-in.
-- Apertus is multilingual (1,000+ languages incl. Swiss German, French, Italian, Romansh).
+- For regulated Swiss and EU organizations, sending confidential data to external AI APIs means months of legal review, DPAs and residual-risk sign-offs; most projects die at the pilot stage. Open weights running in-jurisdiction make most of that review unnecessary.
+- The approach is proven in production: the Canton of Ticino runs a fine-tuned Apertus-8B translation service on its own infrastructure at 94% accuracy after fine-tuning.
+- Open weights mean transparency, auditability, ownership and no vendor lock-in. Clients own the fine-tuned model and receive a documented handover — they can run the system independently.
+- Compliant by design: built for Swiss FADP/nFADP and EU GDPR, with documentation supporting EU AI Act obligations.
+- Apertus is natively multilingual: German, French, Italian and Romansh, including Swiss German.
 
 ## Pages
 
-- [Home](https://sysf.io/): positioning, five pillars, how it works, FAQ.
-- [Platform](https://sysf.io/platform/): the end-to-end pipeline, architecture, compliance.
+- [Home](https://sysf.io/): positioning, six pillars, ownership ("built to be fired"), how it works, FAQ.
+- [Platform](https://sysf.io/platform/): the end-to-end pipeline, architecture, hardware sizing, compliance.
 - [Industries](https://sysf.io/industries/): use cases for banking, healthcare, legal, government, insurance, manufacturing.
-- [Pricing](https://sysf.io/pricing/): engagement model (Pilot → Deploy → Sovereign); pricing scoped per engagement.
-- [About](https://sysf.io/about/): mission, principles, how we differ from generic API integrators.
+- [Pricing](https://sysf.io/pricing/): engagement model (Pilot → Production → Air-gapped); every tier is sovereign; pricing scoped per engagement.
+- [About](https://sysf.io/about/): mission, principles, honest comparison with sovereign platforms and US cloud APIs.
 - [Contact](https://sysf.io/contact/): book a scoping call. Email hello@sysf.io.
 
 ## Engagement model
 
-- Pilot — prove value on one use case (fine-tune, eval report, roadmap; Swiss cloud).
-- Deploy — production system (LangGraph agents, RAG, guardrails, deployment, monitoring, SLAs).
-- Sovereign — fully on-prem / air-gapped, dedicated MLOps, compliance documentation, enterprise SLAs.
-- Pricing is scoped per engagement. Contact: hello@sysf.io
+- Pilot — prove value on one use case (fine-tune + retrieval, evaluation report with ablation, production roadmap; runs in the client's environment or a dedicated single-tenant Swiss cloud under a DPA, with deletion or handover of all data and weights at project end).
+- Production — the pilot hardened for daily use (agents, RAG, guardrails, deployment, monitoring, support & maintenance agreement).
+- Air-gapped — fully on-prem / confidential compute, dedicated operations, complete compliance & audit documentation (model card, data lineage, DPA template, TOMs, EU AI Act risk-classification worksheet, evaluation report).
+- Pricing is scoped per engagement — fixed-scope proposals, no open-ended time-and-materials. Contact: hello@sysf.io
 
 ## Reference
 

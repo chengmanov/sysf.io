@@ -1,0 +1,83 @@
+---
+layout: layouts/base.njk
+order: 5
+title: Contact
+description: Book a scoping call with sysf.io to map your first sovereign AI use case — custom models fine-tuned on Apertus, deployed in your Swiss or EU jurisdiction, or on-prem.
+ogType: website
+---
+<section class="container-x py-16 md:py-24">
+  <div class="grid gap-14 md:grid-cols-12">
+    <!-- Left -->
+    <div class="md:col-span-5">
+      <p class="eyebrow">Contact</p>
+      <h1 class="mt-4 text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+        Let's scope your first sovereign use case.
+      </h1>
+      <p class="mt-6 text-lg prose-muted">
+        Tell us the workflow and the data you can't send away. We'll come back with a fixed-scope proposal — no obligation.
+      </p>
+
+      <div class="mt-10 space-y-6">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Email</div>
+          <a class="mt-1 block text-lg font-semibold text-ink-900 link-underline dark:text-white" href="mailto:{{ site.email }}?subject=Sovereign%20AI%20enquiry">{{ site.email }}</a>
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">What to expect</div>
+          <ul class="mt-2 space-y-2 text-sm prose-muted">
+            {% for x in ["A 30-minute scoping call", "A fixed-scope Pilot proposal on your data", "Clear answers on compliance & deployment"] %}
+            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <p class="text-sm text-ink-500">Based in Switzerland. Serving Swiss and EU organizations.</p>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="border border-ink-900/10 p-6 md:p-8 dark:border-white/10">
+        <!--
+          This static site has no backend. To receive submissions, either:
+          (1) create a free form endpoint at https://formspree.io and paste its URL below, or
+          (2) delete this form and rely on the mailto link on the left.
+        -->
+        <form action="https://formspree.io/f/your-form-id" method="POST" class="space-y-5">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <label class="block">
+              <span class="text-sm font-medium text-ink-900 dark:text-white">Name</span>
+              <input type="text" name="name" required autocomplete="name"
+                     class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-ink-900 dark:text-white">Work email</span>
+              <input type="email" name="email" required autocomplete="email"
+                     class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+            </label>
+          </div>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Organization</span>
+            <input type="text" name="organization" autocomplete="organization"
+                   class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Sector</span>
+            <select name="sector"
+                    class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white dark:[&>option]:bg-ink-900">
+              {% for s in ["Banking & Finance", "Healthcare & Pharma", "Legal", "Government & Public", "Insurance", "Manufacturing", "Other"] %}
+              <option>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">What would you like to build?</span>
+            <textarea name="message" rows="4" required
+                      class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white"></textarea>
+          </label>
+          <button type="submit" class="btn-primary w-full">Send enquiry</button>
+          <p class="text-xs text-ink-500">By sending, you agree we may contact you about your enquiry. We don't share your details.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

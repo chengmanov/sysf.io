@@ -1,0 +1,22 @@
+{
+  "name": "sysf-io",
+  "version": "1.0.0",
+  "description": "sysf.io — Swiss sovereign AI productization studio. Marketing site.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf _site",
+    "build:11ty": "eleventy",
+    "build:css": "tailwindcss -i ./src/assets/input.css -o ./_site/assets/styles.css --minify",
+    "build": "npm run build:11ty && npm run build:css",
+    "watch:11ty": "eleventy --serve --port 8080",
+    "watch:css": "tailwindcss -i ./src/assets/input.css -o ./_site/assets/styles.css --watch",
+    "dev": "npm run build && concurrently -k \"npm:watch:11ty\" \"npm:watch:css\""
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "concurrently": "^9.1.0",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

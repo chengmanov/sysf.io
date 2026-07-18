@@ -1,0 +1,109 @@
+---
+layout: layouts/base.njk
+order: 1
+title: Platform
+description: How sysf.io productizes sovereign AI end-to-end — compliance scoping, private fine-tuning on Apertus, LangGraph agent orchestration with RAG and tools, guardrails, and sovereign deployment with monitoring and SLAs.
+faq:
+  - q: What is the technical stack?
+    a: A fine-tuned Apertus model at the core, orchestrated with LangChain and LangGraph for agents, retrieval-augmented generation (RAG) over your knowledge, and tool calling into your systems. We add evaluation harnesses and guardrails, and deploy via containers to your Swiss cloud, on-premise hardware, or a confidential-compute enclave.
+  - q: Do you fine-tune, or just do RAG?
+    a: Both, matched to the problem. RAG grounds the model in your current knowledge; fine-tuning teaches your domain, tone, formats and tasks. Most production systems combine fine-tuning, RAG and agentic tools — we choose the mix during scoping and validate it against your evaluation set.
+  - q: How do you handle evaluation and guardrails?
+    a: Every engagement includes a use-case-specific evaluation set and metrics agreed with you, plus guardrails for safety, PII handling and output constraints. We report quality against those metrics before go-live and monitor them continuously in production.
+  - q: Where does it run?
+    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute. Nothing depends on external US LLM APIs.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">The platform</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      End-to-end productization of sovereign AI.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Not a model handed over in a notebook — a maintained production system. Every step of the pipeline runs inside your jurisdiction, from data preparation to monitoring.
+    </p>
+  </div>
+</section>
+
+<!-- Pipeline -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Pipeline", "Seven steps, one jurisdiction.") }}
+  <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-2">
+    {% set steps = [
+      {n:"01", t:"Discovery & compliance scoping", d:"We map the use case, data sources and the regulatory frame (FADP/nFADP, GDPR, EU AI Act), and define success metrics and guardrail requirements up front."},
+      {n:"02", t:"Private, in-jurisdiction data prep", d:"Data is curated, cleaned and structured where it already lives. Nothing is shipped to an external service. PII handling is designed in from the start."},
+      {n:"03", t:"Fine-tuning on Apertus", d:"We fine-tune Switzerland's open Apertus model on your corpus to teach your domain, terminology, formats and tasks — with full transparency over weights and data lineage."},
+      {n:"04", t:"Agent & RAG orchestration", d:"LangGraph orchestrates agents, retrieval-augmented generation and tool calls into your systems, so the model reasons over live knowledge and takes real actions."},
+      {n:"05", t:"Evaluation & guardrails", d:"A use-case-specific eval set, safety and PII guardrails, and output constraints. We report quality against agreed metrics before go-live."},
+      {n:"06", t:"Sovereign deployment", d:"Containerised deployment to your Swiss cloud, on-premise hardware, or a confidential-compute enclave. Zero dependency on US LLM APIs."},
+      {n:"07", t:"Monitoring & iteration", d:"Continuous monitoring of quality, drift and usage, with a maintenance cadence and SLAs. The system improves as your data and needs evolve."}
+    ] %}
+    {% for s in steps %}
+    <div class="bg-white p-8 dark:bg-ink-950">
+      <div class="font-mono text-sm text-swiss">{{ s.n }}</div>
+      <h3 class="mt-3 text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x grid items-center gap-14 md:grid-cols-12">
+    <div class="md:col-span-6">
+      {{ sectionHead("Architecture", "Your data never leaves your jurisdiction.", "A single trust boundary contains everything — data, model and orchestration. There is no round-trip to an external API.") }}
+      <ul class="mt-8 space-y-4">
+        {% set arch = [
+          {t:"Apertus core", d:"Fine-tuned Swiss open LLM — open weights, auditable, yours to run."},
+          {t:"LangChain + LangGraph", d:"Stateful agents, routing and tool use over your systems."},
+          {t:"RAG layer", d:"Retrieval over your knowledge bases, grounded and cited."},
+          {t:"Guardrails & eval", d:"Safety, PII and quality checks, monitored in production."},
+          {t:"Sovereign runtime", d:"On-prem, Swiss cloud, or confidential compute."}
+        ] %}
+        {% for a in arch %}
+        <li class="flex gap-4">
+          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <div>
+            <div class="font-semibold text-ink-900 dark:text-white">{{ a.t }}</div>
+            <div class="text-sm prose-muted">{{ a.d }}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="md:col-span-5 md:col-start-8">
+      {% include "partials/diagram.njk" %}
+    </div>
+  </div>
+</section>
+
+<!-- Compliance -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Compliance", "Compliance is an architecture, not a checkbox.") }}
+  <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-3">
+    {% set comp = [
+      {t:"Swiss FADP / nFADP", d:"In-jurisdiction processing and clear data lineage keep personal data under Swiss law and control."},
+      {t:"EU GDPR", d:"Data minimisation, purpose limitation and residency handled by design for EU operations."},
+      {t:"EU AI Act", d:"Documented training data, transparency and guardrails support risk classification and obligations."}
+    ] %}
+    {% for c in comp %}
+    <div class="bg-white p-8 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ c.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ c.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">We deliver compliance and audit documentation alongside the system. This is not legal advice — we work with your compliance and legal teams to meet your obligations.</p>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Platform questions.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("See it on your use case.", "Bring one high-value workflow. We'll show you the pipeline end-to-end — on your data, in your jurisdiction.") }}

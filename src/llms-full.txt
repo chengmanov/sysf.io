@@ -1,0 +1,84 @@
+# sysf.io — full profile
+
+> sysf.io is a Swiss sovereign-AI productization studio. We fine-tune Switzerland's open Apertus model on client data and ship it as a real, maintained product — orchestrated with LangChain and LangGraph, deployed inside the client's jurisdiction or on-premise, compliant by design. Clients own the resulting model.
+
+## Positioning
+
+Sovereign AI, productized in Switzerland. The most capable AI historically lived behind closed US
+APIs, which is a dead end for a Swiss bank, hospital or public authority whose data cannot leave.
+Switzerland answered with Apertus, a fully open, sovereign, multilingual model (open weights,
+documented training data) from EPFL, ETH Zurich and the Swiss National Supercomputing Centre
+(CSCS). sysf.io turns that open foundation into working products.
+
+## Five pillars
+
+1. Swiss by foundation — built on Apertus, Switzerland's sovereign open LLM (open weights, documented training data).
+2. Compliant by design — aligned to Swiss FADP/nFADP, EU GDPR and the EU AI Act; transparency and auditability from the architecture.
+3. Sovereign & private — data never leaves the client's jurisdiction; on-prem, Swiss cloud or confidential compute; no US API dependency; zero data egress.
+4. Customized on your data — domain fine-tuning plus RAG and agentic tools on the client's corpus, systems and terminology.
+5. End-to-end productization — data → fine-tune → evaluate → deploy → monitor → maintain, with SLAs. A product, not a proof-of-concept.
+
+Bonus: multilingual coverage of 1,000+ languages including Swiss German, French, Italian and Romansh.
+
+## The platform pipeline (seven steps, one jurisdiction)
+
+1. Discovery & compliance scoping — map use case, data sources and regulatory frame (FADP, GDPR, EU AI Act); define success metrics and guardrails.
+2. Private, in-jurisdiction data prep — curate and structure data where it lives; design PII handling in; no external services.
+3. Fine-tuning on Apertus — teach domain, terminology, formats and tasks; full transparency over weights and data lineage.
+4. Agent & RAG orchestration — LangGraph orchestrates agents, retrieval-augmented generation and tool calls into the client's systems.
+5. Evaluation & guardrails — use-case-specific eval set, safety and PII guardrails, output constraints; quality reported against agreed metrics before go-live.
+6. Sovereign deployment — containerised deployment to Swiss cloud, on-premise hardware or a confidential-compute enclave.
+7. Monitoring & iteration — continuous monitoring of quality, drift and usage; maintenance cadence and SLAs.
+
+## Technical stack
+
+Fine-tuned Apertus at the core; LangChain and LangGraph for agents; RAG over client knowledge;
+tool calling into client systems; evaluation harnesses and guardrails; container-based deployment
+to Swiss cloud, on-prem, or confidential compute. Fine-tuning, RAG and agentic tools are combined
+per use case. No dependency on external US LLM APIs.
+
+## Industries and sample use cases
+
+- Banking & Finance (banking secrecy, FINMA): advisory copilots; KYC/AML document processing; regulatory and policy Q&A (DE/FR/IT/EN); research/reporting assistants. On-prem, zero data egress, full audit trail.
+- Healthcare & Pharma: clinical documentation and letter drafting; patient triage/intake; research and literature assistants; coding and admin automation. Patient data stays in Switzerland; FADP/GDPR by design.
+- Legal & Professional Services: contract analysis and clause extraction; multilingual legal research; drafting grounded in templates/precedent; due-diligence and data-room summarisation. Privilege-safe, in-jurisdiction.
+- Government & Public Sector: multilingual citizen-service assistants (DE/FR/IT/RM); internal knowledge assistants; document/application processing; plain-language drafting. Runs on national infrastructure; data never leaves the country.
+- Insurance: claims intake/triage/document automation; policy and coverage Q&A copilots; underwriting research; correspondence drafting. Traceable, grounded, on-prem option.
+- Manufacturing & Industrial: maintenance/troubleshooting copilots; knowledge assistants over manuals/SOPs/specs; quality and compliance documentation; supplier/procurement processing. On-prem/edge-friendly; protects operational IP.
+
+## Compliance
+
+Compliance is engineered into the architecture: in-jurisdiction processing and data lineage for
+Swiss FADP/nFADP; data minimisation, purpose limitation and residency for EU GDPR; documented
+training data, transparency and guardrails for the EU AI Act. Compliance and audit documentation
+is delivered with the system. This is not legal advice; sysf.io works with the client's compliance
+and legal teams.
+
+## Engagement model and pricing
+
+Land-and-expand across three stages; pricing is scoped per engagement, delivered as a fixed-scope
+proposal before commitment.
+
+- Pilot — prove value on one use case: private data prep, fine-tuning on Apertus, evaluation report vs. agreed metrics, production roadmap, hosted in Swiss cloud.
+- Deploy — production productization: everything in Pilot plus LangGraph agents, RAG and tools, guardrails, Swiss-cloud or on-prem deployment, monitoring and evaluation, support and maintenance with SLAs.
+- Sovereign — regulated/air-gapped enterprise: everything in Deploy plus fully on-prem/confidential compute, multiple models and agents, dedicated MLOps, compliance and audit documentation, enterprise SLAs.
+- Add-ons: compliance & audit pack, additional languages, additional use cases, managed hosting.
+
+Clients own the resulting model, because sysf.io builds on the open Apertus model and fine-tunes
+inside the client's environment.
+
+## Differentiation vs. a generic API integrator
+
+- Data location: client's jurisdiction / on-prem vs. third-party US servers.
+- Model weights: open (Apertus), auditable vs. closed, opaque.
+- Ownership: client owns the model vs. rented access.
+- Compliance: engineered in by design vs. left to the client.
+- Customization: fine-tuned on client data vs. prompting a shared model.
+- Deliverable: maintained product with SLAs vs. an integration.
+
+## Contact
+
+- Email: hello@sysf.io
+- Website: https://sysf.io
+- Based in Switzerland; serving Swiss and EU organizations.
+- Reference — Apertus base model: https://ethz.ch/en/news-and-events/eth-news/news/2025/09/press-release-apertus-a-fully-open-transparent-multilingual-language-model.html

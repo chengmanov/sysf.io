@@ -1,0 +1,120 @@
+---
+layout: layouts/base.njk
+order: 2
+title: Industries
+description: Sovereign AI use cases for Switzerland's regulated sectors — banking & finance, healthcare & pharma, legal, government, insurance and manufacturing. Custom models fine-tuned on Apertus, deployed on-prem with zero data egress.
+faq:
+  - q: Which industries do you serve?
+    a: We focus on regulated and data-sensitive sectors in Switzerland and the EU — banking and finance, healthcare and pharma, legal and professional services, government and the public sector, insurance, and manufacturing. These are the organisations for whom sovereignty, privacy and compliance are non-negotiable.
+  - q: Can you work with our existing systems?
+    a: Yes. Agents built with LangGraph call into your existing systems and data sources through tools and RAG, so the AI works with your core banking, EHR, DMS, ERP or case-management systems rather than replacing them.
+  - q: We operate across languages — is that supported?
+    a: Apertus is multilingual across 1,000+ languages, including Swiss German, French, Italian and Romansh. That makes it well suited to Swiss and EU organisations operating across national languages.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Industries</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Built for the sectors that can't send data away.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Where confidentiality, sovereignty and compliance are non-negotiable, sysf.io turns AI from a blocked pilot into a production system you own.
+    </p>
+  </div>
+</section>
+
+<div class="container-x divide-y divide-ink-900/10 dark:divide-white/10">
+  {% set industries = [
+    {
+      k:"Banking & Finance",
+      p:"Swiss banking secrecy and FINMA expectations rule out sending client data to external APIs. We deploy fine-tuned models on-prem so confidential data never moves.",
+      cases:[
+        "Client-advisory copilots grounded in your product and policy documents",
+        "KYC / AML document processing and screening support",
+        "Regulatory and internal-policy Q&A across DE/FR/IT/EN",
+        "Research and reporting assistants over your own market data"
+      ],
+      note:"On-prem or confidential compute · zero data egress · full audit trail"
+    },
+    {
+      k:"Healthcare & Pharma",
+      p:"Patient and clinical data must stay protected and in-jurisdiction. Models run inside your environment, keeping sensitive data under Swiss and EU law.",
+      cases:[
+        "Clinical documentation and letter drafting from structured notes",
+        "Patient triage and intake support assistants",
+        "Research and literature assistants over internal knowledge",
+        "Coding and administrative workflow automation"
+      ],
+      note:"Patient data stays in Switzerland · FADP / GDPR by design"
+    },
+    {
+      k:"Legal & Professional Services",
+      p:"Privilege and confidentiality demand tools that don't leak. Multilingual models reason over your matters without exposing them to third parties.",
+      cases:[
+        "Contract analysis, review and clause extraction",
+        "Multilingual legal research (DE / FR / IT / EN)",
+        "Drafting assistants grounded in your templates and precedent",
+        "Due-diligence and data-room summarisation"
+      ],
+      note:"Privilege-safe · in-jurisdiction · your templates and precedent"
+    },
+    {
+      k:"Government & Public Sector",
+      p:"Sovereign infrastructure and multilingual service delivery are prerequisites. Apertus's Swiss origin and language coverage make it a natural fit for public bodies.",
+      cases:[
+        "Multilingual citizen-service assistants (DE / FR / IT / RM)",
+        "Internal knowledge and procedure assistants for staff",
+        "Document and application processing support",
+        "Accessible, plain-language communication drafting"
+      ],
+      note:"Runs on national infrastructure · data never leaves the country"
+    },
+    {
+      k:"Insurance",
+      p:"Claims and policy data are sensitive and high-volume. Grounded models automate routine work while keeping decisions traceable and auditable.",
+      cases:[
+        "Claims intake, triage and document automation",
+        "Policy and coverage Q&A copilots for agents and customers",
+        "Underwriting research and summarisation support",
+        "Correspondence drafting grounded in your policies"
+      ],
+      note:"Traceable outputs · grounded in your documents · on-prem option"
+    },
+    {
+      k:"Manufacturing & Industrial",
+      p:"Operational and IP-sensitive knowledge shouldn't leave the plant. On-prem assistants put decades of documentation at the fingertips of your teams.",
+      cases:[
+        "Maintenance and troubleshooting copilots on the shop floor",
+        "Knowledge assistants over manuals, SOPs and specs",
+        "Quality and compliance documentation support",
+        "Supplier and procurement document processing"
+      ],
+      note:"On-prem / edge-friendly · protects operational IP"
+    }
+  ] %}
+  {% for ind in industries %}
+  <section class="grid gap-8 py-14 md:grid-cols-12 md:py-16">
+    <div class="md:col-span-4">
+      <h2 class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ ind.k }}</h2>
+      <p class="mt-4 text-sm prose-muted">{{ ind.p }}</p>
+      <p class="mt-5 inline-flex items-center gap-2 text-xs font-medium text-swiss">
+        <span class="h-1.5 w-1.5 bg-swiss"></span>{{ ind.note }}
+      </p>
+    </div>
+    <div class="md:col-span-7 md:col-start-6">
+      <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Sample use cases</div>
+      <ul class="mt-4 grid gap-px bg-ink-900/10 dark:bg-white/10 sm:grid-cols-2">
+        {% for c in ind.cases %}
+        <li class="flex items-start gap-3 bg-white p-5 text-sm text-ink-700 dark:bg-ink-950 dark:text-ink-300">
+          <span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{{ cta("Don't see your sector?", "If you handle confidential data under Swiss or EU regulation, sovereign AI applies. Tell us your use case.") }}

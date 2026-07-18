@@ -1,0 +1,87 @@
+---
+layout: layouts/base.njk
+order: 4
+title: About
+description: sysf.io is a Swiss sovereign-AI productization studio. We build custom fine-tuned models on Apertus and ship them end-to-end — so regulated organizations can adopt AI without giving up control of their data.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">About</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Sovereign AI shouldn't mean second-best AI.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      sysf.io exists to give regulated organizations a way to adopt AI on their own terms — private, compliant, and genuinely their own — without settling for a locked-down black box in someone else's datacentre.
+    </p>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">{{ sectionHead("Why we exist", "The sovereignty gap.") }}</div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-lg prose-muted">
+      <p>The most capable AI has, until recently, lived behind closed US APIs. For a Swiss bank, a hospital or a cantonal authority, that's a dead end: the data can't leave, so the pilot dies.</p>
+      <p>Switzerland answered with <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — a fully open, sovereign, multilingual model from EPFL, ETH Zurich and CSCS, with open weights and documented training data. It closes the capability gap while keeping everything inspectable and ownable.</p>
+      <p>sysf.io turns that open foundation into working products. We do the hard part — fine-tuning, agent orchestration, evaluation, compliance and operations — so you get a system you own, running where your data already lives.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Principles -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Principles", "How we work.") }}
+    <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-2 lg:grid-cols-4">
+      {% set vals = [
+        {t:"Sovereignty first", d:"Your data and your model stay in your jurisdiction and your control. Always."},
+        {t:"Open over closed", d:"We build on open weights so you get transparency, auditability and no lock-in."},
+        {t:"Products, not demos", d:"We measure success by what runs in production, not by what impresses in a meeting."},
+        {t:"Compliance by design", d:"Regulatory fit is engineered in from step one — not retrofitted before launch."}
+      ] %}
+      {% for v in vals %}
+      <div class="bg-white p-8 dark:bg-ink-950">
+        <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Differentiation -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("What makes us different", "Not another API integrator.") }}
+  <div class="mt-12 overflow-x-auto">
+    <table class="w-full min-w-[640px] border-collapse text-sm">
+      <thead>
+        <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+          <th class="py-4 pr-4 font-semibold text-ink-900 dark:text-white"></th>
+          <th class="py-4 pr-4 font-semibold text-swiss">sysf.io</th>
+          <th class="py-4 pr-4 font-semibold text-ink-500">Generic API integrator</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+        {% set rows = [
+          {k:"Where data lives", a:"Your jurisdiction / on-prem", b:"Third-party US servers"},
+          {k:"Model weights", a:"Open (Apertus), auditable", b:"Closed, opaque"},
+          {k:"Ownership", a:"You own the model", b:"Rented access"},
+          {k:"Compliance", a:"Engineered in by design", b:"Your problem"},
+          {k:"Customization", a:"Fine-tuned on your data", b:"Prompting on a shared model"},
+          {k:"Deliverable", a:"Maintained product + SLAs", b:"An integration"}
+        ] %}
+        {% for r in rows %}
+        <tr>
+          <td class="py-4 pr-4 font-medium text-ink-900 dark:text-white">{{ r.k }}</td>
+          <td class="py-4 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
+          <td class="py-4 pr-4 text-ink-500">{{ r.b }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{{ cta("Work with us.", "If sovereignty, compliance and ownership matter to your AI roadmap, we should talk.") }}

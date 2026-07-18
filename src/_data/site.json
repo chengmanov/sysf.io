@@ -1,0 +1,31 @@
+{
+  "name": "sysf.io",
+  "legalName": "sysf.io",
+  "brandBase": "sysf",
+  "brandTld": ".io",
+  "descriptor": "Specialized AI for niche areas.",
+  "tagline": "Sovereign AI, productized in Switzerland.",
+  "description": "sysf.io builds custom fine-tuned AI models on Switzerland's sovereign open model, Apertus, and productizes them end-to-end with LangChain and LangGraph. Compliant by design, data-private, and deployed in Swiss or EU jurisdiction — or fully on-prem.",
+  "shortDescription": "Swiss sovereign AI: custom models fine-tuned on Apertus, productized end-to-end, compliant by design.",
+  "url": "https://sysf.io",
+  "locale": "en",
+  "email": "hello@sysf.io",
+  "country": "Switzerland",
+  "foundingYear": "2026",
+  "themeColor": "#3C8B96",
+  "baseModel": {
+    "name": "Apertus",
+    "by": "EPFL, ETH Zurich & the Swiss National Supercomputing Centre (CSCS)",
+    "url": "https://ethz.ch/en/news-and-events/eth-news/news/2025/09/press-release-apertus-a-fully-open-transparent-multilingual-language-model.html"
+  },
+  "nav": [
+    { "label": "Platform", "url": "/platform/" },
+    { "label": "Industries", "url": "/industries/" },
+    { "label": "Pricing", "url": "/pricing/" },
+    { "label": "About", "url": "/about/" },
+    { "label": "Contact", "url": "/contact/" }
+  ],
+  "social": {
+    "github": "https://github.com/chengmanov/sysf.io"
+  }
+}

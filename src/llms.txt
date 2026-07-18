@@ -1,0 +1,38 @@
+# sysf.io
+
+> sysf.io is a Swiss sovereign-AI productization studio. We build custom fine-tuned AI models on Apertus — Switzerland's fully open, sovereign LLM from EPFL, ETH Zurich and CSCS — and productize them end-to-end with LangChain and LangGraph. Everything is compliant by design, data-private, and deployed inside your Swiss or EU jurisdiction, or fully on-premise. Clients own the resulting model.
+
+## What we do
+
+- Fine-tune the open Apertus model on a client's own data (domain, terminology, tasks).
+- Orchestrate agents, retrieval-augmented generation (RAG) and tools with LangChain/LangGraph.
+- Add evaluation and guardrails (safety, PII, quality) with agreed metrics.
+- Deploy sovereignly: on-premise, Swiss cloud, or confidential compute — no US LLM API dependency, zero data egress.
+- Operate the system: monitoring, iteration and maintenance with SLAs.
+
+## Why it matters
+
+- Regulated Swiss and EU organizations cannot send confidential data to closed US LLM APIs; sysf.io removes that blocker.
+- Compliant by design: aligned to Swiss FADP/nFADP, EU GDPR, and the EU AI Act.
+- Open weights mean transparency, auditability, ownership and no vendor lock-in.
+- Apertus is multilingual (1,000+ languages incl. Swiss German, French, Italian, Romansh).
+
+## Pages
+
+- [Home](https://sysf.io/): positioning, five pillars, how it works, FAQ.
+- [Platform](https://sysf.io/platform/): the end-to-end pipeline, architecture, compliance.
+- [Industries](https://sysf.io/industries/): use cases for banking, healthcare, legal, government, insurance, manufacturing.
+- [Pricing](https://sysf.io/pricing/): engagement model (Pilot → Deploy → Sovereign); pricing scoped per engagement.
+- [About](https://sysf.io/about/): mission, principles, how we differ from generic API integrators.
+- [Contact](https://sysf.io/contact/): book a scoping call. Email hello@sysf.io.
+
+## Engagement model
+
+- Pilot — prove value on one use case (fine-tune, eval report, roadmap; Swiss cloud).
+- Deploy — production system (LangGraph agents, RAG, guardrails, deployment, monitoring, SLAs).
+- Sovereign — fully on-prem / air-gapped, dedicated MLOps, compliance documentation, enterprise SLAs.
+- Pricing is scoped per engagement. Contact: hello@sysf.io
+
+## Reference
+
+- Apertus (base model): https://ethz.ch/en/news-and-events/eth-news/news/2025/09/press-release-apertus-a-fully-open-transparent-multilingual-language-model.html

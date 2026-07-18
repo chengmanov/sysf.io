@@ -47,23 +47,23 @@ ogType: website
             <label class="block">
               <span class="text-sm font-medium text-ink-900 dark:text-white">Name</span>
               <input type="text" name="name" required autocomplete="name"
-                     class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+                     class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
             </label>
             <label class="block">
               <span class="text-sm font-medium text-ink-900 dark:text-white">Work email</span>
               <input type="email" name="email" required autocomplete="email"
-                     class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+                     class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
             </label>
           </div>
           <label class="block">
             <span class="text-sm font-medium text-ink-900 dark:text-white">Organization</span>
             <input type="text" name="organization" autocomplete="organization"
-                   class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white" />
+                   class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
           </label>
           <label class="block">
             <span class="text-sm font-medium text-ink-900 dark:text-white">Sector</span>
             <select name="sector"
-                    class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white dark:[&>option]:bg-ink-900">
+                    class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white dark:[&>option]:bg-ink-900">
               {% for s in ["Banking & Finance", "Healthcare & Pharma", "Legal", "Government & Public", "Insurance", "Manufacturing", "Other"] %}
               <option>{{ s }}</option>
               {% endfor %}
@@ -72,7 +72,7 @@ ogType: website
           <label class="block">
             <span class="text-sm font-medium text-ink-900 dark:text-white">What would you like to build?</span>
             <textarea name="message" rows="4" required
-                      class="mt-1.5 w-full border border-ink-900/15 bg-transparent px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-swiss dark:border-white/15 dark:text-white"></textarea>
+                      class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white"></textarea>
           </label>
           <button type="submit" class="btn-primary w-full">Send enquiry</button>
           <p class="text-xs text-ink-500">By sending, you agree we may contact you about your enquiry. We don't share your details.</p>

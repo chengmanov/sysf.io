@@ -1,32 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
-  <defs>
-    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M48 0H0V48" fill="none" stroke="#3C8B96" stroke-opacity="0.10" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <rect width="1200" height="630" fill="#14212A"/>
-  <rect width="1200" height="630" fill="url(#grid)"/>
-  <rect x="0" y="0" width="1200" height="8" fill="#3C8B96"/>
-
-  <!-- wordmark: sys [neural f] .io -->
-  <g transform="translate(96,120)">
-    <text x="0" y="52" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="64" font-weight="700" letter-spacing="-3" fill="#EAF1F2">sys</text>
-    <g transform="translate(118,6) scale(1.9)">
-      <g stroke="#3C8B96" stroke-width="1.7" stroke-linecap="round" fill="none"><path d="M16 16V4M16 16v12M16 16H4M16 16h12"/></g>
-      <g stroke="#B23C46" stroke-width="1.3" fill="none"><path d="M16 9l6.2 7-6.2 7-6.2-7z"/><path d="M9.8 16h12.4M16 9v14M11 12l10 8M21 12l-10 8"/></g>
-      <g fill="#3C8B96"><circle cx="16" cy="4" r="2.3"/><circle cx="16" cy="28" r="2.3"/><circle cx="4" cy="16" r="2.3"/><circle cx="28" cy="16" r="2.3"/></g>
-      <g fill="#B23C46"><circle cx="16" cy="16" r="1.9"/><circle cx="16" cy="9" r="1.5"/><circle cx="22.2" cy="16" r="1.5"/><circle cx="16" cy="23" r="1.5"/><circle cx="9.8" cy="16" r="1.5"/></g>
-    </g>
-    <text x="188" y="52" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="64" font-weight="700" letter-spacing="-3" fill="#EAF1F2">.io</text>
+  <rect width="1200" height="630" fill="#f5f3ee"/>
+  <rect width="1200" height="8" fill="#b4232f"/>
+  <!-- faint teal circuit motif -->
+  <g stroke="#b1cecc" stroke-width="1.5" fill="none" opacity="0.7">
+    <path d="M760 90 L900 170 L1030 70 L1180 180"/>
+    <path d="M900 170 L900 300 M1030 70 L1030 210"/>
   </g>
+  <g fill="#93babc" opacity="0.8"><circle cx="900" cy="170" r="5"/><circle cx="1030" cy="70" r="5"/></g>
+  <circle cx="760" cy="90" r="7" fill="#b4232f" opacity="0.85"/>
 
-  <text x="96" y="360" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="60" font-weight="700" letter-spacing="-2" fill="#ffffff">Sovereign AI, productized in Switzerland.</text>
-  <text x="96" y="418" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" fill="#8FB3B8">Specialized AI for niche areas — custom models fine-tuned on Apertus, compliant by design.</text>
+  <!-- real neural-f mark -->
+  <svg x="92" y="120" width="150" height="161" viewBox="0 0 224 240">
+    <g><line x1="112" y1="98" x2="112" y2="66" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="112" y1="66" x2="134" y2="52" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="134" y1="52" x2="160" y2="50" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="160" y1="50" x2="180" y2="64" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="112" y1="98" x2="112" y2="104" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="112" y1="130" x2="62" y2="130" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="162" y2="130" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="112" y2="104" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="112" y2="158" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="84" y2="106" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="140" y2="106" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="84" y2="154" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="140" y2="154" stroke="#b4232f" stroke-width="2.2" stroke-linecap="round"/><line x1="112" y1="130" x2="112" y2="184" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="112" y1="184" x2="112" y2="216" stroke="#466e78" stroke-width="2.4" stroke-linecap="round"/><line x1="112" y1="184" x2="88" y2="198" stroke="#466e78" stroke-width="1.6" stroke-linecap="round"/><line x1="112" y1="184" x2="136" y2="198" stroke="#466e78" stroke-width="1.6" stroke-linecap="round"/><line x1="88" y1="198" x2="136" y2="198" stroke="#466e78" stroke-width="1.6" stroke-linecap="round"/></g>
+    <circle cx="180" cy="64" r="7.5" fill="#8fb9bb"/>
+    <g><circle cx="112" cy="98" r="4.6" fill="#466e78"/><circle cx="112" cy="66" r="4.6" fill="#466e78"/><circle cx="134" cy="52" r="4.6" fill="#466e78"/><circle cx="160" cy="50" r="4.6" fill="#466e78"/><circle cx="62" cy="130" r="4.6" fill="#b4232f"/><circle cx="162" cy="130" r="4.6" fill="#b4232f"/><circle cx="112" cy="104" r="4.6" fill="#b4232f"/><circle cx="112" cy="158" r="4.6" fill="#b4232f"/><circle cx="84" cy="106" r="4" fill="#b4232f"/><circle cx="140" cy="106" r="4" fill="#b4232f"/><circle cx="84" cy="154" r="4" fill="#b4232f"/><circle cx="140" cy="154" r="4" fill="#b4232f"/><circle cx="112" cy="184" r="4.4" fill="#466e78"/><circle cx="88" cy="198" r="4.4" fill="#466e78"/><circle cx="136" cy="198" r="4.4" fill="#466e78"/><circle cx="112" cy="216" r="4.4" fill="#466e78"/><circle cx="112" cy="130" r="6.4" fill="#b4232f"/></g>
+  </svg>
 
-  <g transform="translate(96,500)" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#AEC0C7">
-    <rect x="0" y="-2" width="10" height="10" fill="#3C8B96"/><text x="22" y="8">Swiss FADP</text>
-    <rect x="150" y="-2" width="10" height="10" fill="#3C8B96"/><text x="172" y="8">EU GDPR</text>
-    <rect x="290" y="-2" width="10" height="10" fill="#3C8B96"/><text x="312" y="8">EU AI Act</text>
-    <rect x="440" y="-2" width="10" height="10" fill="#8B2A34"/><text x="462" y="8">On-prem · Zero data egress</text>
+  <text x="250" y="235" font-family="'Nunito Sans','Segoe UI',Arial,sans-serif" font-size="90" font-weight="900" letter-spacing="-3" fill="#2d3945">sysf<tspan fill="#b4232f">.io</tspan></text>
+
+  <text x="94" y="360" font-family="'Nunito Sans','Segoe UI',Arial,sans-serif" font-size="52" font-weight="800" letter-spacing="-1.5" fill="#2d3945">Specialized AI for niche areas.</text>
+  <text x="94" y="416" font-family="'Nunito Sans','Segoe UI',Arial,sans-serif" font-size="28" font-weight="400" fill="#34505b">Sovereign, purpose-built models fine-tuned on Apertus — compliant by design, hosted in Switzerland.</text>
+
+  <g transform="translate(94,500)" font-family="'IBM Plex Mono',ui-monospace,monospace" font-size="21" font-weight="500" fill="#605b50">
+    <rect x="0" y="-13" width="11" height="11" rx="2" fill="#466e78"/><text x="22" y="-3">Swiss FADP</text>
+    <rect x="150" y="-13" width="11" height="11" rx="2" fill="#466e78"/><text x="172" y="-3">EU GDPR</text>
+    <rect x="290" y="-13" width="11" height="11" rx="2" fill="#466e78"/><text x="312" y="-3">EU AI Act</text>
+    <rect x="440" y="-13" width="11" height="11" rx="2" fill="#b4232f"/><text x="462" y="-3">On-prem · Zero data egress</text>
   </g>
 </svg>

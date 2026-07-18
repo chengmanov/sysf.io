@@ -37,8 +37,7 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("theme");
-          if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          if (localStorage.getItem("theme") === "dark") {
             document.documentElement.classList.add("dark");
           }
         } catch (e) {}
@@ -108,7 +107,7 @@
     {% endif %}
   </head>
 
-  <body class="min-h-screen bg-white text-ink-900 dark:bg-ink-950 dark:text-ink-300">
+  <body class="min-h-screen bg-neutral-50 text-ink-800 dark:bg-ink-950 dark:text-neutral-300">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-swiss focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
 
     {% include "partials/nav.njk" %}

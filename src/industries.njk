@@ -105,9 +105,9 @@ faq:
     </div>
     <div class="md:col-span-7 md:col-start-6">
       <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Sample use cases</div>
-      <ul class="mt-4 grid gap-px bg-ink-900/10 dark:bg-white/10 sm:grid-cols-2">
+      <ul class="mt-4 grid gap-5 sm:grid-cols-2">
         {% for c in ind.cases %}
-        <li class="flex items-start gap-3 bg-white p-5 text-sm text-ink-700 dark:bg-ink-950 dark:text-ink-300">
+        <li class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white p-5 text-sm text-ink-700 shadow-sm dark:border-white/10 dark:bg-ink-950 dark:text-ink-300">
           <span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}
         </li>
         {% endfor %}

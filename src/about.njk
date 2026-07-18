@@ -34,7 +34,7 @@ description: sysf.io is a Swiss sovereign-AI productization studio. We build cus
 <section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
     {{ sectionHead("Principles", "How we work.") }}
-    <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-2 lg:grid-cols-4">
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {% set vals = [
         {t:"Sovereignty first", d:"Your data and your model stay in your jurisdiction and your control. Always."},
         {t:"Open over closed", d:"We build on open weights so you get transparency, auditability and no lock-in."},
@@ -42,7 +42,7 @@ description: sysf.io is a Swiss sovereign-AI productization studio. We build cus
         {t:"Compliance by design", d:"Regulatory fit is engineered in from step one — not retrofitted before launch."}
       ] %}
       {% for v in vals %}
-      <div class="bg-white p-8 dark:bg-ink-950">
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
       </div>

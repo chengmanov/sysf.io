@@ -22,8 +22,7 @@ faq:
 
 <!-- Hero -->
 <section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
-  <div class="pointer-events-none absolute inset-0 -z-10 opacity-[0.04] dark:opacity-[0.06]"
-       style="background-image:linear-gradient(#3C8B96 1px,transparent 1px),linear-gradient(90deg,#3C8B96 1px,transparent 1px);background-size:44px 44px;"></div>
+  <div class="circuit pointer-events-none absolute inset-0 -z-10 opacity-70 dark:opacity-20"></div>
   <div class="container-x grid items-center gap-12 py-20 md:grid-cols-12 md:py-28">
     <div class="md:col-span-7">
       <p class="eyebrow">Swiss Sovereign AI</p>
@@ -66,7 +65,7 @@ faq:
       {{ sectionHead("The problem", "Frontier APIs weren't built for regulated teams.", "Banks, hospitals, insurers and public bodies can't send confidential data to a US LLM API. So they get stuck at the pilot stage — impressive demos that never reach production because they can't clear compliance.") }}
     </div>
     <div class="md:col-span-6 md:col-start-7">
-      <div class="grid gap-px bg-ink-900/10 dark:bg-white/10 sm:grid-cols-2">
+      <div class="grid gap-5 sm:grid-cols-2">
         {% set problems = [
           {t:"Data leaves your control", d:"Prompts and documents are sent to third-party servers in another jurisdiction."},
           {t:"No transparency", d:"Closed weights mean no auditability — a non-starter for regulators."},
@@ -74,7 +73,7 @@ faq:
           {t:"Stuck at PoC", d:"Demos don't survive a data-protection or security review."}
         ] %}
         {% for p in problems %}
-        <div class="bg-white p-6 dark:bg-ink-950">
+        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
           <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
           <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
         </div>
@@ -89,7 +88,7 @@ faq:
 <section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
     {{ sectionHead("Why sysf.io", "Five reasons regulated teams choose us.") }}
-    <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {% set pillars = [
         {n:"01", t:"Swiss by foundation", d:"Built on Apertus, Switzerland's sovereign open LLM — open weights and documented training data, not a black box."},
         {n:"02", t:"Compliant by design", d:"Aligned to Swiss FADP/nFADP, EU GDPR and the EU AI Act. Transparency and auditability come from the architecture."},
@@ -99,7 +98,7 @@ faq:
         {n:"06", t:"Multilingual, incl. Swiss", d:"Apertus covers 1,000+ languages including Swiss German, French, Italian and Romansh — built for Switzerland."}
       ] %}
       {% for p in pillars %}
-      <div class="bg-white p-8 dark:bg-ink-950">
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
         <div class="font-mono text-sm text-swiss">{{ p.n }}</div>
         <h3 class="mt-4 text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
@@ -134,7 +133,7 @@ faq:
 <section class="border-t border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
     {{ sectionHead("Industries", "Built for Switzerland's regulated sectors.") }}
-    <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {% set inds = [
         {t:"Banking & Finance", d:"Advisory copilots, KYC/AML document processing, regulatory Q&A — on-prem, zero data egress."},
         {t:"Healthcare & Pharma", d:"Clinical documentation, triage and research assistants — patient data stays in Switzerland."},
@@ -144,7 +143,7 @@ faq:
         {t:"Manufacturing", d:"On-prem knowledge and maintenance assistants for the shop floor."}
       ] %}
       {% for i in inds %}
-      <a href="/industries/" class="group bg-white p-8 dark:bg-ink-950">
+      <a href="/industries/" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
         <h3 class="flex items-center justify-between text-lg font-semibold text-ink-900 dark:text-white">
           {{ i.t }}
           <span class="text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
@@ -159,14 +158,14 @@ faq:
 <!-- Engagement teaser -->
 <section class="container-x py-20 md:py-28">
   {{ sectionHead("Engagement", "Start small. Prove value. Scale to sovereign.", "A land-and-expand path that de-risks adoption. Pricing is scoped per engagement — <a class='link-underline' href='/pricing/'>see the model</a>.") }}
-  <div class="mt-12 grid gap-px bg-ink-900/10 dark:bg-white/10 md:grid-cols-3">
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
     {% set tiers = [
       {t:"Pilot", for:"Prove value on one use case", d:"Fine-tune on your data, evaluation report and a production roadmap — hosted in Swiss cloud."},
       {t:"Deploy", for:"Production productization", d:"Fine-tuned model, LangGraph agents, RAG, guardrails, deployment and monitoring with support."},
       {t:"Sovereign", for:"Regulated / air-gapped", d:"Fully on-prem or confidential compute, dedicated MLOps, compliance documentation and SLAs."}
     ] %}
     {% for t in tiers %}
-    <div class="bg-white p-8 dark:bg-ink-950">
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
       <p class="mt-4 text-sm prose-muted">{{ t.d }}</p>

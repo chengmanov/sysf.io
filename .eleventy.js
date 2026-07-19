@@ -26,6 +26,19 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => (a.data.order || 0) - (b.data.order || 0))
   );
 
+  // Writing collection (reports, notes) for the News index — newest first.
+  eleventyConfig.addCollection("writing", (collectionApi) =>
+    collectionApi
+      .getFilteredByTag("writing")
+      .sort((a, b) => new Date(b.data.date) - new Date(a.data.date))
+  );
+
+  // Readable date for post listings, e.g. "19 July 2026".
+  eleventyConfig.addFilter("readableDate", (value) => {
+    const d = value ? new Date(value) : new Date();
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  });
+
   return {
     dir: {
       input: "src",

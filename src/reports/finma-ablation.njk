@@ -2,6 +2,11 @@
 layout: layouts/base.njk
 title: Worked Example — Does Fine-Tuning a Small Model Actually Help?
 description: A reproducible four-way ablation (base / +RAG / fine-tuned / both) of Apertus-8B on Swiss FINMA circular Q&A, scored deterministically on answer accuracy and exact Rz-citation. The kind of evaluation sysf.io runs at the start of every Pilot.
+tags: writing
+date: 2026-07-19
+kicker: Report
+listTitle: Does fine-tuning a small model actually help? A measured answer.
+blurb: A reproducible four-way ablation of Apertus-8B on Swiss FINMA circular Q&A. Fine-tuning plus retrieval doubles the production bar (answer + exact citation) from 22.4% to 45.4% — scored deterministically, on public data, with the harness open-sourced.
 faq:
   - q: Is this on your customers' data?
     a: "No — deliberately. It runs entirely on public FINMA circulars so anyone can reproduce it, and so we can publish it. In a Pilot the identical method runs on your documents, inside your environment, and the report stays yours."

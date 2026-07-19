@@ -23,6 +23,7 @@
     { "label": "Concepts", "url": "/concepts/" },
     { "label": "Industries", "url": "/industries/" },
     { "label": "Pricing", "url": "/pricing/" },
+    { "label": "News", "url": "/news/" },
     { "label": "About", "url": "/about/" },
     { "label": "Contact", "url": "/contact/" }
   ],

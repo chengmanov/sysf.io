@@ -16,6 +16,7 @@ faq:
     a: "No LLM judge anywhere. FINMA circulars number every normative paragraph (Randziffer, Rz), so a correct citation is exactly checkable. Answer accuracy is string/number matching against a verified gold answer; citation is an exact Rz match. Every number is recomputed from frozen run records."
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -54,6 +55,22 @@ faq:
 <section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
     {{ sectionHead("The result", "Fine-tuning plus retrieval doubles the production bar.", "183 human-verified questions (101 German, 82 English, 10 circulars). Brackets are 95% confidence intervals.") }}
+
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Answer correct", cls:"bg-teal-300"},
+        {name:"Answer + citation (production bar)", cls:"bg-teal-600"},
+        {name:"Clears the bar", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:37.2, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"B · + Retrieval", bars:[{v:63.4, cls:"bg-teal-300"}, {v:22.4, cls:"bg-teal-600"}]},
+        {label:"C · Fine-tuned", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
+        {label:"D · Fine-tuned + retrieval", note:"the full system", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "Read down the production-bar row: it is near-zero without retrieval (A, C), reaches 22.4% with retrieval alone (B), and only fine-tuning <strong class='text-ink-700 dark:text-ink-300'>and</strong> retrieval together clear 45.4% (D, in red). Full breakdown below.") }}
+    </div>
+
     <div class="mt-10 overflow-x-auto">
       <table class="w-full min-w-[680px] border-collapse text-sm">
         <thead>

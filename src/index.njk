@@ -19,6 +19,7 @@ faq:
     a: Engagements start with a fixed-scope Pilot on a single high-value use case — prove the numbers on your own data, then decide about production with an evaluation report in hand. Where needed, we take the system fully on-prem. Book a call and we'll scope it with you.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import statBand, hbarChart %}
 
 <!-- Hero -->
 <section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
@@ -58,6 +59,17 @@ faq:
   </div>
 </section>
 
+<!-- Proof stats -->
+<section class="container-x py-14 md:py-20">
+  {% set stats = [
+    {v:"94%", label:"Production accuracy", sub:"Canton of Ticino's fine-tuned Apertus-8B, in service on cantonal infrastructure"},
+    {v:"2×", label:"Fine-tuning + retrieval", sub:"Doubles the production bar vs. retrieval alone on our public FINMA benchmark"},
+    {v:"100%", label:"Format compliance", sub:"Machine-parseable output every time, once the model is tuned to the task"},
+    {v:"0", label:"Bytes of data egress", sub:"Training and inference run inside your jurisdiction — on-prem, Swiss cloud or air-gapped"}
+  ] %}
+  {{ statBand(stats) }}
+</section>
+
 <!-- Problem / positioning -->
 <section class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
@@ -81,6 +93,33 @@ faq:
       </div>
       <p class="mt-6 text-base prose-muted">sysf.io removes the blocker: a model you <strong class="font-semibold text-ink-900 dark:text-white">own</strong>, running where your data already lives.</p>
       <p class="mt-4 text-base prose-muted">And this isn't theoretical — the <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Canton of Ticino runs a fine-tuned Apertus-8B translation service</a> in production on its own infrastructure, reaching <strong class="font-semibold text-ink-900 dark:text-white">94% accuracy after fine-tuning</strong> on cantonal data. The same playbook applies to your workflows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Proof / measured results -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12 md:items-center">
+    <div class="md:col-span-5">
+      {{ sectionHead("Measured, not promised", "We prove the numbers before you commit.", "A reproducible four-way ablation of Apertus-8B on Swiss FINMA circular Q&amp;A, scored deterministically — no LLM judge. The base model often knows the answer, but only fine-tuning <em>and</em> retrieval together clear the production bar: a correct answer <strong class='font-semibold text-ink-900 dark:text-white'>with</strong> the exact legal citation.") }}
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/reports/finma-ablation/" class="btn-ghost">Read the full report</a>
+        <a href="https://github.com/chengmanov/apertus-finma-eval" class="btn-ghost" target="_blank" rel="noopener">Reproduce on GitHub →</a>
+      </div>
+    </div>
+    <div class="md:col-span-7">
+      {% set legend = [
+        {name:"Answer correct", cls:"bg-teal-300"},
+        {name:"Answer + citation (production bar)", cls:"bg-teal-600"},
+        {name:"Clears the bar", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base model", bars:[{v:37.2, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"B · + Retrieval", bars:[{v:63.4, cls:"bg-teal-300"}, {v:22.4, cls:"bg-teal-600"}]},
+        {label:"C · Fine-tuned", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
+        {label:"D · Fine-tuned + retrieval", note:"the full system", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "183 human-verified questions across 10 FINMA circulars (DE + EN). The production bar — answer <strong class='text-ink-700 dark:text-ink-300'>and</strong> exact citation — goes 22.4% → 45.4% only when fine-tuning and retrieval are combined (D).") }}
     </div>
   </div>
 </section>
@@ -161,16 +200,20 @@ faq:
   <div class="container-x">
     {{ sectionHead("Industries", "Built for Switzerland's regulated sectors.") }}
     <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {# Icons are Lucide (landmark, heart-pulse, scale, building-2, shield-check, factory) — inlined, no CDN. #}
       {% set inds = [
-        {t:"Banking & Finance", d:"Advisory copilots, KYC/AML document processing, regulatory Q&A — on-prem, zero data egress."},
-        {t:"Healthcare & Pharma", d:"Clinical documentation and research assistants — patient data stays in Switzerland."},
-        {t:"Legal & Compliance", d:"Multilingual contract analysis and legal research (DE/FR/IT), privilege-safe."},
-        {t:"Government & Public", d:"Sovereign, multilingual citizen services on national infrastructure."},
-        {t:"Insurance", d:"Claims automation and policy Q&A copilots grounded in your documents."},
-        {t:"Manufacturing", d:"On-prem knowledge and maintenance assistants for the shop floor."}
+        {t:"Banking & Finance", d:"Advisory copilots, KYC/AML document processing, regulatory Q&A — on-prem, zero data egress.", ic:'<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'},
+        {t:"Healthcare & Pharma", d:"Clinical documentation and research assistants — patient data stays in Switzerland.", ic:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>'},
+        {t:"Legal & Compliance", d:"Multilingual contract analysis and legal research (DE/FR/IT), privilege-safe.", ic:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'},
+        {t:"Government & Public", d:"Sovereign, multilingual citizen services on national infrastructure.", ic:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'},
+        {t:"Insurance", d:"Claims automation and policy Q&A copilots grounded in your documents.", ic:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/>'},
+        {t:"Manufacturing", d:"On-prem knowledge and maintenance assistants for the shop floor.", ic:'<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>'}
       ] %}
       {% for i in inds %}
-      <a href="/industries/" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <a href="/industries/" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md dark:border-white/10 dark:bg-ink-950">
+        <span class="mb-5 inline-grid h-11 w-11 place-items-center rounded-lg bg-teal-50 text-swiss transition-colors group-hover:bg-teal-100 dark:bg-white/5 dark:text-teal-300">
+          <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{{ i.ic | safe }}</svg>
+        </span>
         <h3 class="flex items-center justify-between text-lg font-semibold text-ink-900 dark:text-white">
           {{ i.t }}
           <span class="text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>

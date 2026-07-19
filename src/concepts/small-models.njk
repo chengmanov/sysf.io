@@ -11,6 +11,7 @@ faq:
     a: The expensive assets survive model swaps. Your evaluation set, your curated training data and your retrieval corpus all carry over unchanged; re-running a LoRA fine-tune on a newer base model is days of work, not a rebuild. That's also why we stay model-agnostic — Apertus, Llama or Mistral, whichever wins on your eval set at the time.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import deltaBars %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -35,6 +36,13 @@ faq:
       <p>The public reference point in Switzerland: the <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Canton of Ticino's translation service</a> went from 90% to <strong class="font-semibold text-ink-900 dark:text-white">94% accuracy after fine-tuning Apertus-8B</strong> on cantonal data, running entirely on cantonal infrastructure. Four points at the top of the scale — in a production service, the difference between spot-checking output and re-doing it.</p>
       <p>A frontier API has two structural handicaps on this ground: it has never seen your documents, and it never can — because they're the documents you can't send away. The small model's advantage isn't intelligence. It's access.</p>
     </div>
+  </div>
+  <div class="mt-12">
+    {% set ticino = [
+      {label:"Base Apertus-8B", v:90, cls:"bg-teal-300"},
+      {label:"Fine-tuned on cantonal data", v:94, cls:"bg-red-600", tag:"+4 pts"}
+    ] %}
+    {{ deltaBars(ticino, "Canton of Ticino translation service — accuracy on cantonal text, running entirely on cantonal infrastructure. Four points at the top of the scale is the difference between spot-checking output and re-doing it. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Source: CSCS</a>.") }}
   </div>
 </section>
 

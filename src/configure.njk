@@ -111,7 +111,8 @@ faq:
   var CONTACT_EMAIL = "{{ site.email }}";
 
   // ---- Selected-state class tokens (must appear literally so Tailwind emits them) ----
-  var SEL = ["ring-2", "ring-teal-500", "border-teal-500", "bg-teal-50", "dark:bg-teal-500/10"];
+  // Important variants so they beat the card's base dark:bg-ink-950 / dark:border-white/10.
+  var SEL = ["ring-2", "ring-teal-500", "!border-teal-500", "!bg-teal-50", "dark:!bg-teal-500/10", "dark:!border-teal-500"];
 
   // ---- Question bank -------------------------------------------------------
   var Q = {

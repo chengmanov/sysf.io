@@ -1,0 +1,156 @@
+---
+layout: layouts/base.njk
+title: Worked Example — Fine-Tuning a Small Model for Swiss Contract Law
+description: A reproducible four-way ablation of Apertus-8B on Swiss Code of Obligations (OR) article Q&A — and the retrieval-aware training mistake that quietly breaks a fine-tune, diagnosed and fixed. Scored deterministically on public data.
+tags: writing
+date: 2026-07-20
+kicker: Report
+listTitle: Fine-tuning a small model for Swiss contract law — and the mistake that breaks it.
+blurb: A second reproducible ablation, this time on the Swiss Code of Obligations. Fine-tuning + retrieval wins at 52.3% — but only after we caught a training mistake that made the naive fine-tune worse than retrieval alone. The failure, diagnosed and fixed.
+faq:
+  - q: Is this the same method as the FINMA report?
+    a: "Yes — deliberately. Same four-way ablation, same deterministic scoring, same base model, on a different sector (legal) and a different document type (a statute, not circulars). Reproducing the finding on a second body of law is the point: the method generalises."
+  - q: Why publish a mistake you made?
+    a: "Because it's the most useful part. Our first fine-tune was trained without retrieval context and collapsed when retrieval was added — worse than the base model. That's exactly the kind of failure a real Pilot's ablation is designed to catch before it reaches production. We fixed it by training the model the way it's served; the report shows both."
+  - q: How is this scored — is there an LLM judge?
+    a: "No LLM judge anywhere. The Code of Obligations numbers every provision, so a correct citation is exactly checkable. Answer accuracy is string/number matching against a verified gold answer; citation is an exact article-number match. Every number is recomputed from frozen run records."
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart, deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Worked example · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Fine-tuning a small model for Swiss contract law.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      A second worked example — same method as the <a class="link-underline" href="/reports/finma-ablation/">FINMA report</a>, a different domain: answering questions about the Swiss Code of Obligations (OR) <em>with</em> a citation to the exact article. Including a real mistake we hit on the way, and how the ablation caught it.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("The setup", "Four systems, one open model.", "Same Apertus-8B, quantized identically to 4-bit, served identically. The only variable is the weights. Scored deterministically — no LLM judge.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"The open model, as shipped."},
+      {k:"B", t:"+ Retrieval", d:"Base model with BM25 retrieval over the statute."},
+      {k:"C", t:"Fine-tuned", d:"LoRA-tuned on the task, no retrieval."},
+      {k:"D", t:"Fine-tuned + retrieval", d:"The full system."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">The production bar is <strong class="text-ink-700 dark:text-ink-300">both at once</strong> — the answer correct <em>and</em> the correct article cited. A right answer with a wrong or missing citation is a failure, because in legal work it is one.</p>
+</section>
+
+<!-- Results -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The result", "Fine-tuning plus retrieval is the best system.", "172 human-verified questions (98 German, 74 French, 10 contract-law topics). Brackets are 95% confidence intervals.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Answer correct", cls:"bg-teal-500"},
+        {name:"Answer + citation (production bar)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:39.0, cls:"bg-teal-500"}, {v:4.1, cls:"bg-red-600"}]},
+        {label:"B · + Retrieval", bars:[{v:54.7, cls:"bg-teal-500"}, {v:38.4, cls:"bg-red-600"}]},
+        {label:"C · Fine-tuned", bars:[{v:46.5, cls:"bg-teal-500"}, {v:2.9, cls:"bg-red-600"}]},
+        {label:"D · Fine-tuned + retrieval", note:"the full system", bars:[{v:70.3, cls:"bg-teal-500"}, {v:52.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "The production bar (red) is near-zero without retrieval (A, C), reaches 38.4% with retrieval alone (B), and peaks at 52.3% only when fine-tuning <strong class='text-ink-700 dark:text-ink-300'>and</strong> retrieval combine (D) — the same shape as the FINMA result, on a different body of law.") }}
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metric</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · tuned</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · tuned+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Answer + citation (production bar)", a:"4.1%", b:"38.4%", c:"2.9%", d:"52.3%", hi:true},
+            {m:"Answer correct", a:"39.0%", b:"54.7%", c:"46.5%", d:"70.3%"},
+            {m:"Citation correct", a:"7.0%", b:"69.8%", c:"5.8%", d:"62.2%"},
+            {m:"Emits the required format", a:"1.2%", b:"0.0%", c:"89.5%", d:"70.9%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- The mistake -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("The mistake worth publishing", "We didn't get 52% on the first try.", "The first fine-tune was trained the obvious way — on questions and their answer + citation, without retrieved context. On its own it looked great. With retrieval added, it collapsed.") }}
+  <div class="mt-10 max-w-3xl">
+    {{ deltaBars([
+      {label:"Naive fine-tune + RAG", v:8.1, cls:"bg-neutral-400 dark:bg-white/25", tag:"worse than B"},
+      {label:"Retrieval-aware + RAG", v:52.3, cls:"bg-red-600"}
+    ], "Arm D on the production bar. The naive model — shown retrieved passages it never saw in training — reverted to terse answers and <strong class='text-ink-700 dark:text-ink-300'>dropped the citation line</strong>, scoring below the base model with retrieval (38.4%). Training format compliance under retrieval fell to 16%.") }}
+  </div>
+  <div class="mt-10 max-w-3xl rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+    <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">Q.</span> Is a prior agreement excluding liability for gross negligence valid? <span class="text-ink-500">(gold: no, Art. 100)</span></p>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Naive fine-tune + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein</pre>
+        <p class="mt-1 text-xs text-swiss">Right answer, no citation → fails</p>
+      </div>
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Retrieval-aware + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein
+SOURCE: OR Art. 100</pre>
+        <p class="mt-1 text-xs text-swiss">Passes</p>
+      </div>
+    </div>
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">The cause is a <strong class="font-semibold text-ink-900 dark:text-white">training/inference distribution mismatch</strong>: a model that will be served <em>with</em> retrieval must be <em>trained</em> with retrieval. We rebuilt the fine-tuning set so every example appears both plain and with retrieved context — the gold article guaranteed present — retrained, and the production bar went from 8.1% to 52.3%. That is exactly the kind of failure a Pilot's <a class="link-underline" href="/concepts/evaluation/">ablation</a> catches before it reaches production. We measure so we don't ship it.</p>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The honest limits", "What this doesn't claim.", "An evaluation you can trust is one that names where it's weak.") }}
+    <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">List-answer questions score near zero, in every arm.</strong> Extracting a complete multi-item set and citing it is the hardest sub-task here and the obvious next target — the same weak spot the FINMA report flagged.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">French trails German</strong> (D: 42% FR vs 60% DE), tracking the training mix (271 DE vs 123 FR items). More balanced data closes it; the number is honest about where the model is weak today.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Format compliance is 71%, not 100%.</strong> The retrieval-aware fine-tune still drops the citation on some items — far better than the naive 16%, not perfect. It's a floor: a larger, more balanced training set moves it further.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-legal-eval" class="btn-ghost" target="_blank" rel="noopener">Reproduce it on GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "About this report.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Want this on your task?", "Bring one workflow and the documents behind it. We'll build the evaluation set and run this ablation — including the failure modes it catches — on your data, in your jurisdiction.") }}

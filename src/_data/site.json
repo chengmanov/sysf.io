@@ -5,6 +5,7 @@
   "brandTld": ".io",
   "descriptor": "Fine-tuned Apertus, running where your data lives.",
   "tagline": "AI for the data you can't send away.",
+  "slogan": "systems, fine-tuned.",
   "description": "sysf.io is a Swiss engineering studio that fine-tunes Apertus — Switzerland's open LLM from EPFL, ETH Zurich and CSCS — on your documents and runs it inside your infrastructure: on-prem, Swiss cloud, or fully air-gapped. Open weights your auditors can inspect, no US API in the loop, and you own the resulting model.",
   "shortDescription": "Swiss sovereign AI: fine-tuned Apertus running in your jurisdiction — open weights, no US APIs, you own the model.",
   "url": "https://sysf.io",
@@ -23,6 +24,7 @@
     { "label": "Concepts", "url": "/concepts/" },
     { "label": "Industries", "url": "/industries/" },
     { "label": "Pricing", "url": "/pricing/" },
+    { "label": "Configure", "url": "/configure/" },
     { "label": "News", "url": "/news/" },
     { "label": "About", "url": "/about/" },
     { "label": "Contact", "url": "/contact/" }

@@ -1,9 +1,15 @@
 <header class="sticky top-0 z-40 border-b border-ink-900/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-ink-950/80">
   <nav class="container-x flex h-16 items-center justify-between" aria-label="Primary">
-    <a href="/" class="flex items-center gap-2.5 text-lg font-bold tracking-tightest text-ink-900 dark:text-white" aria-label="sysf.io home">
-      {% include "partials/mark.njk" %}
-      <span class="font-display font-extrabold">{{ site.brandBase }}<span class="text-red-600">{{ site.brandTld }}</span></span>
-    </a>
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2.5 text-lg font-bold tracking-tightest text-ink-900 dark:text-white" aria-label="sysf.io home">
+        {% include "partials/mark.njk" %}
+        <span class="font-display font-extrabold">{{ site.brandBase }}<span class="text-red-600">{{ site.brandTld }}</span></span>
+      </a>
+      <span class="hidden items-center gap-3 lg:flex" aria-hidden="true">
+        <span class="h-4 w-px bg-ink-900/15 dark:bg-white/15"></span>
+        <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">{{ site.slogan }}</span>
+      </span>
+    </div>
 
     <div class="hidden items-center gap-8 md:flex">
       {% for item in site.nav %}

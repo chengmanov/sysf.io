@@ -1,0 +1,633 @@
+---
+layout: layouts/base.njk
+order: 3.5
+title: Configure Your Sovereign AI Build
+description: An interactive configurator — pick your model, size, quantization, languages, data handling, deployment and compliance, and get a one-page build spec. We explain every choice. Nothing leaves your browser until you send it.
+faq:
+  - q: Does anything leave my browser while I configure?
+    a: "No. Every answer stays in your browser as you go — nothing is sent anywhere until you press Send to sysf.io, which opens your own email client with the spec pre-filled. It's the same principle as everything we build: your data comes to the model, not the other way around."
+  - q: Can I really choose the model?
+    a: "This configurator scopes the starting point. Apertus is our default — Switzerland's fully open LLM. But in a real engagement the evaluation decides: we test open-weight models on a set built from your documents and ship whichever wins. Apertus, Llama or Mistral — the evaluation decides, not the logo."
+  - q: Is the build spec a quote?
+    a: "No — it's a structured brief. We don't publish fixed prices because every engagement differs in data, deployment and compliance scope. The spec gives us enough to come back with a fixed-scope proposal after a short call."
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<style>
+  @media print {
+    body * { visibility: hidden !important; }
+    #specPrint, #specPrint * { visibility: visible !important; }
+    #specPrint { position: absolute; left: 0; top: 0; width: 100%; }
+    #specActions { display: none !important; }
+  }
+</style>
+
+<!-- Hero -->
+<section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
+  <div class="circuit pointer-events-none absolute inset-0 -z-10 opacity-70 dark:opacity-20"></div>
+  <div class="container-x py-16 md:py-20">
+    <p class="eyebrow">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+      Build configurator
+    </p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-bold leading-[1.06] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Spec your sovereign build in two minutes.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Eight quick questions — model, size, languages, data, deployment, compliance. We explain what each choice means as you go, then hand you a one-page build spec to send us. It's the fastest way to turn "we should look at this" into a concrete proposal.
+    </p>
+    <div class="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      {% for c in ["8 steps · ~2 minutes", "No account, no sign-up", "Nothing leaves your browser until you send"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 bg-swiss"></span>{{ c }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <div class="container-x py-10">
+    <div class="card">
+      <p class="text-sm text-ink-700 dark:text-ink-300">The configurator needs JavaScript. No problem — just <a class="link-underline" href="/contact/">tell us what you'd like to build</a> and we'll scope it with you.</p>
+    </div>
+  </div>
+</noscript>
+
+<!-- Builder -->
+<section id="builder" class="container-x py-14 md:py-20">
+  <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <!-- Wizard -->
+    <div class="lg:col-span-8">
+      <div class="mb-8">
+        <div class="mb-2 flex items-center justify-between">
+          <span id="progressLabel" class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Step 1 / 8</span>
+          <span id="progressPct" class="font-mono text-xs tabular-nums text-ink-500">12%</span>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/10">
+          <div id="progressFill" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 12%"></div>
+        </div>
+      </div>
+
+      <div id="stepContainer" aria-live="polite"></div>
+
+      <div class="mt-10 flex items-center justify-between gap-4 border-t border-ink-900/10 pt-6 dark:border-white/10">
+        <button id="backBtn" type="button" class="btn-ghost">← Back</button>
+        <button id="nextBtn" type="button" class="btn-primary">Next →</button>
+      </div>
+    </div>
+
+    <!-- Live summary -->
+    <aside class="lg:col-span-4">
+      <div id="summaryCard" class="sticky top-24 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Your build so far</div>
+        <div class="mt-4">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Suggested engagement</div>
+          <div id="tierChip" class="mt-1.5 inline-flex items-center gap-2 rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">Pilot</div>
+          <p class="mt-1.5 text-xs prose-muted">No fixed prices — every engagement is scoped after a short call.</p>
+        </div>
+        <dl id="summaryList" class="mt-5 space-y-2.5 border-t border-neutral-200 pt-5 text-sm dark:border-white/10"></dl>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Generated spec (hidden until generated) -->
+<section id="specPrint" class="container-x hidden py-14 md:py-20">
+  <div id="specBody"></div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-16 dark:border-white/10 md:py-24">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Before you start.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Prefer to just talk it through?", "Skip the form — book a 30-minute scoping call and we'll map your first use case together.") }}
+
+<script>
+(function () {
+  "use strict";
+  var CONTACT_EMAIL = "{{ site.email }}";
+
+  // ---- Selected-state class tokens (must appear literally so Tailwind emits them) ----
+  var SEL = ["ring-2", "ring-teal-500", "border-teal-500", "bg-teal-50", "dark:bg-teal-500/10"];
+
+  // ---- Question bank -------------------------------------------------------
+  var Q = {
+    sector: { title: "Which sector are you in?", type: "single", cols: 2, hint: "Pick the closest — it shapes the tasks, systems and compliance we design for.", opts: [
+      { id: "banking", label: "Banking & Finance", imp: "Client identifying data and Art. 47 secrecy — on-prem or confidential compute, zero egress, audit rights and an exit plan documented." },
+      { id: "healthcare", label: "Healthcare & Pharma", imp: "Special-category data under nFADP / GDPR, KIS integration via HL7-FHIR. Outside MDR scope by design — no diagnostic or triage function." },
+      { id: "legal", label: "Legal & Professional Services", imp: "Privilege-safe and in-jurisdiction — contract analysis, multilingual research and drafting on your own templates and precedent." },
+      { id: "government", label: "Government & Public Sector", imp: "Runs on national infrastructure, data never leaves the country — the Canton of Ticino Apertus-8B pattern." },
+      { id: "insurance", label: "Insurance", imp: "FINMA-compliant outsourcing from day one — claims, policy Q&A and correspondence against core systems like Guidewire or SAP FS-CM." },
+      { id: "manufacturing", label: "Manufacturing & Industrial", imp: "On-prem / edge-friendly and protects operational IP — copilots over your manuals, SOPs and specs." },
+      { id: "other", label: "Something else", imp: "Tell us more in the notes at the end — the method is the same: measure on your data, ship the smallest model that clears the bar." }
+    ]},
+    task: { title: "What's the primary task?", type: "single", cols: 2, hint: "This is what we'd tune and measure first.", opts: [
+      { id: "qa", label: "Document & regulatory Q&A", imp: "Retrieval-first: answers grounded in your documents, with citations. The eval set is built from real questions your teams ask." },
+      { id: "extract", label: "Extraction & classification", imp: "Fine-tuning locks the output format so every result is machine-parseable and lands cleanly in your systems." },
+      { id: "draft", label: "Drafting & correspondence", imp: "Tuned on your templates and house style — drafts in your voice, in the right language, ready to edit." },
+      { id: "intake", label: "Intake & triage", imp: "Routes and structures incoming cases by pairing a small tuned model with your business rules — not a black box." },
+      { id: "coding", label: "Domain coding (ICD/CHOP, clause tags…)", imp: "A narrow, measurable task where a tuned 4–8B beats a general API — and stays inside your walls." }
+    ]},
+    languages: { title: "Which languages must it handle?", type: "multi", cols: 3, note: "Apertus is multilingual by construction — native German, French, Italian and Romansh, including Swiss German, plus 1,000+ further languages. No translation layer in the loop.", opts: [
+      { id: "de", label: "German" }, { id: "fr", label: "French" }, { id: "it", label: "Italian" },
+      { id: "rm", label: "Romansh" }, { id: "gsw", label: "Swiss German" }, { id: "en", label: "English" },
+      { id: "other", label: "Other" }
+    ]},
+    dataVolume: { title: "Roughly how much data will it work over?", type: "single", cols: 2, hint: "A rough bucket is fine — it mostly affects retrieval engineering, not model size.", opts: [
+      { id: "small", label: "Under 1,000 documents", imp: "Plenty for retrieval and a focused eval set (50–300 tasks). Fine-tuning data is curated, not bulk." },
+      { id: "med", label: "1k – 100k documents", imp: "Comfortable for a production retrieval index; we sample a representative eval set from it." },
+      { id: "large", label: "100k – millions", imp: "We shard the index and add re-ranking. Volume is a retrieval-engineering problem, not a reason for a bigger model." },
+      { id: "unsure", label: "Not sure yet", imp: "Fine — we size the index and eval set together during scoping." }
+    ]},
+    dataLocation: { title: "Where does that data live?", type: "single", cols: 3, note: "Where your data lives decides where the model runs — it comes to the data, never the other way around.", opts: [
+      { id: "onprem", label: "Our datacentre / servers" },
+      { id: "swisscloud", label: "Swiss cloud tenancy" },
+      { id: "mixed", label: "Mixed / to be decided" }
+    ]},
+    pii: { title: "Does it contain PII that must be handled before the model sees it?", type: "single", cols: 2, note: "PII handling is a tested guardrail, not an afterthought — redaction / minimisation runs in the pipeline and we measure that it holds. This isn't legal advice; we work with your compliance team.", opts: [
+      { id: "none", label: "No sensitive PII" },
+      { id: "redact", label: "Yes — redact before processing" },
+      { id: "pseudo", label: "Yes — pseudonymise / tokenise" },
+      { id: "unsure", label: "Not sure" }
+    ]},
+    model: { title: "Starting model", type: "single", cols: 2, hint: "You can change this — in a real engagement the evaluation decides.", opts: [
+      { id: "apertus", label: "Apertus", sub: "Recommended", imp: "Switzerland's fully open LLM — open weights and documented training data, exactly what auditors want to see. Our default." },
+      { id: "eval", label: "Let the evaluation decide", imp: "We test open-weight models — Apertus, Llama, Mistral — on a set built from your documents and ship whichever wins. The evaluation decides, not the logo." }
+    ]},
+    size: { title: "Model size", type: "single", cols: 2, opts: [
+      { id: "s8", label: "4–8B · workstation class", sub: "~24–48 GB VRAM", imp: "Runs at interactive speed on a single workstation-class GPU server. The production sweet spot for a narrow, well-defined task." },
+      { id: "s70", label: "70B · node class", sub: "multi-GPU", imp: "For broad reasoning or escalation — needs a multi-GPU node or a confidential-compute instance. Escalation still stays local, never to a cloud API." },
+      { id: "unsure", label: "Not sure", imp: "We pick the smallest model that clears your eval bar. Smaller is cheaper, faster and easier to run." }
+    ]},
+    quant: { title: "Quantization", type: "single", cols: 3, note: "Quantization shrinks the model to fit your hardware. 4-bit is the production default — we always re-evaluate after quantizing, and if quality drops we don't ship it.", opts: [
+      { id: "fp16", label: "16-bit", sub: "full precision" },
+      { id: "q4", label: "4-bit", sub: "recommended" },
+      { id: "q12", label: "1–2 bit", sub: "frontier" }
+    ]},
+    approach: { title: "How should it get good at your task?", type: "single", cols: 2, opts: [
+      { id: "base", label: "Base model only", imp: "The open model as shipped — a baseline to measure against, rarely the answer on its own." },
+      { id: "rag", label: "+ Retrieval (RAG)", imp: "Grounds answers in your documents. Knowledge updates the moment a document does — no retraining." },
+      { id: "ft", label: "+ Fine-tune (LoRA)", imp: "Teaches your terminology, formats and task behaviour. It does NOT reliably memorise facts — we never use it as a knowledge store." },
+      { id: "both", label: "Fine-tune + Retrieval", sub: "Recommended", imp: "The full system: retrieval supplies the facts, fine-tuning locks the format and voice. On our FINMA benchmark this doubles the production bar over retrieval alone." }
+    ]},
+    deployment: { title: "Where should it run?", type: "single", cols: 2, opts: [
+      { id: "swisscloud", label: "Dedicated Swiss cloud", imp: "Single-tenant, in-jurisdiction, under a data-processing agreement. A clean path for a Pilot." },
+      { id: "onprem_ws", label: "On-prem workstation", imp: "A single workstation-class GPU in your datacentre — a tuned 4–8B on a CHF 5–15k machine." },
+      { id: "onprem_node", label: "On-prem node", imp: "A multi-GPU node for larger models or higher throughput, entirely inside your walls." },
+      { id: "airgapped", label: "Air-gapped / confidential compute", imp: "Fully isolated — updates arrive as signed, checksummed offline bundles. Pull the network cable, keep working." }
+    ]},
+    integration: { title: "How should it plug into your runtime?", type: "multi", cols: 2, note: "The model is the engine; orchestration wires it to your systems with RBAC, audit trails and PII discipline. The framework is plumbing — the hardening is the product.", opts: [
+      { id: "chat", label: "Standalone chat interface" },
+      { id: "api", label: "An API into our existing apps" },
+      { id: "systems", label: "Into a core system (HL7-FHIR, Guidewire, SAP…)" },
+      { id: "agents", label: "Agents & tools (MCP)" }
+    ]},
+    ongoing: { title: "How much do you want us to run afterwards?", type: "single", cols: 1, opts: [
+      { id: "pilot", label: "One-off Pilot, then hand it over", imp: "You own the model and run it independently. A documented handover is the deliverable — your exit strategy is in scope." },
+      { id: "production", label: "Production with monitoring & support", imp: "We monitor for drift, evaluate on a cadence and maintain the system under a support agreement." },
+      { id: "managed", label: "Managed ongoing retraining", imp: "We re-run fine-tuning as your data grows or a stronger open base ships. Note: facts update through retrieval instantly — retraining is for behaviour, not knowledge." }
+    ]},
+    frameworks: { title: "Which regimes apply?", type: "multi", cols: 2, note: "In-jurisdiction deployment addresses the Swiss FADP / nFADP and EU GDPR; documented data lineage and tested guardrails support your EU AI Act obligations. Not legal advice — we work alongside your compliance and legal teams.", opts: [
+      { id: "fadp", label: "Swiss FADP / nFADP" },
+      { id: "gdpr", label: "EU GDPR" },
+      { id: "aiact", label: "EU AI Act" },
+      { id: "unsure", label: "Not sure yet" }
+    ]},
+    compliancePack: { title: "Include the compliance & audit pack?", type: "single", cols: 2, note: "The pack: model card, training-data lineage record, data-processing agreement template, technical & organisational measures (TOMs), EU AI Act risk-classification worksheet, and the evaluation report.", opts: [
+      { id: "yes", label: "Yes, include it" },
+      { id: "no", label: "Not needed" },
+      { id: "unsure", label: "Undecided" }
+    ]}
+  };
+
+  // ---- Steps ---------------------------------------------------------------
+  var STEPS = [
+    { eyebrow: "01 · Use case", title: "What are you building, and for whom?", intro: "Start with the shape of the work. There are no wrong answers — this scopes where we begin.", questions: ["sector", "task"] },
+    { eyebrow: "02 · Languages", title: "The languages your work actually happens in.", questions: ["languages"] },
+    { eyebrow: "03 · Your data", title: "The data you can't send away.", intro: "This is the whole point — so we handle it carefully from the first question.", questions: ["dataVolume", "dataLocation", "pii"] },
+    { eyebrow: "04 · Model & approach", title: "Pick the engine — and watch it fit.", intro: "This is the fun part. Change the size and quantization and see the model shrink onto your hardware; change the approach and see the accuracy floor move.", questions: ["model", "size", "quant", "approach"], widgets: true },
+    { eyebrow: "05 · Deployment", title: "Where it runs, and how it plugs in.", questions: ["deployment", "integration"] },
+    { eyebrow: "06 · Ongoing", title: "One-off, maintained, or managed.", questions: ["ongoing"] },
+    { eyebrow: "07 · Compliance", title: "The paperwork your auditors will ask for.", questions: ["frameworks", "compliancePack"] },
+    { eyebrow: "08 · You", title: "Where should we send the proposal?", intro: "Your answers have stayed in your browser this whole time. They only leave when you press send.", contact: true }
+  ];
+
+  // ---- Static reference data ----------------------------------------------
+  var GB = { s8: { fp16: 16, q4: 4.5, q12: 2 }, s70: { fp16: 140, q4: 40, q12: 18 }, unsure: { fp16: 16, q4: 4.5, q12: 2 } };
+  var GB_MAX = 140;
+  var ABLATION = [
+    { id: "base", label: "Base model", v: 0 },
+    { id: "rag", label: "+ Retrieval", v: 22.4 },
+    { id: "ft", label: "+ Fine-tune", v: 1.6 },
+    { id: "both", label: "Fine-tune + Retrieval", v: 45.4 }
+  ];
+
+  // ---- State ---------------------------------------------------------------
+  var state = { model: "apertus", size: "s8", quant: "q4", approach: "both", languages: [], integration: [], frameworks: [], contact: {} };
+  var cur = 0;
+
+  // ---- DOM refs ------------------------------------------------------------
+  var stepContainer = document.getElementById("stepContainer");
+  var progressFill = document.getElementById("progressFill");
+  var progressLabel = document.getElementById("progressLabel");
+  var progressPct = document.getElementById("progressPct");
+  var backBtn = document.getElementById("backBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var summaryList = document.getElementById("summaryList");
+  var tierChip = document.getElementById("tierChip");
+  var builder = document.getElementById("builder");
+  var specPrint = document.getElementById("specPrint");
+  var specBody = document.getElementById("specBody");
+
+  // ---- Helpers -------------------------------------------------------------
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function labelOf(qk, oid) {
+    var o = Q[qk] && Q[qk].opts.filter(function (x) { return x.id === oid; })[0];
+    return o ? o.label : "";
+  }
+  function optOf(qk, oid) { return Q[qk].opts.filter(function (x) { return x.id === oid; })[0]; }
+  function isSel(qk, oid) {
+    var v = state[qk];
+    return Q[qk].type === "multi" ? (v || []).indexOf(oid) > -1 : v === oid;
+  }
+  var CHECK = '<svg data-check class="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function optionHtml(qk, o) {
+    var sel = isSel(qk, o.id);
+    var selCls = sel ? " " + SEL.join(" ") : "";
+    var sub = o.sub ? '<span class="mt-0.5 block text-xs font-semibold uppercase tracking-[0.1em] text-teal-600 dark:text-teal-300">' + esc(o.sub) + '</span>' : "";
+    return '<button type="button" data-qk="' + qk + '" data-oid="' + o.id + '" role="' + (Q[qk].type === "multi" ? "checkbox" : "radio") + '" aria-checked="' + (sel ? "true" : "false") +
+      '" class="option-card group flex items-start justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-4 text-left shadow-xs transition hover:border-teal-400 dark:border-white/10 dark:bg-ink-950' + selCls + '">' +
+      '<span class="min-w-0"><span class="block text-sm font-semibold text-ink-900 dark:text-white">' + esc(o.label) + '</span>' + sub + '</span>' +
+      '<span class="mt-0.5">' + CHECK + '</span>' +
+      '</button>';
+  }
+
+  function questionHtml(qk) {
+    var q = Q[qk];
+    var gridCols = q.cols === 1 ? "grid-cols-1" : q.cols === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2";
+    var opts = q.opts.map(function (o) { return optionHtml(qk, o); }).join("");
+    // initial implication text
+    var impText = "";
+    if (q.type === "multi") { impText = anySel(qk) ? (q.note || "") : (q.hint || ""); }
+    else { impText = state[qk] ? (optOf(qk, state[qk]).imp || q.note || "") : (q.hint || q.note || ""); }
+    return '<fieldset class="mt-8" data-qfield="' + qk + '">' +
+      '<legend class="text-base font-bold tracking-tight text-ink-900 dark:text-white">' + esc(q.title) + '</legend>' +
+      (q.type === "multi" ? '<p class="mt-1 text-xs text-ink-500">Choose any that apply.</p>' : "") +
+      '<div class="mt-3 grid gap-3 ' + gridCols + '">' + opts + '</div>' +
+      '<p data-imp="' + qk + '" class="mt-3 min-h-[1.25rem] text-sm prose-muted">' + esc(impText) + '</p>' +
+      '</fieldset>';
+  }
+
+  function anySel(qk) { return (state[qk] || []).length > 0; }
+
+  // ---- Interactive widgets (step 04) --------------------------------------
+  function widgetsHtml() {
+    var barRows = ABLATION.map(function (a) {
+      return '<div class="flex items-center gap-3">' +
+        '<span class="w-40 shrink-0 text-sm font-medium text-ink-900 dark:text-white">' + a.label + '</span>' +
+        '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]">' +
+        '<div data-arm="' + a.id + '" class="h-full rounded bg-teal-500 transition-[width,background-color] duration-300" style="width: ' + a.v + '%"></div>' +
+        '</div>' +
+        '<span class="w-12 shrink-0 text-right font-mono text-xs font-semibold tabular-nums text-ink-900 dark:text-white">' + a.v + '%</span>' +
+        '</div>';
+    }).join("");
+    return '<div class="mt-10 grid gap-5 md:grid-cols-2">' +
+      // memory-fit
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Fits in memory</figcaption>' +
+        '<div class="mt-4 flex items-baseline gap-2">' +
+          '<span id="memGb" class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">4.5</span>' +
+          '<span class="text-lg font-semibold text-ink-500">GB</span>' +
+        '</div>' +
+        '<div class="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-white/[0.06]">' +
+          '<div id="memBar" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 3%"></div>' +
+        '</div>' +
+        '<div id="memVerdict" class="mt-4 inline-flex items-center gap-2 rounded-md bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-700 dark:bg-teal-500/10 dark:text-teal-200">Fits a single workstation-class GPU (CHF 5–15k)</div>' +
+        '<p class="mt-3 text-xs prose-muted">Weights only — the KV cache is a second budget we also quantize. 4-bit is the production default.</p>' +
+      '</figure>' +
+      // ablation
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Expected accuracy floor</figcaption>' +
+        '<div class="mt-4 space-y-2.5">' + barRows + '</div>' +
+        '<p id="ablationCap" class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10"></p>' +
+      '</figure>' +
+    '</div>';
+  }
+
+  function updateMemory() {
+    var sizeKey = state.size || "s8";
+    var q = state.quant || "q4";
+    var gb = (GB[sizeKey] || GB.s8)[q];
+    var memGb = document.getElementById("memGb");
+    var memBar = document.getElementById("memBar");
+    var memVerdict = document.getElementById("memVerdict");
+    if (!memGb) return;
+    memGb.textContent = gb;
+    memBar.style.width = Math.max(2, Math.round(gb / GB_MAX * 100)) + "%";
+    var fits = gb <= 48;
+    memVerdict.textContent = fits ? "Fits a single workstation-class GPU (CHF 5–15k)" : "Needs a multi-GPU node or confidential-compute instance";
+    // one-red rule: keep the good case teal; use neutral (not red) for the heavier case
+    memVerdict.className = "mt-4 inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold " +
+      (fits ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-200" : "bg-neutral-100 text-ink-700 dark:bg-white/10 dark:text-ink-300");
+  }
+
+  function updateAblation() {
+    var pick = state.approach;
+    ABLATION.forEach(function (a) {
+      var bar = document.querySelector('[data-arm="' + a.id + '"]');
+      if (!bar) return;
+      var on = a.id === pick;
+      bar.className = "h-full rounded transition-[width,background-color] duration-300 " + (on ? "bg-red-600" : "bg-teal-500");
+    });
+    var cap = document.getElementById("ablationCap");
+    if (!cap) return;
+    var base = "Production bar (correct answer + exact citation) on our public FINMA benchmark — a floor, not a ceiling.";
+    if (pick === "ft") base = "Fine-tuning alone barely moves this bar — it teaches format and terminology, not facts. Pair it with retrieval and it doubles. " + base;
+    else if (pick === "both") base = "The full system: retrieval supplies the facts, fine-tuning locks the format. " + base;
+    else if (pick === "rag") base = "Retrieval alone already clears a real bar — often the right first step. " + base;
+    cap.textContent = base;
+  }
+
+  // ---- Contact step --------------------------------------------------------
+  function inputHtml(field, label, type, req) {
+    var c = state.contact[field] || "";
+    return '<label class="block">' +
+      '<span class="text-sm font-medium text-ink-900 dark:text-white">' + label + (req ? ' <span class="text-red-600">*</span>' : "") + '</span>' +
+      '<input data-field="' + field + '" type="' + type + '" value="' + esc(c) + '"' + (req ? ' required' : "") +
+      ' class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />' +
+      '</label>';
+  }
+  function contactHtml() {
+    var c = state.contact;
+    return '<div class="mt-8 grid gap-5">' +
+      '<div class="grid gap-5 sm:grid-cols-2">' + inputHtml("name", "Name", "text", true) + inputHtml("email", "Work email", "email", true) + '</div>' +
+      inputHtml("org", "Organisation", "text", false) +
+      '<label class="block"><span class="text-sm font-medium text-ink-900 dark:text-white">Anything to add?</span>' +
+      '<textarea data-field="notes" rows="3" class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white">' + esc(c.notes || "") + '</textarea></label>' +
+      '<p class="text-xs text-ink-500">Email is only needed when you send. Your answers stay in your browser until then — nothing is stored on a server.</p>' +
+      '</div>';
+  }
+
+  // ---- Render --------------------------------------------------------------
+  function renderStep() {
+    var step = STEPS[cur];
+    var pct = Math.round((cur + 1) / STEPS.length * 100);
+    progressFill.style.width = pct + "%";
+    progressLabel.textContent = "Step " + (cur + 1) + " / " + STEPS.length;
+    progressPct.textContent = pct + "%";
+
+    var html = '<p class="eyebrow">' + step.eyebrow + '</p>';
+    html += '<h2 id="stepHeading" tabindex="-1" class="mt-3 text-2xl font-bold tracking-tightest text-ink-900 outline-none md:text-3xl dark:text-white">' + esc(step.title) + '</h2>';
+    if (step.intro) html += '<p class="mt-3 max-w-2xl text-base prose-muted">' + esc(step.intro) + '</p>';
+    if (step.contact) { html += contactHtml(); }
+    else {
+      step.questions.forEach(function (qk) { html += questionHtml(qk); });
+      if (step.widgets) html += widgetsHtml();
+    }
+    stepContainer.innerHTML = html;
+
+    if (step.widgets) { updateMemory(); updateAblation(); }
+    // fix check-icon visibility rendered in markup
+    stepContainer.querySelectorAll("[data-check]").forEach(function (ck) {
+      var btn = ck.closest(".option-card");
+      var sel = btn && btn.getAttribute("aria-checked") === "true";
+      ck.classList.toggle("hidden", !sel);
+    });
+
+    backBtn.classList.toggle("invisible", cur === 0);
+    nextBtn.textContent = cur === STEPS.length - 1 ? "Generate my build spec →" : "Next →";
+    var h = document.getElementById("stepHeading");
+    if (h) h.focus();
+    updateSummary();
+  }
+
+  // ---- Selection handling (event delegation) ------------------------------
+  stepContainer.addEventListener("click", function (e) {
+    var btn = e.target.closest(".option-card");
+    if (!btn) return;
+    var qk = btn.getAttribute("data-qk");
+    var oid = btn.getAttribute("data-oid");
+    var q = Q[qk];
+    if (q.type === "multi") {
+      state[qk] = state[qk] || [];
+      var i = state[qk].indexOf(oid);
+      if (i > -1) state[qk].splice(i, 1); else state[qk].push(oid);
+      paint(btn, i === -1);
+      setImp(qk, anySel(qk) ? (q.note || "") : (q.hint || ""));
+    } else {
+      state[qk] = oid;
+      btn.closest("[data-qfield]").querySelectorAll(".option-card").forEach(function (b) { paint(b, b === btn); });
+      setImp(qk, optOf(qk, oid).imp || q.note || "");
+    }
+    if (qk === "size" || qk === "quant") updateMemory();
+    if (qk === "approach") updateAblation();
+    updateSummary();
+  });
+
+  stepContainer.addEventListener("input", function (e) {
+    var f = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (!f) return;
+    state.contact[f] = e.target.value;
+  });
+
+  function paint(btn, on) {
+    SEL.forEach(function (c) { btn.classList.toggle(c, on); });
+    btn.setAttribute("aria-checked", on ? "true" : "false");
+    var ck = btn.querySelector("[data-check]");
+    if (ck) ck.classList.toggle("hidden", !on);
+  }
+  function setImp(qk, text) {
+    var el = stepContainer.querySelector('[data-imp="' + qk + '"]');
+    if (el) el.textContent = text;
+  }
+
+  // ---- Suggested tier ------------------------------------------------------
+  function suggestTier() {
+    if (state.deployment === "airgapped") return "Air-gapped";
+    if (state.deployment === "onprem_node" || state.deployment === "onprem_ws" || state.ongoing === "managed" || state.ongoing === "production") return "Production";
+    return "Pilot";
+  }
+
+  // ---- Live summary --------------------------------------------------------
+  function summaryRow(label, value) {
+    return '<div class="flex items-baseline justify-between gap-3"><dt class="text-xs font-semibold uppercase tracking-[0.1em] text-ink-500">' + label + '</dt>' +
+      '<dd class="text-right text-sm font-medium text-ink-900 dark:text-white">' + esc(value) + '</dd></div>';
+  }
+  function multiLabels(qk) { return (state[qk] || []).map(function (id) { return labelOf(qk, id); }).join(", "); }
+
+  function updateSummary() {
+    var tier = suggestTier();
+    tierChip.textContent = tier;
+    var rows = "";
+    if (state.sector) rows += summaryRow("Sector", labelOf("sector", state.sector));
+    if (state.task) rows += summaryRow("Task", labelOf("task", state.task));
+    if (anySel("languages")) rows += summaryRow("Languages", multiLabels("languages"));
+    rows += summaryRow("Model", state.model === "eval" ? "Eval-decided" : "Apertus");
+    rows += summaryRow("Size", labelOf("size", state.size).split(" · ")[0]);
+    rows += summaryRow("Approach", labelOf("approach", state.approach));
+    if (state.deployment) rows += summaryRow("Deployment", labelOf("deployment", state.deployment));
+    summaryList.innerHTML = rows || '<p class="text-xs prose-muted">Your choices will appear here as you go.</p>';
+  }
+
+  // ---- Navigation ----------------------------------------------------------
+  nextBtn.addEventListener("click", function () {
+    if (cur === STEPS.length - 1) { generateSpec(); return; }
+    cur++;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  backBtn.addEventListener("click", function () {
+    if (cur === 0) return;
+    cur--;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // ---- Build spec ----------------------------------------------------------
+  function line(label, val) { return val ? (label + ": " + val + "\n") : ""; }
+  function buildBrief() {
+    var b = "";
+    b += line("Sector", labelOf("sector", state.sector));
+    b += line("Primary task", labelOf("task", state.task));
+    b += line("Languages", multiLabels("languages"));
+    b += line("Data volume", labelOf("dataVolume", state.dataVolume));
+    b += line("Data location", labelOf("dataLocation", state.dataLocation));
+    b += line("PII handling", labelOf("pii", state.pii));
+    b += line("Model", state.model === "eval" ? "Evaluation-decided (Apertus / Llama / Mistral)" : "Apertus");
+    b += line("Size", labelOf("size", state.size));
+    b += line("Quantization", labelOf("quant", state.quant));
+    b += line("Approach", labelOf("approach", state.approach));
+    b += line("Deployment", labelOf("deployment", state.deployment));
+    b += line("Integration", multiLabels("integration"));
+    b += line("Ongoing", labelOf("ongoing", state.ongoing));
+    b += line("Compliance", multiLabels("frameworks"));
+    b += line("Compliance & audit pack", labelOf("compliancePack", state.compliancePack));
+    b += line("Suggested engagement", suggestTier());
+    var c = state.contact;
+    b += "\nContact: " + (c.name || "") + (c.email ? " <" + c.email + ">" : "") + (c.org ? ", " + c.org : "") + "\n";
+    if (c.notes) b += "Notes: " + c.notes + "\n";
+    return b;
+  }
+
+  function specStat(label, value) {
+    return '<div class="bg-white p-5 dark:bg-ink-950"><dd class="font-mono text-2xl font-bold tabular-nums text-ink-900 dark:text-white md:text-3xl">' + esc(value) + '</dd>' +
+      '<dt class="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-700 dark:text-ink-300">' + label + '</dt></div>';
+  }
+  function specSection(label, value) {
+    if (!value) return "";
+    return '<div class="flex flex-col gap-1 border-b border-neutral-200 py-3 last:border-0 dark:border-white/10 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">' +
+      '<dt class="text-xs font-semibold uppercase tracking-[0.1em] text-ink-500 sm:w-48 sm:shrink-0">' + label + '</dt>' +
+      '<dd class="text-sm text-ink-800 dark:text-ink-200 sm:flex-1 sm:text-right">' + esc(value) + '</dd></div>';
+  }
+
+  function generateSpec() {
+    var chosen = ABLATION.filter(function (a) { return a.id === state.approach; })[0] || ABLATION[3];
+    var sizeShort = labelOf("size", state.size).split(" · ")[0];
+    var quantShort = ({ fp16: "16-bit", q4: "4-bit", q12: "1–2 bit" })[state.quant] || labelOf("quant", state.quant);
+    var deployShort = labelOf("deployment", state.deployment) || "To scope";
+
+    var html = "";
+    html += '<p class="eyebrow"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></svg> Your build spec</p>';
+    html += '<h2 class="mt-3 text-3xl font-bold tracking-tightest text-ink-900 md:text-4xl dark:text-white">' + esc(labelOf("task", state.task) || "Sovereign AI build") + (state.sector ? ' for ' + esc(labelOf("sector", state.sector)) : "") + '</h2>';
+    html += '<p class="mt-3 max-w-2xl text-base prose-muted">A structured starting point — not a quote. Send it over and we\'ll come back with a fixed-scope proposal after a short call.</p>';
+
+    // headline stats
+    html += '<dl class="mt-8 grid gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 dark:border-white/10 dark:bg-white/10 grid-cols-2 lg:grid-cols-4">' +
+      specStat("Model", state.model === "eval" ? "Eval-decided" : "Apertus " + (sizeShort || "")) +
+      specStat("Quantization", quantShort) +
+      specStat("Approach", chosen.label) +
+      specStat("Deployment", deployShort) +
+      '</dl>';
+
+    // ablation floor
+    html += '<figure class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Expected production floor · ' + esc(chosen.label) + '</figcaption>' +
+      '<div class="mt-4 flex items-center gap-4">' +
+      '<span class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">' + chosen.v + '%</span>' +
+      '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]"><div class="h-full rounded bg-red-600" style="width: ' + chosen.v + '%"></div></div>' +
+      '</div>' +
+      '<figcaption class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10">Correct answer + exact citation on our public FINMA benchmark. A floor, not a ceiling — your data and metrics set the real target.</figcaption>' +
+      '</figure>';
+
+    // recap
+    html += '<dl class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      specSection("Languages", multiLabels("languages")) +
+      specSection("Data volume", labelOf("dataVolume", state.dataVolume)) +
+      specSection("Data location", labelOf("dataLocation", state.dataLocation)) +
+      specSection("PII handling", labelOf("pii", state.pii)) +
+      specSection("Runtime integration", multiLabels("integration")) +
+      specSection("Ongoing", labelOf("ongoing", state.ongoing)) +
+      specSection("Compliance regimes", multiLabels("frameworks")) +
+      specSection("Compliance & audit pack", labelOf("compliancePack", state.compliancePack)) +
+      '</dl>';
+
+    // tier + next
+    html += '<div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<div class="flex flex-wrap items-center gap-3"><span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Suggested engagement</span>' +
+      '<span class="inline-flex items-center rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">' + suggestTier() + '</span></div>' +
+      '<ul class="mt-4 space-y-2 text-sm prose-muted">' +
+      ['A 30-minute call with the engineer who will build your system', 'A fixed-scope proposal on your data — within one week', 'A clear no by minute 20 if a fine-tuned open model isn\'t the right fit'].map(function (x) {
+        return '<li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>' + x + '</li>';
+      }).join("") + '</ul>' +
+      '</div>';
+
+    // actions
+    html += '<div id="specActions" class="mt-8 flex flex-wrap items-center gap-3">' +
+      '<button id="sendBtn" type="button" class="btn-primary">Send to sysf.io →</button>' +
+      '<button id="copyBtn" type="button" class="btn-ghost">Copy brief</button>' +
+      '<button id="printBtn" type="button" class="btn-ghost">Print / save as PDF</button>' +
+      '<button id="editBtn" type="button" class="btn-secondary">← Edit answers</button>' +
+      '<span id="actionMsg" class="text-sm text-ink-500" role="status" aria-live="polite"></span>' +
+      '</div>';
+
+    specBody.innerHTML = html;
+    builder.classList.add("hidden");
+    specPrint.classList.remove("hidden");
+    specPrint.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    document.getElementById("sendBtn").addEventListener("click", sendBrief);
+    document.getElementById("copyBtn").addEventListener("click", copyBrief);
+    document.getElementById("printBtn").addEventListener("click", function () { window.print(); });
+    document.getElementById("editBtn").addEventListener("click", function () {
+      specPrint.classList.add("hidden");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function msg(t) { var m = document.getElementById("actionMsg"); if (m) m.textContent = t; }
+
+  function sendBrief() {
+    var c = state.contact;
+    if (!c.name || !c.email) {
+      msg("Add your name and work email first —");
+      specPrint.classList.add("hidden");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      var email = stepContainer.querySelector('[data-field="email"]');
+      if (email) email.focus();
+      return;
+    }
+    var subject = "Build spec — " + (c.org || c.name);
+    var body = "Here's the build spec I configured on sysf.io:\n\n" + buildBrief();
+    window.location.href = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  }
+
+  function copyBrief() {
+    var text = "sysf.io build spec\n\n" + buildBrief();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { msg("Copied to clipboard."); }, function () { msg("Couldn't copy — select and copy manually."); });
+    } else { msg("Clipboard unavailable — use Print instead."); }
+  }
+
+  // ---- Go ------------------------------------------------------------------
+  renderStep();
+})();
+</script>

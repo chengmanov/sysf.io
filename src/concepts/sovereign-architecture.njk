@@ -4,7 +4,7 @@ title: The Sovereign Runtime — From One Workstation to a Full Air Gap
 description: The deployment shapes behind "runs where your data lives" — workstation-class single-GPU servers, multi-GPU nodes, confidential compute with attestation, the small-model-first escalation router, and how air-gapped systems stay updated.
 faq:
   - q: What does the hardware actually cost?
-    a: The workstation shape — a single-GPU server that runs a task-tuned 4–8B — is typically a CHF 5,000–15,000 machine that lives in your existing rack or a locked office cabinet. The node shape for 70B-class models is a mid-five-figure investment or a rental in your Swiss cloud tenancy. Exact sizing (and committed throughput numbers) is part of every proposal — and a Pilot can run on hardware we bring, so you spend nothing on infrastructure before value is proven.
+    a: The workstation shape — a single-GPU server that runs a task-tuned 4–8B — is typically a CHF 5,000–15,000 machine that lives in your existing rack or a locked office cabinet. The node shape for 70B-class models is a mid-five-figure investment or a rental in your Swiss cloud tenancy. Exact sizing (and committed throughput numbers) is part of every proposal — and Pilot hardware can be ours, so infrastructure spend starts only after the evaluation clears.
   - q: What is confidential compute, concretely?
     a: Hardware-encrypted virtual machines — AMD SEV-SNP or Intel TDX — where memory is encrypted with keys the cloud operator never holds, and remote attestation lets you cryptographically verify the launch state (firmware, image, configuration) before any data enters. Practical meaning — you can rent Swiss infrastructure while shifting the provider out of the data-confidentiality trust boundary. One caveat we raise before your security team does — a CPU enclave alone doesn't cover the GPU where inference actually runs; extending the boundary to the accelerator takes confidential-computing-capable GPUs (NVIDIA H100 class, with encrypted transfers and GPU attestation), and we size for exactly that when the threat model requires it.
   - q: How do air-gapped systems get updates?
@@ -31,7 +31,7 @@ faq:
     {% set shapes = [
       {t:"Workstation class", w:"Task-tuned 4–8B, quantized", d:"One GPU server in your rack — or a locked cabinet in your office. Runs a fine-tuned small model with retrieval at interactive speed for a team or a document pipeline. This is the shape that makes sovereign AI a line item instead of a project."},
       {t:"Node class", w:"70B-class, or several models", d:"A multi-GPU server in your datacentre or your Swiss cloud tenancy. Runs larger models, multiple concurrent workloads, and the escalation tier of the router below. The shape for organisation-wide rollouts."},
-      {t:"Air-gapped / confidential", w:"Any size, maximum isolation", d:"Either physically disconnected infrastructure with offline update runbooks, or confidential-compute VMs (AMD SEV-SNP / Intel TDX, paired with confidential-computing GPUs, with remote attestation) that shift the infrastructure operator out of the data-confidentiality trust boundary."}
+      {t:"Air-gapped / confidential", w:"Any size, maximum isolation", d:"Either physically disconnected infrastructure with offline update runbooks, or confidential-compute VMs with remote attestation — memory encrypted with keys the operator never holds. Chip-level detail in the FAQ below."}
     ] %}
     {% for s in shapes %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -82,7 +82,7 @@ faq:
     </div>
     <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
       <p>The runtime is containerised and self-contained: model weights, retrieval index, orchestration and monitoring all run inside your network segment. No component calls out — no telemetry, no license pings, no "anonymous usage statistics". Your firewall rules can say <em>deny all egress</em>, and the system keeps working. That's the test, and you can run it yourself.</p>
-      <p>Monitoring stays inside too: dashboards, logs and evaluation scores are served locally, and log retention follows your policy — because inference logs contain your data, and shipping them to a vendor's observability cloud would quietly undo the whole point.</p>
+      <p>Monitoring stays inside too: dashboards, logs and evaluation scores are served locally, and log retention follows your policy — inference logs contain your data. The self-hosted tracing stack behind this is on <a class="link-underline" href="/concepts/orchestration/">the orchestration page</a>.</p>
       <p>On the workstation and air-gapped shapes, this is also a demo we like giving: pull the network cable, keep working.</p>
     </div>
   </div>

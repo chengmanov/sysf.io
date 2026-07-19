@@ -30,7 +30,7 @@ ogType: website
             {% endfor %}
           </ul>
         </div>
-        <p class="text-sm text-ink-500">Based in Switzerland. Serving Swiss and EU organizations.</p>
+        <p class="text-sm text-ink-500">Based in Switzerland. Serving Swiss and EU organisations.</p>
       </div>
     </div>
 
@@ -45,20 +45,13 @@ ogType: website
           enquiryForm <script> block at the bottom of this file.
         -->
         <form id="enquiryForm" action="#" class="space-y-5">
-          <div class="grid gap-5 sm:grid-cols-2">
-            <label class="block">
-              <span class="text-sm font-medium text-ink-900 dark:text-white">Name</span>
-              <input type="text" name="name" required autocomplete="name"
-                     class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
-            </label>
-            <label class="block">
-              <span class="text-sm font-medium text-ink-900 dark:text-white">Work email</span>
-              <input type="email" name="email" required autocomplete="email"
-                     class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
-            </label>
-          </div>
           <label class="block">
-            <span class="text-sm font-medium text-ink-900 dark:text-white">Organization</span>
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Name</span>
+            <input type="text" name="name" required autocomplete="name"
+                   class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Organisation</span>
             <input type="text" name="organization" autocomplete="organization"
                    class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
           </label>
@@ -93,7 +86,7 @@ ogType: website
       e.preventDefault();
       var v = function (n) { var el = form.elements[n]; return el && el.value ? el.value.trim() : ""; };
       var subject = "Sovereign AI enquiry — " + (v("organization") || v("name"));
-      var body = "Name: " + v("name") + "\nWork email: " + v("email") + "\nOrganization: " + v("organization") + "\nSector: " + v("sector") + "\n\nWhat we'd like to build:\n" + v("message");
+      var body = "Name: " + v("name") + "\nOrganisation: " + v("organization") + "\nSector: " + v("sector") + "\n\nWhat we'd like to build:\n" + v("message");
       window.location.href = "mailto:{{ site.email }}?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     });
   })();

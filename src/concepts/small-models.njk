@@ -6,7 +6,7 @@ faq:
   - q: Is an 8B model really good enough for German legal or clinical text?
     a: For a scoped task, usually yes — but we never ask you to take that on faith. Every engagement starts by building an evaluation set from your own documents and measuring base model, RAG, fine-tune and the combination against it. If the small model doesn't clear the bar we agree up front, you see that in the report before you spend on production. The Canton of Ticino's fine-tuned Apertus-8B runs cantonal translation in production at 94% accuracy — the pattern is real, but the evaluation decides for your task.
   - q: What about reasoning-heavy work?
-    a: Deep multi-hop reasoning over open-ended questions is where model size still pays. Our answer is architectural, not ideological — a small model handles the routine volume, and requests it can't handle confidently escalate to a larger open-weight model running on the same infrastructure. Nothing escalates to a cloud API. The sovereign-runtime concepts page describes how that router works.
+    a: Deep multi-hop reasoning over open-ended questions is where model size still pays. Our answer is architectural, not ideological — a small model handles the routine volume, and requests it can't handle confidently escalate to a larger open-weight model running on the same infrastructure. Nothing escalates to a cloud API. The <a class="link-underline" href="/concepts/sovereign-architecture/">sovereign runtime page</a> describes how that router works.
   - q: Doesn't fine-tuning become obsolete every time a better base model ships?
     a: The expensive assets survive model swaps. Your evaluation set, your curated training data and your retrieval corpus all carry over unchanged; re-running a LoRA fine-tune on a newer base model is days of work, not a rebuild. That's also why we stay model-agnostic — Apertus, Llama or Mistral, whichever wins on your eval set at the time.
 ---
@@ -42,7 +42,7 @@ faq:
       {label:"Base Apertus-8B", v:90, cls:"bg-teal-300"},
       {label:"Fine-tuned on cantonal data", v:94, cls:"bg-red-600", tag:"+4 pts"}
     ] %}
-    {{ deltaBars(ticino, "Canton of Ticino translation service — accuracy on cantonal text, running entirely on cantonal infrastructure. Four points at the top of the scale is the difference between spot-checking output and re-doing it. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Source: CSCS</a>.") }}
+    {{ deltaBars(ticino, "Canton of Ticino — translation accuracy on cantonal text, before and after fine-tuning Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Source: CSCS</a>.") }}
   </div>
 </section>
 
@@ -54,7 +54,7 @@ faq:
       {% set roles = [
         {t:"Fine-tuning", d:"Teaches the task: your terminology, document formats, tone, output structure, refusal behaviour. It does not reliably memorise facts — using it as a knowledge store is a design error we refuse to ship."},
         {t:"Retrieval (RAG)", d:"Supplies the facts: the current version of your policies, contracts and records, cited back to the source page. Knowledge updates the moment the document does — no retraining."},
-        {t:"The ablation", d:"Every Pilot scores all four arms — base, retrieval, fine-tune, combined — on your evaluation set. The table says which system is worth buying before production money is spent."}
+        {t:"The ablation", d:"Every Pilot scores all four arms — base, retrieval, fine-tune, combined — on your evaluation set. The table says which system is worth buying."}
       ] %}
       {% for r in roles %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -63,6 +63,7 @@ faq:
       </div>
       {% endfor %}
     </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">Measured, the split is stark: in <a class="link-underline" href="/reports/finma-ablation/">our FINMA ablation</a>, fine-tuning alone took format compliance from ~2% to 100% yet left answer-plus-citation accuracy at 1.6% — behaviour learned, facts not. Retrieval alone: 22.4%. Combined: 45.4%.</p>
   </div>
 </section>
 
@@ -70,12 +71,12 @@ faq:
 <section class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
-      {{ sectionHead("The economics", "Ten to thirty times cheaper to run — and faster.", "Small models don't just fit your compliance envelope. They fit your budget and your latency budget.") }}
+      {{ sectionHead("The economics", "An order of magnitude cheaper to run — and faster.", "Small models don't just fit your compliance envelope. They fit your budget — in francs and in milliseconds.") }}
     </div>
     <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
       <p><strong class="font-semibold text-ink-900 dark:text-white">Serving cost:</strong> running a 7–8B model costs roughly an order of magnitude less than a 70B-class model — the difference between one workstation-class GPU and a multi-GPU node, between a purchase order and a procurement round.</p>
       <p><strong class="font-semibold text-ink-900 dark:text-white">Latency:</strong> every cloud API call pays a round-trip tax — network hops, TLS, queueing behind other tenants — before your tokens even reach a GPU; first tokens routinely arrive only after several hundred milliseconds. A small model in your own rack skips that tax entirely, and its faster prefill and decode compound on top — which is what makes high-volume document pipelines and interactive assistants feel instant.</p>
-      <p><strong class="font-semibold text-ink-900 dark:text-white">The sovereignty multiplier:</strong> every parameter you don't need is compliance you don't have to buy. A task-tuned small model turns "on-prem AI" from a datacentre project into a single machine — which is what makes fully air-gapped and edge deployments (shop floor, clinic, field service) feasible at all. This is the ground where hosted platforms and US APIs structurally cannot follow.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">The sovereignty multiplier:</strong> every parameter you don't need is compliance you don't have to buy. A task-tuned small model runs on one machine — the workstation shape in <a class="link-underline" href="/concepts/sovereign-architecture/">the sovereign runtime</a> — which opens the air-gapped and edge deployments (shop floor, clinic, field service) where hosted platforms and US APIs structurally cannot follow.</p>
     </div>
   </div>
 </section>

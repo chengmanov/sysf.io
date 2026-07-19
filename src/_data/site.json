@@ -21,10 +21,10 @@
   },
   "nav": [
     { "label": "Platform", "url": "/platform/" },
-    { "label": "Concepts", "url": "/concepts/" },
     { "label": "Industries", "url": "/industries/" },
     { "label": "Pricing", "url": "/pricing/" },
     { "label": "Configure", "url": "/configure/" },
+    { "label": "Concepts", "url": "/concepts/" },
     { "label": "News", "url": "/news/" },
     { "label": "About", "url": "/about/" },
     { "label": "Contact", "url": "/contact/" }

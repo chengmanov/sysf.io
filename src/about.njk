@@ -2,7 +2,7 @@
 layout: layouts/base.njk
 order: 4
 title: About
-description: sysf.io is an independent Swiss sovereign-AI engineering studio. We build custom fine-tuned models on Apertus and ship them end-to-end — so regulated organizations can adopt AI without giving up control of their data.
+description: sysf.io is an independent Swiss sovereign-AI engineering studio. We build custom fine-tuned models on Apertus and ship them end-to-end — so regulated organisations can adopt AI without giving up control of their data.
 ---
 {% from "partials/components.njk" import sectionHead, cta %}
 
@@ -13,7 +13,7 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
       Sovereign AI shouldn't mean second-best AI.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      sysf.io exists to give regulated organizations a way to adopt AI on their own terms — private, compliant, and genuinely their own — without settling for a locked-down black box in someone else's datacentre.
+      sysf.io exists to make that true in practice: an open Swiss model, fine-tuned on your documents and measured on your task before it ships — not a locked-down black box in someone else's datacentre.
     </p>
   </div>
 </section>
@@ -24,9 +24,8 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
     <div class="md:col-span-5">{{ sectionHead("Why we exist", "The sovereignty gap.") }}</div>
     <div class="md:col-span-6 md:col-start-7 space-y-5 text-lg prose-muted">
       <p>The most capable AI has, until recently, lived behind closed US APIs. For a Swiss bank, a hospital or a cantonal authority, that's a dead end: the data can't leave, so the pilot dies.</p>
-      <p>Switzerland answered with <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — a fully open, sovereign, multilingual model from EPFL, ETH Zurich and CSCS, with open weights and documented training data. It closes the capability gap while keeping everything inspectable and ownable.</p>
-      <p>Does a fine-tuned open model actually hold up? The public evidence says yes: the <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Canton of Ticino's translation service</a> reached <strong class="font-semibold text-ink-900 dark:text-white">94% accuracy after fine-tuning Apertus-8B</strong> on cantonal data — a model that knows your documents beats a bigger one that has never seen them.</p>
-      <p>sysf.io is an independent Swiss engineering studio that turns that open foundation into working systems. We do the hard part — fine-tuning, retrieval, evaluation, compliance documentation and operations — so you get a system you own, measured on your task, running where your data already lives.</p>
+      <p>Switzerland answered with <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — a fully open, sovereign, multilingual model from EPFL, ETH Zurich and CSCS, with open weights and documented training data. It closes the capability gap while keeping everything inspectable and ownable — the measured proof (<a class="link-underline" href="/concepts/small-models/">Ticino's 90→94% translation service</a>, our <a class="link-underline" href="/reports/finma-ablation/">FINMA ablation</a>) lives under News.</p>
+      <p>sysf.io is an independent Swiss engineering studio that turns that open foundation into working systems. We do the hard part — fine-tuning, retrieval, evaluation, compliance documentation and operations — so you get a system you own, measured on your task — with the evaluation report to show your risk committee.</p>
     </div>
   </div>
 </section>
@@ -37,7 +36,7 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
     <div class="grid gap-12 md:grid-cols-12">
       <div class="md:col-span-5">{{ sectionHead("The name", "systems, fine-tuned.") }}</div>
       <div class="md:col-span-6 md:col-start-7">
-        <p class="text-lg prose-muted">The name says what we do. <span class="font-mono text-ink-700 dark:text-ink-300">sys</span> is the engineer's word for the systems you run — the data, documents and workflows that can't leave your walls. <span class="font-mono text-ink-700 dark:text-ink-300">f</span> is fine-tuning: an open Swiss model adapted to them and measured on your task. No cloud, no black box — just your systems, fine-tuned.</p>
+        <p class="text-lg prose-muted">The name says what we do. No cloud, no black box — just your systems, fine-tuned.</p>
         <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
           <div class="flex items-baseline gap-3">
             <span class="font-display text-3xl font-extrabold tracking-tightest text-ink-900 dark:text-white">sys<span class="text-red-600">f</span></span>
@@ -65,10 +64,10 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
     {{ sectionHead("Principles", "How we work.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {% set vals = [
-        {t:"Sovereignty first", d:"Your data and your model stay in your jurisdiction and your control. Always."},
-        {t:"Open over closed", d:"We build on open weights so you get transparency, auditability and no lock-in."},
-        {t:"Products, not demos", d:"We measure success by what runs in production, not by what impresses in a meeting."},
-        {t:"Compliance by design", d:"Regulatory fit is engineered in from step one — not retrofitted before launch."}
+        {t:"Sovereignty first", d:"Training and inference run in your tenancy or your datacentre; Production and Air-gapped engagements have zero data egress."},
+        {t:"Open over closed", d:"Open weights only — Apertus, Llama or Mistral, whichever wins your eval — so auditors can inspect what they sign off."},
+        {t:"Products, not demos", d:"Go-live is gated on an evaluation score agreed at scoping, not on a stakeholder demo."},
+        {t:"Compliance by design", d:"FADP/GDPR mapping and EU AI Act documentation are named deliverables in the statement of work."}
       ] %}
       {% for v in vals %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -80,40 +79,9 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
   </div>
 </section>
 
-<!-- Differentiation -->
+<!-- Differentiation pointer -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("What makes us different", "Three ways to get sovereign AI — and what you actually receive.") }}
-  <div class="mt-12 overflow-x-auto">
-    <table class="w-full min-w-[720px] border-collapse text-sm">
-      <thead>
-        <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
-          <th class="py-4 pr-4 font-semibold text-ink-900 dark:text-white"></th>
-          <th class="py-4 pr-4 font-semibold text-swiss">sysf.io (studio)</th>
-          <th class="py-4 pr-4 font-semibold text-ink-500">Sovereign platform (hosted endpoint)</th>
-          <th class="py-4 pr-4 font-semibold text-ink-500">US cloud API (Swiss region)</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
-        {% set rows = [
-          {k:"Where data lives", a:"Your infrastructure — on-prem, your tenancy, or air-gapped", b:"The provider's Swiss datacentre", c:"Provider's region, under US legal reach"},
-          {k:"Model weights", a:"Open, fine-tuned on your corpus, auditable", b:"Shared base model, open or closed", c:"Closed, opaque"},
-          {k:"Who builds your product", a:"We do — scoped use case, eval plan, delivery", b:"Your team, on their endpoint", c:"Your team, on their API"},
-          {k:"Accuracy on your task", a:"Measured against your eval set before go-live", b:"Unknown until you build and test", c:"Unknown until you build and test"},
-          {k:"Ownership & exit", a:"You own the model; handover is a deliverable", b:"Subscription — access ends with the contract", c:"Rented access"},
-          {k:"Compliance documentation", a:"Delivered with the system", b:"Platform-level; use-case compliance is yours", c:"Shared responsibility — mostly yours"}
-        ] %}
-        {% for r in rows %}
-        <tr>
-          <td class="py-4 pr-4 font-medium text-ink-900 dark:text-white">{{ r.k }}</td>
-          <td class="py-4 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
-          <td class="py-4 pr-4 text-ink-500">{{ r.b }}</td>
-          <td class="py-4 pr-4 text-ink-500">{{ r.c }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <p class="mt-6 max-w-3xl text-sm text-ink-500">To be fair to the alternatives: a managed platform is the right answer if you have an AI engineering team and want infrastructure only, and a US cloud API is the right answer if your data can leave. We're the answer when the data can't leave and you want the system built, measured and handed over.</p>
+  <p class="max-w-2xl text-lg prose-muted">How this compares to hosted platforms and US cloud APIs — see <a class="link-underline" href="/platform/">the comparison on the platform page</a>.</p>
 </section>
 
-{{ cta("Work with us.", "If sovereignty, compliance and ownership matter to your AI roadmap, we should talk.") }}
+{{ cta("Work with us.", "Bring one workflow and the data constraint that blocks it. You'll get a 30-minute call with the engineer who'd build it — and a clear no by minute 20 if we're the wrong fit.") }}

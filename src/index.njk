@@ -6,17 +6,17 @@ title: Swiss Sovereign AI — Fine-Tuned Apertus, Run in Your Jurisdiction
 description: sysf.io fine-tunes Apertus — Switzerland's open LLM from EPFL, ETH Zurich and CSCS — on your documents and runs it inside your infrastructure. Open weights your auditors can inspect, no US API in the loop, and you own the model.
 faq:
   - q: What is sysf.io?
-    a: sysf.io is a Swiss sovereign-AI engineering studio. We fine-tune Switzerland's open Apertus model on your data and ship it as a production system — retrieval, agents and guardrails wired to your systems, deployed in Swiss or EU jurisdiction, or fully on-premise. The result is a compliant, private, customized AI system you own — not a demo.
+    a: sysf.io is a Swiss sovereign-AI engineering studio. We fine-tune Switzerland's open Apertus model on your data and ship it as a production system — retrieval, agents and guardrails wired to your systems, deployed in Swiss or EU jurisdiction, or fully on-premise. You own the weights and the runbooks.
   - q: Which model do you use — is it always Apertus?
-    a: Apertus is our foundation of choice — Switzerland's fully open, multilingual LLM from EPFL, ETH Zurich and CSCS, with open weights and documented training data, which is exactly what auditors and regulators want to see. But we're not dogmatic — we test open-weight models against an evaluation set built from your documents and deploy whichever wins. Apertus, Llama or Mistral — the evaluation decides, not the logo. All of them run fully inside your jurisdiction with weights you can inspect and own.
+    a: Apertus is our foundation of choice — Switzerland's fully open, multilingual LLM from EPFL, ETH Zurich and CSCS — weights and training data your auditors can inspect directly. But we're not dogmatic — we test open-weight models against an evaluation set built from your documents and deploy whichever wins. Apertus, Llama or Mistral — the evaluation decides, not the logo. All of them run fully inside your jurisdiction with weights you can inspect and own.
   - q: Does our data ever leave our environment?
-    a: For Production and Air-gapped engagements — no. Training and inference run inside your tenancy or your datacentre, with no third-party LLM APIs and no data egress. Pilots run either in your environment or in a dedicated single-tenant Swiss cloud environment under a data-processing agreement, with all data and derived weights deleted or handed over to you at project end — your choice at scoping.
+    a: For Production and Air-gapped engagements — no. Training and inference run inside your tenancy or your datacentre, with no third-party LLM APIs and no data egress. Pilots run in your environment or a dedicated single-tenant Swiss cloud — the data-handling options are on the <a class="link-underline" href="/pricing/">pricing page</a>.
   - q: How is this "compliant by design"?
-    a: Compliance is built into the architecture rather than bolted on. Open weights give you transparency and auditability; in-jurisdiction deployment addresses the Swiss Federal Act on Data Protection (FADP/nFADP) and EU GDPR; and documented data lineage plus guardrails support your EU AI Act obligations. We deliver the compliance and audit documentation alongside the model.
+    a: Open weights give you transparency and auditability; in-jurisdiction deployment addresses the Swiss Federal Act on Data Protection (FADP/nFADP) and EU GDPR; and documented data lineage plus guardrails support your EU AI Act obligations. We deliver the compliance and audit documentation alongside the model.
   - q: What does "end-to-end" mean here?
     a: We take a use case from data preparation and fine-tuning through evaluation, guardrails, deployment, monitoring and ongoing iteration. You get a maintained production system with agent orchestration, retrieval (RAG) and tools wired to your systems — plus a support and maintenance agreement — not a proof-of-concept that stalls.
   - q: How do we start?
-    a: Engagements start with a fixed-scope Pilot on a single high-value use case — prove the numbers on your own data, then decide about production with an evaluation report in hand. Where needed, we take the system fully on-prem. Book a call and we'll scope it with you.
+    a: Engagements start with a fixed-scope Pilot on a single high-value use case — prove the numbers on your own data, then decide about production with an evaluation report in hand. Book a call and we'll scope it with you.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 {% from "partials/charts.njk" import statBand, hbarChart %}
@@ -36,10 +36,9 @@ faq:
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/contact/" class="btn-primary">Book a call</a>
         <a href="/configure/" class="btn-secondary">Configure your build</a>
-        <a href="/platform/" class="btn-ghost">How it works</a>
       </div>
       <p class="mt-6 text-sm text-ink-500">
-        Built on <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> by EPFL, ETH Zurich &amp; CSCS — open weights, trained on the Alps supercomputer in Lugano, already running in production in the Swiss public sector.
+        Built on <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — open weights, trained on the Alps supercomputer in Lugano, already in production in the Canton of Ticino at 94% accuracy.
       </p>
     </div>
     <div class="md:col-span-5">
@@ -64,9 +63,9 @@ faq:
 <section class="container-x py-14 md:py-20">
   {% set stats = [
     {v:"94%", label:"Production accuracy", sub:"Canton of Ticino's fine-tuned Apertus-8B, in service on cantonal infrastructure"},
-    {v:"2×", label:"Fine-tuning + retrieval", sub:"Doubles the production bar vs. retrieval alone on our public FINMA benchmark"},
-    {v:"100%", label:"Format compliance", sub:"Machine-parseable output every time, once the model is tuned to the task"},
-    {v:"0", label:"Bytes of data egress", sub:"Training and inference run inside your jurisdiction — on-prem, Swiss cloud or air-gapped"}
+    {v:"2×", label:"Fine-tuning + retrieval", sub:"Correct answer + exact citation goes 22.4% → 45.4% when fine-tuning is added to retrieval — public FINMA benchmark, 183 verified questions"},
+    {v:"100%", label:"Format compliance", sub:"From ~2% to 100% machine-parseable output after fine-tuning — measured on the same FINMA benchmark"},
+    {v:"0", label:"Bytes of data egress", sub:"No third-party LLM API in training or inference — zero egress is architectural, not contractual"}
   ] %}
   {{ statBand(stats) }}
 </section>
@@ -75,7 +74,7 @@ faq:
 <section class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
-      {{ sectionHead("The problem", "Frontier APIs weren't built for regulated teams.", "For banks, hospitals, insurers and public bodies, external AI isn't forbidden — it's slow and residual-risk-heavy: months of legal review, DPAs, sub-processor chains, and at the end a model you still don't control. Most projects get stuck at the pilot stage — impressive demos that never clear the review.") }}
+      {{ sectionHead("The problem", "Frontier APIs weren't built for regulated teams.", "For banks, hospitals, insurers and public bodies, external AI isn't forbidden — it's slow and residual-risk-heavy: months of legal review, DPAs, sub-processor chains, and at the end a model you still don't control.") }}
     </div>
     <div class="md:col-span-6 md:col-start-7">
       <div class="grid gap-5 sm:grid-cols-2">
@@ -93,7 +92,7 @@ faq:
         {% endfor %}
       </div>
       <p class="mt-6 text-base prose-muted">sysf.io removes the blocker: a model you <strong class="font-semibold text-ink-900 dark:text-white">own</strong>, running where your data already lives.</p>
-      <p class="mt-4 text-base prose-muted">And this isn't theoretical — the <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Canton of Ticino runs a fine-tuned Apertus-8B translation service</a> in production on its own infrastructure, reaching <strong class="font-semibold text-ink-900 dark:text-white">94% accuracy after fine-tuning</strong> on cantonal data. The same playbook applies to your workflows.</p>
+      <p class="mt-4 text-base prose-muted">The <strong class="font-semibold text-ink-900 dark:text-white">94% above</strong> is the <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Canton of Ticino's fine-tuned Apertus-8B translation service</a>, in production on cantonal infrastructure — <a class="link-underline" href="/concepts/small-models/">read the full case study</a>.</p>
     </div>
   </div>
 </section>
@@ -125,17 +124,17 @@ faq:
   </div>
 </section>
 
-<!-- Five pillars -->
+<!-- Six pillars -->
 <section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
     {{ sectionHead("Why sysf.io", "Six reasons this architecture clears compliance review.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {% set pillars = [
         {n:"01", t:"Swiss by foundation", d:"Built on Apertus, Switzerland's sovereign open LLM — open weights and documented training data, not a black box."},
-        {n:"02", t:"Compliant by design", d:"Built for Swiss FADP/nFADP and EU GDPR, with the documentation your EU AI Act obligations demand. Transparency and auditability come from the architecture."},
-        {n:"03", t:"Sovereign & private", d:"Your data never leaves your jurisdiction. On-prem, Swiss cloud or confidential compute — no US API dependency."},
-        {n:"04", t:"Customized on your data", d:"Domain fine-tuning plus RAG and agentic tools on your own corpus, systems and terminology."},
-        {n:"05", t:"End-to-end delivery", d:"Data → fine-tune → evaluate → deploy → monitor → maintain. A maintained production system, not a proof-of-concept."},
+        {n:"02", t:"Compliant by design", d:"Built for Swiss FADP/nFADP and EU GDPR, with the documentation your EU AI Act obligations demand. The audit file — data lineage, evaluation report, guardrail test results — ships with the model."},
+        {n:"03", t:"Sovereign & private", d:"Runs where your data lives — your datacentre, Swiss cloud tenancy or a single workstation-class GPU (a fine-tuned 8B needs ~4.5 GB at 4-bit). No US API anywhere."},
+        {n:"04", t:"Customised on your data", d:"Domain fine-tuning plus RAG and agentic tools on your own corpus, systems and terminology."},
+        {n:"05", t:"End-to-end delivery", d:"Data → fine-tune → evaluate → deploy → monitor → maintain. Delivered under a support and maintenance agreement."},
         {n:"06", t:"Multilingual, incl. Swiss", d:"Native German, French, Italian and Romansh — including Swiss German — from a model built for Switzerland, not translated to it."}
       ] %}
       {% for p in pillars %}
@@ -176,13 +175,13 @@ faq:
 <!-- How it works teaser -->
 <section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
   <div class="container-x">
-  {{ sectionHead("The platform", "From your data to a product in production.", "A repeatable, end-to-end pipeline — every step runs inside your jurisdiction.") }}
+  {{ sectionHead("The platform", "From your data to a product in production.") }}
   <ol class="mt-12 grid gap-6 md:grid-cols-4">
     {% set steps = [
       {n:"1", t:"Scope & comply", d:"Use-case discovery and compliance scoping (FADP, GDPR, EU AI Act)."},
       {n:"2", t:"Fine-tune on Apertus", d:"Private, in-jurisdiction data prep and domain fine-tuning."},
       {n:"3", t:"Orchestrate", d:"Agents, RAG and tools wired to your systems, with guardrails."},
-      {n:"4", t:"Deploy & operate", d:"Sovereign deployment, monitoring, evaluation and iteration with support agreements."}
+      {n:"4", t:"Deploy & operate", d:"Deployment in your tenancy or datacentre, monitoring, evaluation and iteration under a support agreement."}
     ] %}
     {% for s in steps %}
     <li class="relative border-t-2 border-swiss pt-5">
@@ -206,7 +205,7 @@ faq:
         {t:"Banking & Finance", d:"Advisory copilots, KYC/AML document processing, regulatory Q&A — on-prem, zero data egress.", ic:'<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'},
         {t:"Healthcare & Pharma", d:"Clinical documentation and research assistants — patient data stays in Switzerland.", ic:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>'},
         {t:"Legal & Compliance", d:"Multilingual contract analysis and legal research (DE/FR/IT), privilege-safe.", ic:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'},
-        {t:"Government & Public", d:"Sovereign, multilingual citizen services on national infrastructure.", ic:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'},
+        {t:"Government & Public", d:"Citizen services and document translation in DE/FR/IT on the administration's own infrastructure.", ic:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'},
         {t:"Insurance", d:"Claims automation and policy Q&A copilots grounded in your documents.", ic:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/>'},
         {t:"Manufacturing", d:"On-prem knowledge and maintenance assistants for the shop floor.", ic:'<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>'}
       ] %}
@@ -228,18 +227,17 @@ faq:
 
 <!-- Engagement teaser -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("Engagement", "Start small. Prove value. Scale to air-gapped.", "Every tier is sovereign — your data stays in your jurisdiction; tiers differ in deployment depth. Pricing is scoped per engagement — <a class='link-underline' href='/pricing/'>see the model</a>.") }}
+  {{ sectionHead("Engagement", "Start small. Prove the numbers. Scale to air-gapped.", "Every tier is sovereign — your data stays in your jurisdiction; tiers differ in deployment depth. Pricing is scoped per engagement — <a class='link-underline' href='/pricing/'>see the model</a>.") }}
   <div class="mt-12 grid gap-5 md:grid-cols-3">
     {% set tiers = [
-      {t:"Pilot", for:"Prove value on one use case", d:"Fine-tuning and retrieval on your data, an evaluation report against agreed metrics, and a production roadmap."},
-      {t:"Production", for:"The pilot, hardened for daily use", d:"Agents, RAG and guardrails wired into your systems, with deployment, monitoring and support."},
-      {t:"Air-gapped", for:"Regulated / most sensitive", d:"Fully on-prem or confidential compute, dedicated operations, and complete compliance documentation."}
+      {t:"Pilot", for:"Prove the numbers on one use case"},
+      {t:"Production", for:"The pilot, hardened for daily use"},
+      {t:"Air-gapped", for:"Regulated / most sensitive"}
     ] %}
     {% for t in tiers %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
-      <p class="mt-4 text-sm prose-muted">{{ t.d }}</p>
     </div>
     {% endfor %}
   </div>
@@ -254,4 +252,4 @@ faq:
   </div>
 </section>
 
-{{ cta("Ready to own your AI?", "Book a scoping call and we'll map your first sovereign use case — on your data, in your jurisdiction.") }}
+{{ cta("Ready to own your AI?", "Book a scoping call. We'll pick one use case, agree the evaluation metrics, and scope a fixed-scope pilot that proves the numbers on your own documents.") }}

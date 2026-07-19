@@ -4,9 +4,9 @@
 
 ## Positioning
 
-AI for the data you can't send away. For regulated Swiss and EU organizations, external AI isn't
+AI for the data you can't send away. For regulated Swiss and EU organisations, external AI isn't
 forbidden — it's slow and residual-risk-heavy: months of legal review, DPAs, sub-processor chains,
-and at the end a model the organization still doesn't control. Most projects die at the pilot
+and at the end a model the organisation still doesn't control. Most projects die at the pilot
 stage. Switzerland answered with Apertus, a fully open, sovereign, multilingual model (open
 weights, documented training data) from EPFL, ETH Zurich and the Swiss National Supercomputing
 Centre (CSCS), trained on the Alps supercomputer in Lugano. sysf.io turns that open foundation
@@ -20,7 +20,7 @@ translation service on its own cantonal infrastructure, reaching 94% accuracy af
 1. Swiss by foundation — built on Apertus, Switzerland's sovereign open LLM (open weights, documented training data).
 2. Compliant by design — built for Swiss FADP/nFADP and EU GDPR, with documentation supporting EU AI Act obligations; transparency and auditability from the architecture.
 3. Sovereign & private — data never leaves the client's jurisdiction; on-prem, Swiss cloud or confidential compute; no US API dependency; zero data egress.
-4. Customized on your data — domain fine-tuning plus RAG and agentic tools on the client's corpus, systems and terminology.
+4. Customised on your data — domain fine-tuning plus RAG and agentic tools on the client's corpus, systems and terminology.
 5. End-to-end delivery — data → fine-tune → evaluate → deploy → monitor → maintain. A maintained production system, not a proof-of-concept.
 6. Multilingual, incl. Swiss — native German, French, Italian and Romansh, including Swiss German.
 
@@ -88,7 +88,7 @@ inside the client's environment. A documented handover is a deliverable in every
 ## Three ways to get sovereign AI — honest comparison
 
 - sysf.io (studio): data on the client's infrastructure; open weights fine-tuned on the client's corpus; sysf.io builds the product against an agreed eval plan; accuracy measured before go-live; client owns the model, handover is a deliverable; compliance documentation delivered with the system.
-- Sovereign platform (hosted endpoint): data in the provider's Swiss datacentre; shared base model; the client's team builds on the endpoint; subscription access ends with the contract; platform-level compliance only. Right answer for organizations with their own AI engineering team that want infrastructure only.
+- Sovereign platform (hosted endpoint): data in the provider's Swiss datacentre; shared base model; the client's team builds on the endpoint; subscription access ends with the contract; platform-level compliance only. Right answer for organisations with their own AI engineering team that want infrastructure only.
 - US cloud API (Swiss region): closed weights under US legal reach; the client's team builds on the API; rented access; shared-responsibility compliance. Right answer when the data can leave.
 
 sysf.io is the answer when the data can't leave and the client wants the system built, measured
@@ -98,5 +98,5 @@ and handed over.
 
 - Email: hello@sysf.io
 - Website: https://sysf.io
-- Based in Switzerland; serving Swiss and EU organizations.
+- Based in Switzerland; serving Swiss and EU organisations.
 - Reference — Apertus base model: https://ethz.ch/en/news-and-events/eth-news/news/2025/09/press-release-apertus-a-fully-open-transparent-multilingual-language-model.html

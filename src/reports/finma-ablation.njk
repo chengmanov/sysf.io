@@ -11,7 +11,7 @@ faq:
   - q: Is this on your customers' data?
     a: "No — deliberately. It runs entirely on public FINMA circulars so anyone can reproduce it, and so we can publish it. In a Pilot the identical method runs on your documents, inside your environment, and the report stays yours."
   - q: Why is 45% the headline and not something higher?
-    a: "Because it's honest. This is a hard task — short-form answer AND exact citation, a single 4–8B model at 4-bit, one modest LoRA run, deliberately plain retrieval. It's a floor, not a ceiling — retrieval quality, a larger escalation-tier model, and more training data each move it. The value of the report is the method and the deltas between arms, not a leaderboard number."
+    a: "Because it's honest. Short-form answer plus exact citation is a hard bar, and the setup is deliberately modest — one 8B model at 4-bit, one LoRA run, plain retrieval. The value of the report is the method and the deltas between arms, not a leaderboard number."
   - q: How is this scored — is there an LLM judge?
     a: "No LLM judge anywhere. FINMA circulars number every normative paragraph (Randziffer, Rz), so a correct citation is exactly checkable. Answer accuracy is string/number matching against a verified gold answer; citation is an exact Rz match. Every number is recomputed from frozen run records."
 ---
@@ -25,7 +25,7 @@ faq:
       Does fine-tuning a small model actually help?
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Not an opinion — a measurement. We took Apertus-8B and ran the same four-way ablation we run at the start of every <a class="link-underline" href="/concepts/evaluation/">Pilot</a>, on a task where the answer can be scored exactly: answering questions about Swiss FINMA circulars <em>with</em> a citation to the exact margin number it rests on.
+      Not an opinion — a measurement. We took Apertus-8B and ran the same four-way ablation we run at the start of every <a class="link-underline" href="/concepts/evaluation/">Pilot</a>, on a task where the answer can be scored exactly: answering questions about Swiss FINMA circulars <em>with</em> a citation to the exact margin number it rests on. The result: fine-tuning plus retrieval doubles the production bar — 22.4% to 45.4%.
     </p>
   </div>
 </section>
@@ -60,7 +60,7 @@ faq:
       {% set legend = [
         {name:"Answer correct", cls:"bg-teal-300"},
         {name:"Answer + citation (production bar)", cls:"bg-teal-600"},
-        {name:"Clears the bar", cls:"bg-red-600"}
+        {name:"Full system (D)", cls:"bg-red-600"}
       ] %}
       {% set groups = [
         {label:"A · Base", bars:[{v:37.2, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
@@ -68,7 +68,7 @@ faq:
         {label:"C · Fine-tuned", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
         {label:"D · Fine-tuned + retrieval", note:"the full system", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
       ] %}
-      {{ hbarChart(groups, legend, "Read down the production-bar row: it is near-zero without retrieval (A, C), reaches 22.4% with retrieval alone (B), and only fine-tuning <strong class='text-ink-700 dark:text-ink-300'>and</strong> retrieval together clear 45.4% (D, in red). Full breakdown below.") }}
+      {{ hbarChart(groups, legend, "Read down the production-bar row: it is near-zero without retrieval (A, C), reaches 22.4% with retrieval alone (B), and only fine-tuning <strong class='text-ink-700 dark:text-ink-300'>and</strong> retrieval together reach 45.4% (D, in red). Full breakdown below.") }}
     </div>
 
     <div class="mt-10 overflow-x-auto">
@@ -101,18 +101,17 @@ faq:
         </tbody>
       </table>
     </div>
-    <p class="mt-4 text-xs text-ink-500">Production bar 22.4% → 45.4% (base+RAG → fine-tuned+RAG). Answer accuracy 63% → 81%. Format compliance ~nothing → perfect.</p>
   </div>
 </section>
 
 <!-- Decomposition -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("What each layer buys", "The ablation stops anyone — us included — from hand-waving.", "Read across the columns and each layer's contribution is unambiguous.") }}
+  {{ sectionHead("What each layer buys", "The ablation stops anyone — us included — from hand-waving.", "Each card below pins one mechanism to a number in the table above.") }}
   <div class="mt-10 grid gap-5 md:grid-cols-3">
     {% set parts = [
       {t:"Retrieval enables citation", d:"Citation-correct goes from ~1% to ~40–50% only when retrieval is on. A model cannot cite a margin number it has never seen — so both no-retrieval arms sit near zero on the production bar, however well-trained."},
       {t:"Fine-tuning enables usable output", d:"The base model often knows the answer (63% with RAG) but emits the required, machine-parseable format just 2% of the time — 0% once retrieval fills the context and distracts it. The fine-tune nails the format 100% of the time. That gap is most of B → D."},
-      {t:"The two compound", d:"Neither alone clears the bar. Together they reach 45%. That interaction — not either ingredient by itself — is the finding, and it's why we measure before we build."}
+      {t:"The two compound", d:"Retrieval alone adds 22.4 points; fine-tuning alone adds 1.6. Together they add 45.4 — nearly double the sum of the parts. That interaction is the finding, and it's why we measure before we build."}
     ] %}
     {% for p in parts %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">

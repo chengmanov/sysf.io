@@ -4,9 +4,7 @@ title: Quantization, Explained — How a Datacentre Model Fits in Your Office
 description: What quantization actually does — bytes per weight, the 4-bit sweet spot, the 1–2 bit frontier, KV-cache memory — and why it's the technology that makes sovereign, on-prem and air-gapped AI affordable.
 faq:
   - q: Does quantization make the model worse?
-    a: Slightly, and measurably — which is the point. Modern 4-bit quantization typically costs a percentage point or two on broad benchmarks, and on a narrow fine-tuned task the difference is often invisible. But "often" isn't a deliverable, so we re-run your evaluation set on the quantized build and ship the delta in the report. A quantized model without an eval report is a guess.
-  - q: What's below 4 bits?
-    a: The research frontier. Naive quantization below 4 bits degrades badly; formats designed for it — ternary (~1.6–2 bits per weight) and binary (~1 bit) representations, often with quantization-aware training — now produce genuinely useful models at a fraction of the size. That's what makes a 27B-class model fit on a phone, and it's the direction that keeps widening what "runs on hardware you own" can mean.
+    a: Slightly, and measurably — which is the point. 'Often invisible on a narrow task' isn't a deliverable, so we re-run your evaluation set on the quantized build and ship the delta next to the full-precision baseline. A quantized model without an eval report is a guess.
   - q: Why does long context need so much memory?
     a: The model keeps a key-value (KV) cache for every token in the conversation, and at long contexts the cache — not the weights — becomes the biggest memory consumer, growing linearly with context length into the gigabytes. The cache can be quantized too, cutting its footprint several-fold. It's a second budget we size explicitly during scoping, because "supports 100K context" on a spec sheet means nothing without the memory to hold it.
 ---
@@ -19,7 +17,7 @@ faq:
       How a datacentre model fits in your office.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Quantization is the unglamorous technology that decides whether sovereign AI costs a server or a datacentre. It's also the part of the stack where the engineering either holds or doesn't — so here's how it actually works, in enough detail for your engineers to check.
+      Quantization is the unglamorous technology that decides whether sovereign AI costs a server or a datacentre. Here's how it actually works, in enough detail for your engineers to check.
     </p>
   </div>
 </section>
@@ -47,7 +45,7 @@ faq:
               {p:"16-bit (training)", a:"~16 GB", b:"~140 GB", c:"Multi-GPU node"},
               {p:"8-bit", a:"~8 GB", b:"~70 GB", c:"Datacentre GPU(s)"},
               {p:"4-bit (the sweet spot)", a:"~4.5 GB", b:"~40 GB", c:"One workstation GPU / one 48 GB card (tight — or 2×24 GB)"},
-              {p:"1–2 bit (the frontier)", a:"~1.5–2.5 GB", b:"~12–20 GB", c:"Laptop or edge box (a phone, for sub-10B models)"}
+              {p:"1–2 bit (the frontier)", a:"~1.5–2.5 GB", b:"~12–20 GB", c:"Laptop or edge box (a phone, for 27B-class and below)"}
             ] %}
             {% for r in rows %}
             <tr>
@@ -105,7 +103,7 @@ faq:
     {{ sectionHead("Why it matters here", "Quantization is sovereignty's cost curve.", "Every bit shaved off a weight moves \"runs where your data lives\" one step down the hardware ladder.") }}
     <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
       <p>At 16-bit, running your own model is a capital request with a floor plan attached. At 4-bit, it's one server. At the 1–2 bit frontier, it starts meaning laptops, edge boxes and machines that have never seen a network cable — the environments where regulated data actually lives.</p>
-      <p>That's why we treat quantization as a first-class discipline rather than a checkbox: it's the lever that decides what your sovereignty costs. See what the resulting systems run on in <a class="link-underline" href="/concepts/sovereign-architecture/">the sovereign runtime</a>.</p>
+      <p>That's why we treat quantization as a first-class discipline, not a checkbox. See what the resulting systems run on in <a class="link-underline" href="/concepts/sovereign-architecture/">the sovereign runtime</a>.</p>
     </div>
   </div>
 </section>

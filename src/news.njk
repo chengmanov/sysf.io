@@ -2,7 +2,7 @@
 layout: layouts/base.njk
 order: 6
 title: News
-description: Reports, benchmarks and notes from sysf.io — reproducible evidence behind sovereign, task-tuned AI for regulated Swiss and EU organizations.
+description: Reports, benchmarks and notes from sysf.io — reproducible evidence behind sovereign, task-tuned AI for regulated Swiss and EU organisations.
 ---
 {% from "partials/components.njk" import sectionHead, cta %}
 
@@ -13,7 +13,7 @@ description: Reports, benchmarks and notes from sysf.io — reproducible evidenc
       Reports, benchmarks and notes.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      We'd rather show the work than describe it. This is where the evidence lives — reproducible evaluations on public data, with the harness open-sourced so you can check every number.
+      We'd rather show the work than describe it: reproducible evaluations on public data, harness open-sourced, every number checkable.
     </p>
   </div>
 </section>
@@ -33,7 +33,7 @@ description: Reports, benchmarks and notes from sysf.io — reproducible evidenc
         </h2>
         <p class="mt-3 max-w-2xl text-base prose-muted">{{ post.data.blurb or post.data.description }}</p>
         <a href="{{ post.url }}" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-swiss">
-          Read the report
+          {{ "Read the report" if post.data.kicker == "Report" else "Read on" }}
           <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
         </a>
       </div>

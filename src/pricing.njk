@@ -2,11 +2,11 @@
 layout: layouts/base.njk
 order: 3
 title: Pricing & Engagement
-description: How sysf.io engagements work — a land-and-expand path from a fixed-scope Pilot to Production to a fully Air-gapped, on-prem rollout. Every tier is sovereign; pricing is scoped per engagement. Book a call to get a proposal.
+description: How sysf.io engagements work — from a fixed-scope Pilot to Production to a fully air-gapped on-prem rollout. Every tier is sovereign; pricing is scoped per engagement. Book a call to get a proposal.
 extraSchema:
   "@context": "https://schema.org"
   "@type": "Service"
-  serviceType: "Custom sovereign AI model development and productization"
+  serviceType: "Custom sovereign AI model development and productisation"
   provider:
     "@type": "Organization"
     name: "sysf.io"
@@ -22,13 +22,13 @@ extraSchema:
     description: "Pricing is scoped per engagement. Contact sysf.io for a proposal."
 faq:
   - q: Why don't you list fixed prices?
-    a: Every engagement differs in data, use cases, deployment target and compliance scope, so we price per engagement after a short scoping conversation. You get a clear, fixed-scope proposal before any commitment — no open-ended time-and-materials.
+    a: "Every engagement differs in data, deployment target and compliance scope, so we price after a 30-minute scoping call — the proposal is fixed-scope and fixed-price. One number we can give up front: the hardware. An 8B-class on-prem deployment runs on a workstation-class GPU server (24–48 GB VRAM), typically CHF 5,000–15,000, one-time."
   - q: What does a Pilot typically involve?
-    a: "A fixed-scope engagement on a single high-value use case — private data preparation, fine-tuning on Apertus, an evaluation report against agreed metrics (including a fine-tune vs. retrieval ablation), and a production roadmap. It's designed to prove value on your own data and de-risk the decision to go to production."
+    a: "The deliverables are on the Pilot card above, and the evaluation report includes a fine-tune vs. retrieval ablation. From your side, a Pilot needs three things: the document corpus for the use case, a domain expert to verify the evaluation set with us, and a decision on where it runs — your environment or our single-tenant Swiss cloud."
   - q: What happens to our data in a Pilot?
     a: If the Pilot runs in your environment, nothing ever leaves it. If you opt for our dedicated single-tenant Swiss cloud environment, your data is processed under a data-processing agreement and, at project end, all data and derived weights are deleted or handed over to you — your choice at scoping. Production and Air-gapped systems always run inside your own environment.
   - q: Is there an ongoing cost after we deploy?
-    a: Production systems include an ongoing platform and support component — hosting or on-prem support, monitoring, evaluation and a maintenance cadence under a support agreement. We scope this transparently as part of the Production or Air-gapped proposal.
+    a: Production systems include an ongoing platform and support component — hosting or on-prem support, monitoring, evaluation and a maintenance cadence under a support agreement. The support component is its own line in the Production or Air-gapped proposal — build cost and running cost side by side.
   - q: Do we own the model?
     a: Yes. Because we build on the open Apertus model and fine-tune on your data inside your environment, you retain ownership and control of the resulting model and can run it independently. A documented handover is a deliverable in every engagement — your exit strategy is part of the scope.
 ---
@@ -41,7 +41,7 @@ faq:
       Start small. Prove value. Scale to air-gapped.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Every tier is sovereign — your data stays in your jurisdiction. Tiers differ in deployment depth, not in principle. Pricing is scoped per engagement — you get a fixed-scope proposal before any commitment.
+      A Pilot proves the numbers on one use case. Production hardens it for daily use. Air-gapped removes the network. Tiers differ in deployment depth, not in principle — a 30-minute scoping call gets you a fixed-scope proposal before any commitment, and the Pilot's central deliverable is an evaluation report you can hold us to.
     </p>
   </div>
 </section>
@@ -90,10 +90,8 @@ faq:
         inc:[
           "Everything in Production",
           "Fully on-prem / confidential compute",
-          "Multiple models & agents",
-          "Dedicated operations",
-          "Compliance & audit documentation",
-          "Enterprise support commitments"
+          "Operational runbooks & documented handover for your team",
+          "Compliance & audit documentation"
         ]
       }
     ] %}

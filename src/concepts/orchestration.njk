@@ -6,7 +6,7 @@ faq:
   - q: Why LangGraph, and not CrewAI, Microsoft's Agent Framework (formerly AutoGen), or an SDK from a model vendor?
     a: Because its primitives — explicit graphs, checkpointing, human-in-the-loop interrupts — map most directly onto how regulated workflows actually run, and it is among the most widely deployed orchestrators in production today. But it's a default we revisit per engagement, not a doctrine — nothing in how we build makes switching expensive. And while model-vendor SDKs will nominally run against any compatible endpoint, their centre of gravity — hosted tools, tracing, evals, roadmap — is the vendor's cloud, which is exactly the dependency we're hired to remove.
   - q: Is LangChain actually production-ready?
-    a: The framework is; production-readiness is a property of the system around it. LangChain and LangGraph give you orchestration primitives that are widely used and well exercised. What makes a system production-ready is everything around them — schema validation at the boundaries, bounded loops, retries and timeouts on every tool, access control, audit logging, evaluation gates and versioning discipline. That layer doesn't come from any framework; it's engineered per system, and it's most of the work.
+    a: The framework is; production-readiness is a property of the system around it — the six gaps and the hardening practices above. That layer doesn't come from any framework; it's engineered per system, and it's most of the work.
   - q: Will our team need to learn LangChain to operate the system?
     a: To operate it — no; runbooks cover deployment, monitoring and recovery without framework internals. To extend it — some familiarity helps, and the handover includes a walkthrough of the graph, the tools and the tests. The graph definitions are ordinary, readable code in your repository, not vendor configuration — which is also your exit route from us, by design.
   - q: How do tools connect to our systems — do you support MCP?
@@ -99,8 +99,7 @@ faq:
   <div class="container-x">
     {{ sectionHead("The commitment", "A choice we re-earn, not a marriage.", "The same rule we apply to models applies to frameworks.") }}
     <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
-      <p>LangGraph is our current default: of the orchestrators built for stateful, tool-calling work, it has the most production miles, and its primitives fit regulated workflows best. The field is moving — and if a better orchestrator earns the spot, the switch is deliberately cheap: your graph design, your tools' business logic, your evaluation set and guardrails are the durable assets, and they port — the framework bindings are the only thing rewritten. The framework is the one layer of the stack we'd swap without ceremony.</p>
-      <p>That's also what you inherit at handover: the whole graph as plain code your engineers can review and change — portable to whatever comes next, and never a reason you're locked to us or to any framework vendor.</p>
+      <p>LangGraph is our current default: of the orchestrators built for stateful, tool-calling work, it has the most production miles, and its primitives fit regulated workflows best. The field is moving — and if a better orchestrator earns the spot, the switch is deliberately cheap: your graph design, your tools' business logic, your evaluation set and guardrails are the durable assets, and they port — the framework bindings are the only thing rewritten — and at handover the whole graph is plain code in your repository. The framework is the one layer of the stack we'd swap without ceremony.</p>
     </div>
   </div>
 </section>

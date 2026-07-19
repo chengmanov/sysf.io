@@ -6,7 +6,7 @@ faq:
   - q: How big does an evaluation set need to be?
     a: Smaller than you'd fear, bigger than a demo. Fifty carefully chosen tasks with gold answers already separate "works" from "impresses"; 150–300 buy per-category breakdowns — document types, languages, edge cases — large enough to act on. We report confidence intervals alongside the scores — on samples this size a two-point difference is noise, and we'd rather tell you that than sell it. Your domain experts spend hours on this, not weeks, and the set becomes a durable asset that outlives any particular model.
   - q: Who defines what "correct" means?
-    a: Your experts, in writing, before anything is built. For extraction tasks that's exact-match on fields; for drafting it's a rubric your reviewers apply; for Q&A it's answer accuracy plus citation faithfulness — the answer must be right and grounded in the retrieved source. We refuse vague success criteria because they're how pilots end up "successful" and unused.
+    a: Your experts, in writing, before anything is built — criteria per task type, signed off (the metric types under step three). We refuse vague success criteria because they're how pilots end up 'successful' and unused.
   - q: What happens if the system misses the bar?
     a: The report says so, with the failure categories broken out — and the production roadmap explains what would close the gap and what it would cost, or recommends stopping. A fixed-scope Pilot that can end in a documented "no" is precisely what makes its "yes" worth something.
 ---
@@ -60,7 +60,7 @@ faq:
       </div>
       {% endfor %}
     </div>
-    <p class="mt-8 max-w-3xl text-base prose-muted">The same ablation covers model choice — Apertus vs. Llama vs. Mistral on your set, and full-precision vs. quantized builds — so every architectural decision in your system traces to a measured difference, not a preference. (Why we're strict about what fine-tuning can and can't do: <a class="link-underline" href="/concepts/small-models/">small models, measured</a>.)</p>
+    <p class="mt-8 max-w-3xl text-base prose-muted">On the FINMA worked example, that table reads 0 → 22.4 → 1.6 → 45.4% on the production bar across A–D: retrieval alone gets a fifth of the way, fine-tuning alone almost nowhere, and only the combination doubles retrieval. The same ablation covers model choice — Apertus vs. Llama vs. Mistral on your set, and full-precision vs. <a class="link-underline" href="/concepts/quantization/">quantized</a> builds — so every architectural decision in your system traces to a measured difference, not a preference. (Why we're strict about what fine-tuning can and can't do: <a class="link-underline" href="/concepts/small-models/">small models, measured</a>.)</p>
   </div>
 </section>
 

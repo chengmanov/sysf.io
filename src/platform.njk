@@ -11,9 +11,9 @@ faq:
   - q: What does on-prem actually require?
     a: Less than you'd think. A quantized, fine-tuned Apertus-8B runs at interactive speed on a single workstation-class GPU server (roughly 24–48 GB of VRAM) that lives in your existing rack. The 70B needs a multi-GPU node or a confidential-compute instance. We size the deployment during scoping and commit to throughput numbers — and a Pilot can run on hardware we bring, so you spend nothing on infrastructure before value is proven.
   - q: How do you handle evaluation and guardrails?
-    a: Every engagement includes a use-case-specific evaluation set and metrics agreed with you, plus guardrails for safety, PII handling and output constraints. We report quality against those metrics before go-live and monitor them continuously in production.
+    a: "The evaluation set is built from your documents and verified with your experts — the FINMA set is the template: 183 human-verified questions, scored deterministically, no LLM judge. Guardrails (safety, PII, output constraints) get their own test cases in the same harness, with pass rates reported before go-live and monitored in production."
   - q: Where does it run?
-    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute (AMD SEV-SNP or Intel TDX with remote attestation, shifting the infrastructure operator out of the data-confidentiality trust boundary). Nothing depends on external US LLM APIs.
+    a: Wherever your data governance requires — your Swiss or EU cloud tenancy, your own datacentre, or an air-gapped environment with confidential compute (AMD SEV-SNP or Intel TDX with remote attestation). What that buys, and its GPU caveat, is on the <a class="link-underline" href="/concepts/sovereign-architecture/">sovereign-runtime page</a>. Nothing depends on external US LLM APIs.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
 
@@ -35,18 +35,18 @@ faq:
   <div class="mt-12 grid gap-5 md:grid-cols-2">
     {% set steps = [
       {n:"01", t:"Discovery & compliance scoping", d:"We map the use case, data sources and the regulatory frame (FADP/nFADP, GDPR, EU AI Act), and define success metrics and guardrail requirements up front."},
-      {n:"02", t:"Private, in-jurisdiction data prep", d:"Data is curated, cleaned and structured where it already lives. Nothing is shipped to an external service. PII handling is designed in from the start."},
+      {n:"02", t:"Private, in-jurisdiction data prep", d:"Documents are deduplicated, formatted and split into training and evaluation sets where they already live, with a documented lineage record. Nothing is shipped to an external service. PII handling is designed in from the start."},
       {n:"03", t:"Fine-tuning on Apertus", d:"We fine-tune Switzerland's open Apertus model on your corpus to teach your domain, terminology, formats and tasks — validated against a retrieval-only baseline, with full transparency over weights and data lineage."},
-      {n:"04", t:"Agent & RAG orchestration", d:"Agents, retrieval-augmented generation and tool calls into your systems, so the model reasons over live knowledge and takes real actions."},
-      {n:"05", t:"Evaluation & guardrails", d:"A use-case-specific eval set, safety and PII guardrails, and output constraints. We report quality against agreed metrics before go-live."},
-      {n:"06", t:"Sovereign deployment", d:"Containerised deployment to your Swiss cloud, your own hardware, or confidential-compute VMs (AMD SEV-SNP / Intel TDX with remote attestation). Zero dependency on US LLM APIs."},
-      {n:"07", t:"Monitoring & iteration", d:"Continuous monitoring of quality, drift and usage, with a maintenance cadence and a support agreement. The system improves as your data and needs evolve."}
+      {n:"04", t:"Agent & RAG orchestration", d:"Agents, retrieval-augmented generation and tool calls into your systems, so answers are grounded in your current documents — with citations — and the system executes calls against your internal APIs."},
+      {n:"05", t:"Evaluation & guardrails", d:'A use-case-specific eval set, safety and PII guardrails, and output constraints. We report quality against agreed metrics before go-live. The same harness produced our public <a class="link-underline" href="/reports/finma-ablation/">FINMA ablation</a>.'},
+      {n:"06", t:"Sovereign deployment", d:"Containerised deployment to your Swiss cloud, your own hardware, or confidential-compute VMs (AMD SEV-SNP / Intel TDX with remote attestation)."},
+      {n:"07", t:"Monitoring & iteration", d:"Continuous monitoring of quality, drift and usage, with a maintenance cadence and a support agreement."}
     ] %}
     {% for s in steps %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
       <div class="font-mono text-sm text-swiss">{{ s.n }}</div>
       <h3 class="mt-3 text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
-      <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
+      <p class="mt-2 text-sm prose-muted">{{ s.d | safe }}</p>
     </div>
     {% endfor %}
   </div>
@@ -75,7 +75,7 @@ faq:
         </li>
         {% endfor %}
       </ul>
-      <p class="mt-6 text-sm text-ink-500">Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on your evaluation set. The evaluation decides, not the logo.</p>
+      <p class="mt-6 text-sm text-ink-500">Model-agnostic by design: Apertus, Llama or Mistral — whichever wins on your evaluation set.</p>
       <p class="mt-3 text-sm text-ink-500">Want the depth behind each layer? The <a class="link-underline" href="/concepts/">concepts pages</a> cover small models, quantization, evaluation and the sovereign runtime in detail.</p>
     </div>
     <div class="md:col-span-5 md:col-start-8">
@@ -91,7 +91,7 @@ faq:
     {% set comp = [
       {t:"Swiss FADP / nFADP", d:"In-jurisdiction processing and clear data lineage keep personal data under Swiss law and control."},
       {t:"EU GDPR", d:"Data minimisation, purpose limitation and residency handled by design for EU operations."},
-      {t:"EU AI Act", d:"Documented training data, transparency and guardrails support risk classification and obligations."}
+      {t:"EU AI Act", d:"Apertus's training data is publicly documented — a head start no closed model offers. We add the EU AI Act risk-classification worksheet and the technical documentation the Act requires."}
     ] %}
     {% for c in comp %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
@@ -100,7 +100,43 @@ faq:
     </div>
     {% endfor %}
   </div>
-  <p class="mt-6 max-w-2xl text-sm text-ink-500">We deliver compliance and audit documentation alongside the system. This is not legal advice — we work with your compliance and legal teams to meet your obligations.</p>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Every engagement ships with the evaluation report; the full compliance &amp; audit pack — model card, training-data lineage record, DPA template, TOMs, EU AI Act risk-classification worksheet — is scoped where your obligations require it. This is not legal advice — we work with your compliance and legal teams to meet your obligations.</p>
+</section>
+
+<!-- Differentiation -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("What makes us different", "Three ways to get sovereign AI — and what you actually receive.") }}
+  <div class="mt-12 overflow-x-auto">
+    <table class="w-full min-w-[720px] border-collapse text-sm">
+      <thead>
+        <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+          <th class="py-4 pr-4 font-semibold text-ink-900 dark:text-white"></th>
+          <th class="py-4 pr-4 font-semibold text-swiss">sysf.io (studio)</th>
+          <th class="py-4 pr-4 font-semibold text-ink-500">Sovereign platform (hosted endpoint)</th>
+          <th class="py-4 pr-4 font-semibold text-ink-500">US cloud API (Swiss region)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+        {% set rows = [
+          {k:"Where data lives", a:"Your infrastructure — on-prem, your tenancy, or air-gapped", b:"The provider's Swiss datacentre", c:"Provider's region, under US legal reach"},
+          {k:"Model weights", a:"Open, fine-tuned on your corpus, auditable", b:"Shared base model, open or closed", c:"Closed, opaque"},
+          {k:"Who builds your product", a:"We do — scoped use case, eval plan, delivery", b:"Your team, on their endpoint", c:"Your team, on their API"},
+          {k:"Accuracy on your task", a:"Measured against your eval set before go-live", b:"Unknown until you build and test", c:"Unknown until you build and test"},
+          {k:"Ownership & exit", a:"You own the model; handover is a deliverable", b:"Subscription — access ends with the contract", c:"Rented access"},
+          {k:"Compliance documentation", a:"Delivered with the system", b:"Platform-level; use-case compliance is yours", c:"Shared responsibility — mostly yours"}
+        ] %}
+        {% for r in rows %}
+        <tr>
+          <td class="py-4 pr-4 font-medium text-ink-900 dark:text-white">{{ r.k }}</td>
+          <td class="py-4 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
+          <td class="py-4 pr-4 text-ink-500">{{ r.b }}</td>
+          <td class="py-4 pr-4 text-ink-500">{{ r.c }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-6 max-w-3xl text-sm text-ink-500">To be fair to the alternatives: a managed platform is the right answer if you have an AI engineering team and want infrastructure only, and a US cloud API is the right answer if your data can leave. We're the answer when the data can't leave and you want the system built, measured and handed over.</p>
 </section>
 
 <section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">

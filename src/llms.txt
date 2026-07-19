@@ -13,7 +13,7 @@
 
 ## Why it matters
 
-- For regulated Swiss and EU organizations, sending confidential data to external AI APIs means months of legal review, DPAs and residual-risk sign-offs; most projects die at the pilot stage. Open weights running in-jurisdiction make most of that review unnecessary.
+- For regulated Swiss and EU organisations, sending confidential data to external AI APIs means months of legal review, DPAs and residual-risk sign-offs; most projects die at the pilot stage. Open weights running in-jurisdiction make most of that review unnecessary.
 - The approach is proven in production: the Canton of Ticino runs a fine-tuned Apertus-8B translation service on its own infrastructure at 94% accuracy after fine-tuning.
 - Open weights mean transparency, auditability, ownership and no vendor lock-in. Clients own the fine-tuned model and receive a documented handover — they can run the system independently.
 - Compliant by design: built for Swiss FADP/nFADP and EU GDPR, with documentation supporting EU AI Act obligations.

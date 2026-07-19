@@ -1,0 +1,150 @@
+---
+layout: layouts/base.njk
+title: Worked Example — Does Fine-Tuning a Small Model Actually Help?
+description: A reproducible four-way ablation (base / +RAG / fine-tuned / both) of Apertus-8B on Swiss FINMA circular Q&A, scored deterministically on answer accuracy and exact Rz-citation. The kind of evaluation sysf.io runs at the start of every Pilot.
+faq:
+  - q: Is this on your customers' data?
+    a: "No — deliberately. It runs entirely on public FINMA circulars so anyone can reproduce it, and so we can publish it. In a Pilot the identical method runs on your documents, inside your environment, and the report stays yours."
+  - q: Why is 45% the headline and not something higher?
+    a: "Because it's honest. This is a hard task — short-form answer AND exact citation, a single 4–8B model at 4-bit, one modest LoRA run, deliberately plain retrieval. It's a floor, not a ceiling — retrieval quality, a larger escalation-tier model, and more training data each move it. The value of the report is the method and the deltas between arms, not a leaderboard number."
+  - q: How is this scored — is there an LLM judge?
+    a: "No LLM judge anywhere. FINMA circulars number every normative paragraph (Randziffer, Rz), so a correct citation is exactly checkable. Answer accuracy is string/number matching against a verified gold answer; citation is an exact Rz match. Every number is recomputed from frozen run records."
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Worked example · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Does fine-tuning a small model actually help?
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Not an opinion — a measurement. We took Apertus-8B and ran the same four-way ablation we run at the start of every <a class="link-underline" href="/concepts/evaluation/">Pilot</a>, on a task where the answer can be scored exactly: answering questions about Swiss FINMA circulars <em>with</em> a citation to the exact margin number it rests on.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("The setup", "Four systems, one open model.", "Same Apertus-8B, quantized identically to 4-bit, served identically. The only variable is what we added.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"The open model, as shipped."},
+      {k:"B", t:"+ Retrieval", d:"Base model with BM25 retrieval over the circulars."},
+      {k:"C", t:"Fine-tuned", d:"LoRA-tuned on the task, no retrieval."},
+      {k:"D", t:"Fine-tuned + retrieval", d:"The full system."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Two things are scored, both deterministically — no LLM judge: is the answer correct, and did it cite the correct Rz in the correct circular. The production bar is <strong class="text-ink-700 dark:text-ink-300">both at once</strong> — a right answer with a wrong or missing citation is a failure, because in regulated work it is one.</p>
+</section>
+
+<!-- Results table -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The result", "Fine-tuning plus retrieval doubles the production bar.", "183 human-verified questions (101 German, 82 English, 10 circulars). Brackets are 95% confidence intervals.") }}
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metric</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · tuned</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · tuned+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Answer + citation (production bar)", a:"0.0%", b:"22.4%", c:"1.6%", d:"45.4%", hi:true},
+            {m:"Answer correct", a:"37.2%", b:"63.4%", c:"44.8%", d:"80.9%"},
+            {m:"Citation correct", a:"1.1%", b:"39.9%", c:"2.2%", d:"50.3%"},
+            {m:"Emits the required format", a:"2.2%", b:"0.0%", c:"100%", d:"100%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-xs text-ink-500">Production bar 22.4% → 45.4% (base+RAG → fine-tuned+RAG). Answer accuracy 63% → 81%. Format compliance ~nothing → perfect.</p>
+  </div>
+</section>
+
+<!-- Decomposition -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("What each layer buys", "The ablation stops anyone — us included — from hand-waving.", "Read across the columns and each layer's contribution is unambiguous.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-3">
+    {% set parts = [
+      {t:"Retrieval enables citation", d:"Citation-correct goes from ~1% to ~40–50% only when retrieval is on. A model cannot cite a margin number it has never seen — so both no-retrieval arms sit near zero on the production bar, however well-trained."},
+      {t:"Fine-tuning enables usable output", d:"The base model often knows the answer (63% with RAG) but emits the required, machine-parseable format just 2% of the time — 0% once retrieval fills the context and distracts it. The fine-tune nails the format 100% of the time. That gap is most of B → D."},
+      {t:"The two compound", d:"Neither alone clears the bar. Together they reach 45%. That interaction — not either ingredient by itself — is the finding, and it's why we measure before we build."}
+    ] %}
+    {% for p in parts %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Concrete example -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("It looks like this", "Same question, same retrieved text.", "The base model isn't stupid — it's unreliable in shape. Reliability of shape is what separates a demo from a system.") }}
+    <div class="mt-10 max-w-3xl space-y-6">
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">Q.</span> For banks, securities firms and financial groups, what is the minimum required equity capital at which the fully qualitative and quantitative requirements apply? <span class="text-ink-500">(gold: CHF 10 billion, Rz 6, FINMA-RS 2010/01)</span></p>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Base + RAG</div>
+            <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">CHF 10 billion</pre>
+            <p class="mt-1 text-xs text-swiss">Right answer, no citation → fails</p>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Fine-tuned + RAG</div>
+            <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: CHF 10 billion
+SOURCE: FINMA-RS 2010/01 Rz 6</pre>
+            <p class="mt-1 text-xs text-swiss">Passes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Honest limits -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("The honest limits", "What this doesn't claim.", "An evaluation you can trust is one that names where it's weak.") }}
+  <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+    <p><strong class="font-semibold text-ink-900 dark:text-white">45% is a floor, not a ceiling.</strong> One small model, 4-bit, a single modest LoRA run on ~500 examples, deliberately plain BM25 retrieval. Every one of those is a lever a real Pilot pulls.</p>
+    <p><strong class="font-semibold text-ink-900 dark:text-white">Structured answers are the weak spot.</strong> Fine-tuned+RAG scores ~47–50% on numbers, durations and yes/no but 27% on multi-item list questions. Complete-set extraction is the obvious next target.</p>
+    <p><strong class="font-semibold text-ink-900 dark:text-white">The method is the product, not the number.</strong> Your task, your documents, this exact ablation — run before you commit to production, so the go/no-go decision rests on measurement, not a promise.</p>
+  </div>
+  <div class="mt-8">
+    <a href="https://github.com/chengmanov/apertus-finma-eval" class="btn-ghost" target="_blank" rel="noopener">Reproduce it on GitHub →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "About this report.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Want this on your task?", "Bring one workflow and the documents behind it. We'll build the evaluation set and run this ablation — on your data, in your jurisdiction.") }}

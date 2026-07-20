@@ -1,0 +1,64 @@
+---
+layout: layouts/base.njk
+order: 6
+title: Démo en direct
+description: Un modèle de triage de messages de support qui s'exécute entièrement dans votre navigateur sur WebGPU — sans serveur, totalement privé. Une démonstration en direct d'inférence quantifiée de petits modèles sur l'appareil.
+ogType: website
+---
+<section class="container-x py-16 md:py-24">
+  <div class="mx-auto max-w-3xl">
+    <p class="eyebrow">Démo en direct · inférence sur l'appareil</p>
+    <h1 class="mt-4 text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Un modèle de langage qui ne quitte jamais votre navigateur.
+    </h1>
+    <p class="mt-6 text-lg prose-muted">
+      Collez un message de support et un modèle <strong>1,58 bit</strong> de
+      1,7&nbsp;milliard de paramètres le trie — <strong>catégorie, urgence et un résumé
+      d'une ligne</strong> — entièrement sur votre appareil via <strong>WebGPU</strong>.
+      Rien n'est envoyé à un serveur. Une démonstration en direct de la même inférence
+      quantifiée, souveraine et sur l'appareil que nous construisons pour nos clients.
+    </p>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3 text-sm prose-muted">
+      <span class="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-50 px-3 py-1 font-medium text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">100% dans votre navigateur · sans serveur</span>
+      <span>Nécessite un navigateur WebGPU (Chrome/Edge, ordinateur) avec GPU. Premier lancement : ~237&nbsp;Mo, puis hors ligne.</span>
+    </div>
+
+    <div id="demoWrap" class="mt-8 overflow-hidden rounded-xl border border-neutral-200 shadow-sm dark:border-white/10">
+      <button id="demoLaunch" type="button" data-src="/demo/app/"
+              class="flex w-full flex-col items-center justify-center gap-2 bg-white px-6 py-16 text-center dark:bg-ink-950"
+              style="min-height:320px">
+        <span class="btn-primary pointer-events-none">▶ Lancer la démo</span>
+        <span class="mt-2 text-sm prose-muted">Charge ~237&nbsp;Mo et s'exécute sur votre GPU · nécessite un navigateur WebGPU</span>
+      </button>
+    </div>
+    <p class="mt-3 text-sm prose-muted">
+      <a class="underline" href="/demo/app/" target="_blank" rel="noopener">Ou l'ouvrir en plein écran dans un nouvel onglet ↗</a>
+    </p>
+    <script>
+      document.getElementById("demoLaunch")?.addEventListener("click", (e) => {
+        const btn = e.currentTarget, wrap = document.getElementById("demoWrap");
+        const f = document.createElement("iframe");
+        f.src = btn.dataset.src; f.title = "Démo de triage de messages sur l'appareil";
+        f.setAttribute("allow", "webgpu; fullscreen"); f.setAttribute("loading", "eager");
+        f.style.cssText = "display:block;width:100%;height:78vh;min-height:560px;border:0";
+        wrap.innerHTML = ""; wrap.appendChild(f);
+      });
+    </script>
+
+    <div class="mt-8 rounded-xl border border-neutral-200/70 bg-white/60 p-5 text-sm prose-muted dark:border-white/10 dark:bg-ink-950/40">
+      <p class="font-semibold text-ink-900 dark:text-white">Crédits du modèle &amp; licence</p>
+      <p class="mt-2">
+        Modèle de démonstration : <strong>Bonsai-1.7B</strong> (Q1_0, 1 bit) — ©&nbsp;Prism&nbsp;ML,
+        Apache-2.0 (<a class="underline" href="https://huggingface.co/prism-ml/Bonsai-1.7B-gguf" target="_blank" rel="noopener">fiche du modèle</a>,
+        <a class="underline" href="https://prismml.com" target="_blank" rel="noopener">prismml.com</a>).
+        Moteur WebGPU adapté de la démo
+        <a class="underline" href="https://huggingface.co/spaces/webml-community/bonsai-webgpu-kernels" target="_blank" rel="noopener">webml-community / Xenova</a> (MIT).
+      </p>
+      <p class="mt-2 text-xs">
+        Bonsai est un modèle ouvert indépendant de Prism&nbsp;ML, présenté ici uniquement pour
+        démontrer l'inférence quantifiée sur l'appareil. Ce n'est pas l'un des fine-tunes Apertus de sysf.io.
+      </p>
+    </div>
+  </div>
+</section>

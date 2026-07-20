@@ -1,0 +1,64 @@
+---
+layout: layouts/base.njk
+order: 6
+title: Demo dal vivo
+description: Un modello di triage dei messaggi di supporto che gira interamente nel tuo browser su WebGPU — senza server, totalmente privato. Una dimostrazione dal vivo di inferenza quantizzata di piccoli modelli sul dispositivo.
+ogType: website
+---
+<section class="container-x py-16 md:py-24">
+  <div class="mx-auto max-w-3xl">
+    <p class="eyebrow">Demo dal vivo · inferenza sul dispositivo</p>
+    <h1 class="mt-4 text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Un modello linguistico che non lascia mai il tuo browser.
+    </h1>
+    <p class="mt-6 text-lg prose-muted">
+      Incolla un messaggio di supporto e un modello a <strong>1,58 bit</strong> da
+      1,7&nbsp;miliardi di parametri lo classifica — <strong>categoria, urgenza e un
+      riassunto di una riga</strong> — interamente sul tuo dispositivo tramite
+      <strong>WebGPU</strong>. Nulla viene inviato a un server. Una dimostrazione dal vivo
+      della stessa inferenza quantizzata, sovrana e sul dispositivo che costruiamo per i clienti.
+    </p>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3 text-sm prose-muted">
+      <span class="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-50 px-3 py-1 font-medium text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">100% nel tuo browser · senza server</span>
+      <span>Richiede un browser WebGPU (Chrome/Edge, desktop) con GPU. Primo avvio: ~237&nbsp;MB, poi offline.</span>
+    </div>
+
+    <div id="demoWrap" class="mt-8 overflow-hidden rounded-xl border border-neutral-200 shadow-sm dark:border-white/10">
+      <button id="demoLaunch" type="button" data-src="/demo/app/"
+              class="flex w-full flex-col items-center justify-center gap-2 bg-white px-6 py-16 text-center dark:bg-ink-950"
+              style="min-height:320px">
+        <span class="btn-primary pointer-events-none">▶ Avvia la demo</span>
+        <span class="mt-2 text-sm prose-muted">Carica ~237&nbsp;MB e gira sulla tua GPU · richiede un browser WebGPU</span>
+      </button>
+    </div>
+    <p class="mt-3 text-sm prose-muted">
+      <a class="underline" href="/demo/app/" target="_blank" rel="noopener">Oppure aprila a schermo intero in una nuova scheda ↗</a>
+    </p>
+    <script>
+      document.getElementById("demoLaunch")?.addEventListener("click", (e) => {
+        const btn = e.currentTarget, wrap = document.getElementById("demoWrap");
+        const f = document.createElement("iframe");
+        f.src = btn.dataset.src; f.title = "Demo di triage dei messaggi sul dispositivo";
+        f.setAttribute("allow", "webgpu; fullscreen"); f.setAttribute("loading", "eager");
+        f.style.cssText = "display:block;width:100%;height:78vh;min-height:560px;border:0";
+        wrap.innerHTML = ""; wrap.appendChild(f);
+      });
+    </script>
+
+    <div class="mt-8 rounded-xl border border-neutral-200/70 bg-white/60 p-5 text-sm prose-muted dark:border-white/10 dark:bg-ink-950/40">
+      <p class="font-semibold text-ink-900 dark:text-white">Crediti del modello &amp; licenza</p>
+      <p class="mt-2">
+        Modello dimostrativo: <strong>Bonsai-1.7B</strong> (Q1_0, 1-bit) — ©&nbsp;Prism&nbsp;ML,
+        Apache-2.0 (<a class="underline" href="https://huggingface.co/prism-ml/Bonsai-1.7B-gguf" target="_blank" rel="noopener">scheda del modello</a>,
+        <a class="underline" href="https://prismml.com" target="_blank" rel="noopener">prismml.com</a>).
+        Motore WebGPU adattato dalla demo
+        <a class="underline" href="https://huggingface.co/spaces/webml-community/bonsai-webgpu-kernels" target="_blank" rel="noopener">webml-community / Xenova</a> (MIT).
+      </p>
+      <p class="mt-2 text-xs">
+        Bonsai è un modello aperto indipendente di Prism&nbsp;ML, mostrato qui unicamente per
+        dimostrare l'inferenza quantizzata sul dispositivo. Non è uno dei fine-tune Apertus di sysf.io.
+      </p>
+    </div>
+  </div>
+</section>

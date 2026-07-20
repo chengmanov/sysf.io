@@ -2,6 +2,12 @@ module.exports = function (eleventyConfig) {
   // Copy static assets (images, svg, favicon). Tailwind writes styles.css separately.
   eleventyConfig.addPassthroughCopy({ "src/assets/img": "assets/img" });
 
+  // Live in-browser demo (self-contained WebGPU app) served at /demo/app/.
+  // Passthrough-copy it verbatim and DO NOT process it as a Nunjucks template
+  // (its inlined JS/WGSL contains `{{`/`{%`-like sequences).
+  eleventyConfig.addPassthroughCopy({ "src/demo-app": "demo/app" });
+  eleventyConfig.ignores.add("src/demo-app/index.html");
+
   // Root files for AEO/SEO + GitHub Pages custom domain.
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
   eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });

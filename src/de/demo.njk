@@ -2,63 +2,352 @@
 layout: layouts/base.njk
 order: 6
 title: Live-Demo
-description: Ein Triage-Modell für Support-Nachrichten, das vollständig in Ihrem Browser auf WebGPU läuft — kein Server, vollständig privat. Eine Live-Demonstration quantisierter On-Device-Inferenz kleiner Modelle.
+description: Führen Sie ein Sprachmodell direkt in dieser Seite aus — ein 1-Bit-Modell mit 1,7 Milliarden Parametern triagiert Support-Nachrichten vollständig in Ihrem Browser auf WebGPU. Nichts, was Sie eingeben, verlässt Ihr Gerät. Eine funktionierende Illustration souveräner On-Device-Inferenz.
 ogType: website
+faq:
+  - q: Verlässt etwas, das ich eingebe, meinen Browser?
+    a: >-
+      Nein. Die Modellgewichte werden einmalig von Hugging Face heruntergeladen und von
+      Ihrem Browser gecacht; danach findet die gesamte Berechnung via WebGPU auf Ihrer
+      eigenen GPU statt. Ihre Nachrichten werden nie an einen Server gesendet — es gibt
+      keinen Server.
+  - q: Warum ist das Modell nur 0,24 GB gross?
+    a: >-
+      Bonsai-1.7B speichert seine Gewichte mit rund 1,125 Bits pro Gewicht (gepackte
+      Vorzeichenbits plus kleine Gruppenskalen) statt 16 Bits — etwa 14× kleiner als
+      dasselbe Modell in FP16. Extreme Quantisierung ist einer der Hebel, die souveränes
+      On-Premise-Deployment bezahlbar machen; unsere <a href="/de/concepts/quantization/">Konzeptseite
+      zur Quantisierung</a> behandelt die Trade-offs.
+  - q: Ist das das Modell, das sysf.io für Kunden deployt?
+    a: >-
+      Nein — Bonsai-1.7B ist ein unabhängiges offenes Modell von Prism ML, hier
+      ausschliesslich zur Demonstration von On-Device-Inferenz eingesetzt. Kundensysteme
+      bauen auf <a href="/de/platform/">Apertus, feinabgestimmt auf Ihren Daten und
+      evaluiert gegen Ihre Aufgabe</a>; das Muster ist dasselbe, das Modell gehört Ihnen.
+  - q: Was brauche ich, um es auszuführen?
+    a: >-
+      Einen Desktop-Browser mit WebGPU (aktuelles Chrome oder Edge) und eine GPU. Der
+      erste Start lädt einmalig ~237 MB herunter. Wenn WebGPU nicht verfügbar ist, sagt
+      die Seite es Ihnen — nichts geht kaputt.
 ---
+{% from "partials/charts.njk" import statBand %}
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<!-- Hero -->
 <section class="container-x py-16 md:py-24">
-  <div class="mx-auto max-w-3xl">
+  <div class="max-w-3xl">
     <p class="eyebrow">Live-Demo · On-Device-Inferenz</p>
     <h1 class="mt-4 text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Ein Sprachmodell, das Ihren Browser nie verlässt.
+      Ein funktionierendes Modell, das in dieser Seite läuft.
     </h1>
     <p class="mt-6 text-lg prose-muted">
-      Fügen Sie eine Support-Nachricht ein, und ein <strong>1,58-Bit</strong>-Modell mit
-      1,7&nbsp;Milliarden Parametern triagiert sie — <strong>Kategorie, Dringlichkeit und
-      eine einzeilige Zusammenfassung</strong> — vollständig auf Ihrem Gerät via
-      <strong>WebGPU</strong>. Nichts wird an einen Server gesendet. Eine Live-Demonstration
-      derselben quantisierten, souveränen On-Device-Inferenz, die wir für Kunden bauen.
+      Unten triagiert ein Sprachmodell mit 1,7&nbsp;Milliarden Parametern Support-Nachrichten —
+      Kategorie, Dringlichkeit, einzeilige Zusammenfassung — berechnet <strong class="text-ink-900 dark:text-white">auf Ihrer eigenen GPU,
+      in diesem Browser-Tab</strong>. Keine API, kein Server, kein Datenabfluss. Es ist die extremste
+      Form des Arguments, das diese Website macht: Modelle, die dort laufen, wo die Daten liegen.
     </p>
+  </div>
+</section>
 
-    <div class="mt-6 flex flex-wrap items-center gap-3 text-sm prose-muted">
-      <span class="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-50 px-3 py-1 font-medium text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">100% in Ihrem Browser · kein Server</span>
-      <span>Benötigt einen WebGPU-Browser (Chrome/Edge, Desktop) mit GPU. Erster Start lädt ~237&nbsp;MB, danach offline.</span>
+<!-- Why this matters -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-16 dark:border-white/10 dark:bg-white/[0.02] md:py-20">
+  <div class="container-x">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-5">
+        {{ sectionHead("Warum das wichtig ist", "Der Einwand gegen souveräne KI ist die Leistungsfähigkeit. Die Antwort ist der Zuschnitt.", "") }}
+      </div>
+      <div class="space-y-5 text-[15px] prose-muted md:col-span-7">
+        <p>
+          Regulierte Organisationen können keine Kundendaten an Dritt-KI-APIs senden —
+          Bankgeheimnis, ärztliche Schweigepflicht und Beschaffungsregeln sagen alle
+          dasselbe. Das übliche Gegenargument lautet, alles, was Sie selbst betreiben
+          können, sei zu schwach, um nützlich zu sein. Das stimmt, wenn Sie von einem
+          Modell erwarten, dass es alles kann.
+        </p>
+        <p>
+          Es stimmt nicht mehr, sobald die Aufgabe eng ist. Ein <a class="underline" href="/de/concepts/small-models/">kleines
+          Modell mit einem klar definierten Job</a> — diese Nachricht klassifizieren, diese
+          Felder extrahieren, diese Standardantwort entwerfen — lässt sich evaluieren,
+          deterministisch machen und auf Hardware betreiben, die Sie kontrollieren.
+          <a class="underline" href="/de/concepts/quantization/">Quantisierung</a>
+          schrumpft es, bis «Hardware, die Sie kontrollieren» eine Workstation, ein Telefon —
+          oder, wie hier, ein Browser-Tab sein kann.
+        </p>
+        <p>
+          Diese Seite ist der funktionierende Beweis: ein echtes Modell mit einem echten Job und ein
+          <span class="font-mono text-[13px]">0-Byte</span>-Netzwerk-Fussabdruck für alles, was Sie eingeben.
+        </p>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div id="demoWrap" class="mt-8 overflow-hidden rounded-xl border border-neutral-200 shadow-sm dark:border-white/10">
-      <button id="demoLaunch" type="button" data-src="/demo/app/"
-              class="flex w-full flex-col items-center justify-center gap-2 bg-white px-6 py-16 text-center dark:bg-ink-950"
-              style="min-height:320px">
-        <span class="btn-primary pointer-events-none">▶ Live-Demo starten</span>
-        <span class="mt-2 text-sm prose-muted">Lädt ~237&nbsp;MB und läuft auf Ihrer GPU · benötigt einen WebGPU-Browser</span>
-      </button>
+<!-- The use case -->
+<section class="container-x py-16 md:py-20">
+  <div class="grid gap-10 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Der Use Case", "Support-Triage: eine kanonische enge Aufgabe.", "") }}
     </div>
-    <p class="mt-3 text-sm prose-muted">
-      <a class="underline" href="/demo/app/" target="_blank" rel="noopener">Oder im Vollbild in einem neuen Tab öffnen ↗</a>
-    </p>
-    <script>
-      document.getElementById("demoLaunch")?.addEventListener("click", (e) => {
-        const btn = e.currentTarget, wrap = document.getElementById("demoWrap");
-        const f = document.createElement("iframe");
-        f.src = btn.dataset.src; f.title = "On-Device-Nachrichten-Triage-Demo";
-        f.setAttribute("allow", "webgpu; fullscreen"); f.setAttribute("loading", "eager");
-        f.style.cssText = "display:block;width:100%;height:78vh;min-height:560px;border:0";
-        wrap.innerHTML = ""; wrap.appendChild(f);
-      });
-    </script>
-
-    <div class="mt-8 rounded-xl border border-neutral-200/70 bg-white/60 p-5 text-sm prose-muted dark:border-white/10 dark:bg-ink-950/40">
-      <p class="font-semibold text-ink-900 dark:text-white">Modell-Credits &amp; Lizenz</p>
-      <p class="mt-2">
-        Demonstrationsmodell: <strong>Bonsai-1.7B</strong> (Q1_0, 1-Bit) — ©&nbsp;Prism&nbsp;ML,
-        Apache-2.0 (<a class="underline" href="https://huggingface.co/prism-ml/Bonsai-1.7B-gguf" target="_blank" rel="noopener">Modellkarte</a>,
-        <a class="underline" href="https://prismml.com" target="_blank" rel="noopener">prismml.com</a>).
-        WebGPU-Engine adaptiert von der
-        <a class="underline" href="https://huggingface.co/spaces/webml-community/bonsai-webgpu-kernels" target="_blank" rel="noopener">webml-community / Xenova</a>-Demo (MIT).
+    <div class="space-y-5 text-[15px] prose-muted md:col-span-7">
+      <p>
+        Jede Serviceorganisation hat eine Inbox: Beschwerden, Störungsmeldungen,
+        Vertriebsanfragen, Passwort-Resets. Jemand — oder etwas — liest jede Nachricht und
+        entscheidet, <em>was sie ist</em> und <em>wie dringend sie ist</em>, bevor irgendjemand handelt.
+        Diese Entscheidung passt perfekt zu einem kleinen Modell: Der Input ist eine Nachricht,
+        der Output ein geschlossenes Set von Labels plus eine einzeilige Zusammenfassung,
+        und jede Antwort ist überprüfbar.
       </p>
-      <p class="mt-2 text-xs">
-        Bonsai ist ein unabhängiges offenes Modell von Prism&nbsp;ML, hier ausschließlich zur
-        Demonstration der On-Device-Quantisierung gezeigt. Es ist keines der Apertus-Fine-Tunes von sysf.io.
+      <p>
+        Die Demo unten macht genau das. Fügen Sie eine Nachricht ein (oder nutzen Sie ein
+        Beispiel), und das Modell liefert <span class="font-mono text-[13px]">Kategorie · Dringlichkeit · Zusammenfassung</span>.
+        Jede Nachricht wird unabhängig triagiert — keine Historie, kein Drift. Wechseln Sie zum
+        <em>Chat</em>-Tab, um frei mit demselben Modell zu sprechen und Ihre Erwartungen zu
+        kalibrieren, was 1,7&nbsp;Milliarden 1-Bit-Parameter können und was nicht.
+      </p>
+      <p>
+        In einem Kundenprojekt beginnt hier die Arbeit, statt zu enden: Die Taxonomie wird zu
+        <em>Ihren</em> Kategorien, das Modell wird auf <em>Ihren</em> gelabelten
+        Nachrichten feinabgestimmt, und ein Evaluations-Harness misst es gegen <em>Ihre</em> Messlatte,
+        bevor es die Produktion berührt — dieselbe Methode wie in unseren
+        <a class="underline" href="/de/reports/finma-ablation/">publizierten Ablationen</a>.
       </p>
     </div>
   </div>
 </section>
+
+<!-- The widget -->
+<section class="container-x pb-16 md:pb-20" id="try-it">
+  <div class="sd" id="sd">
+    <div class="sd-head">
+      <span class="sd-dot" id="sdDot" data-kind="idle"></span>
+      <span class="sd-status font-mono" id="sdStatus"></span>
+      <div class="sd-tabs" role="tablist">
+        <button type="button" role="tab" data-sd-mode="triage" class="on">Triage</button>
+        <button type="button" role="tab" data-sd-mode="chat">Chat</button>
+      </div>
+    </div>
+
+    <div class="sd-panel" id="sdGate">
+      <p class="sd-gate-lead">
+        Läuft vollständig in diesem Tab auf WebGPU. Der erste Start lädt das Modell herunter —
+        <span class="font-mono text-[13px]">~237&nbsp;MB, einmalig</span> — danach ist es gecacht
+        und funktioniert offline. Desktop-Chrome oder -Edge mit GPU empfohlen.
+      </p>
+      <button type="button" class="sd-cta" id="sdLoad">Modell laden</button>
+      <p class="sd-note" id="sdNote" hidden></p>
+    </div>
+
+    <div class="sd-panel" id="sdLoading" hidden>
+      <div class="sd-phase font-mono" id="sdPhase"></div>
+      <div class="sd-track"><i id="sdFill"></i></div>
+      <div class="sd-bytes font-mono" id="sdBytes"></div>
+    </div>
+
+    <div class="sd-panel" id="sdError" hidden>
+      <p class="sd-err font-mono" id="sdErrorMsg"></p>
+      <button type="button" class="sd-cta" id="sdRetry">Erneut versuchen</button>
+    </div>
+
+    <div class="sd-panel sd-panel-run" id="sdRun" hidden>
+      <div class="sd-thread" id="sdThread" aria-live="polite"></div>
+      <div class="sd-seeds" id="sdSeeds"></div>
+      <div class="sd-composer">
+        <textarea id="sdInput" rows="2" spellcheck="false"></textarea>
+        <button type="button" id="sdSend" class="sd-send" aria-label="Senden" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
+        <button type="button" id="sdStop" class="sd-send sd-stopbtn" aria-label="Stopp" hidden>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg>
+        </button>
+      </div>
+      <div class="sd-foot">
+        <span class="sd-live font-mono" id="sdLive"></span>
+        <button type="button" class="sd-clear font-mono" id="sdClear">LEEREN</button>
+      </div>
+    </div>
+  </div>
+  <p class="mt-3 text-xs prose-muted">
+    Modell-Download von huggingface.co · Ihre Nachrichten verlassen dieses Gerät nie ·
+    <a class="underline" href="https://chengmanov.github.io/bonsai-webgpu-triage/" target="_blank" rel="noopener">eigenständige Version ↗</a>
+  </p>
+</section>
+
+<!-- What's running -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-16 dark:border-white/10 dark:bg-white/[0.02] md:py-20">
+  <div class="container-x">
+    <div class="max-w-3xl">
+      {{ sectionHead("Was hier läuft", "Bonsai-1.7B — ein offenes 1-Bit-Modell.", "") }}
+      <p class="mt-5 text-[15px] prose-muted">
+        <strong class="text-ink-900 dark:text-white">Bonsai-1.7B</strong> ist ein offenes Modell von
+        <strong class="text-ink-900 dark:text-white">Prism&nbsp;ML</strong> (Apache-2.0): aufgebaut auf
+        Qwen3-1.7B und end-to-end für 1-Bit-Gewichte trainiert. Die WebGPU-Engine —
+        handgeschriebene Compute-Kernel, die die gepackten Gewichte auf Ihrer GPU dekodieren —
+        wurde von der webml-community für das 27B-Flaggschiff publiziert (MIT); wir haben sie
+        für diese Seite auf die einfache qwen3-Architektur des 1.7B portiert. Es ist ein
+        unabhängiger Demonstrator, keines unserer Apertus-Fine-Tunes.
+      </p>
+    </div>
+    {% set stats = [
+      {v:"1.125", label:"Bits pro Gewicht", sub:"Q1_0: gepackte Vorzeichenbits + FP16-Gruppenskalen — etwa 14× kleiner als dasselbe Modell in FP16"},
+      {v:"0.24 GB", label:"Einmaliger Download", sub:"Nach dem ersten Laden von Ihrem Browser gecacht; läuft von da an offline"},
+      {v:"32k", label:"Token-Kontextfenster", sub:"Die volle Kontextlänge von Qwen3-1.7B, ausgeführt auf Ihrer GPU"},
+      {v:"0", label:"Bytes Datenabfluss", sub:"Die Gewichte kommen von Hugging Face; nichts, was Sie eingeben, geht irgendwohin"}
+    ] %}
+    <div class="mt-10">{{ statBand(stats) }}</div>
+  </div>
+</section>
+
+<!-- From demo to production -->
+<section class="container-x py-16 md:py-20">
+  <div class="grid gap-10 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Von der Demo zur Produktion", "Das Muster ist das Produkt.", "") }}
+    </div>
+    <div class="space-y-5 text-[15px] prose-muted md:col-span-7">
+      <p>
+        Was Sie gerade benutzt haben, ist ein Muster: ein kleines, auf eine Aufgabe
+        zugeschnittenes Modell, quantisiert, bis es auf die Hardware passt, die Sie
+        tatsächlich haben, ausgeführt dort, wo die Daten liegen. In Kundenprojekten wenden
+        wir dasselbe Muster mit anderen Zutaten an — <a class="underline" href="/de/platform/">Apertus</a>,
+        das offene Schweizer Modell, feinabgestimmt auf Ihren Daten, deployt in Ihrer
+        Jurisdiktion und gemessen an einer <a class="underline" href="/de/concepts/evaluation/">Evaluations-Messlatte</a>,
+        die vor Projektstart vereinbart wird.
+      </p>
+      <p>
+        Wenn Ihre Organisation eine Inbox, einen Dokumentenstrom oder eine
+        Formular-Pipeline hat, die heute von Hand sortiert wird, ist das meist das richtige
+        erste Projekt: eng, messbar und souverän vom ersten Tag an.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ + CTA -->
+<section class="container-x pb-16 md:pb-20">
+  <div class="grid gap-10 md:grid-cols-12">
+    <div class="md:col-span-5">{{ sectionHead("Fragen", "Das Kleingedruckte.", "") }}</div>
+    <div class="md:col-span-7">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Kartieren Sie Ihre erste enge Aufgabe.", "Ein 30-minütiges Scoping-Gespräch — wir sagen Ihnen ehrlich, ob ein kleines, auf die Aufgabe abgestimmtes Modell passt.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}
+
+<!-- Widget i18n + styles + logic -->
+<script type="application/json" id="sd-i18n">
+{
+  "ui": {
+    "statusIdle": "MODELL NICHT GELADEN",
+    "statusLoading": "LADEN …",
+    "statusReady": "BEREIT",
+    "statusWriting": "SCHREIBT …",
+    "statusError": "FEHLER",
+    "statusContextFull": "KONTEXT VOLL",
+    "statusUnavailable": "WEBGPU NICHT VERFÜGBAR",
+    "noWebgpu": "WebGPU ist in diesem Browser nicht verfügbar. Versuchen Sie ein aktuelles Desktop-Chrome oder -Edge auf einem Rechner mit GPU — der Rest dieser Seite funktioniert auch ohne.",
+    "phaseEngine": "ENGINE WIRD GELADEN (0.7 MB)",
+    "phaseDevice": "WEBGPU-GERÄT WIRD ANGEFORDERT",
+    "phaseInit": "INITIALISIEREN",
+    "phaseTokenizer": "TOKENIZER WIRD GEPARST",
+    "phaseWeights": "GEWICHTE WERDEN GELADEN",
+    "phaseKernels": "WEBGPU-KERNEL WERDEN KOMPILIERT",
+    "genStopped": "Generierung gestoppt:",
+    "contextFull": "Kontextfenster voll — drücken Sie LEEREN für einen Neustart.",
+    "roleYou": "SIE",
+    "roleModel": "MODELL",
+    "fieldCategory": "Kategorie",
+    "fieldUrgency": "Dringlichkeit",
+    "fieldSummary": "Zusammenfassung",
+    "urgLow": "Tief",
+    "urgMedium": "Mittel",
+    "urgHigh": "Hoch"
+  },
+  "triage": {
+    "placeholder": "Support-Nachricht zum Triagieren einfügen …",
+    "wrapper": "Triage this customer support message. Reply with ONLY these three lines and nothing else:\nCategory: <one of Billing, Technical, Account, Sales, General>\nUrgency: <one of Low, Medium, High>\nSummary: <one short sentence>\n\nMessage:\n",
+    "seeds": [
+      {"label": "Abrechnung · dringend", "prompt": "Meine Zahlung ist dreimal fehlgeschlagen und ich fliege heute Abend ab — ich brauche sofort eine Lösung."},
+      {"label": "Technisch", "prompt": "Der Export-Button lässt die App jedes Mal abstürzen, wenn ich mehr als 100 Zeilen auswähle."},
+      {"label": "Konto", "prompt": "Ich habe mein Passwort zweimal zurückgesetzt, kann mich aber immer noch nicht in mein Konto einloggen."},
+      {"label": "Vertrieb", "prompt": "Wir sind ein Team von 40 Personen — bieten Sie Mengenrabatte auf den Jahresplan an?"}
+    ]
+  },
+  "chat": {
+    "placeholder": "Fragen Sie etwas …",
+    "seeds": [
+      {"label": "Logikrätsel", "prompt": "Sie haben drei Kisten mit den Etiketten Äpfel, Orangen und Gemischt. Jedes Etikett ist falsch.\n\nSie dürfen eine Frucht aus einer Kiste nehmen, ohne hineinzuschauen. Wie können Sie alle drei Kisten korrekt neu etikettieren?"},
+      {"label": "1-Bit-KI erklären", "prompt": "Erklären Sie in einfachen Worten, wie ein Sprachmodell mit 1-Bit-Gewichten funktionieren kann."},
+      {"label": "Code generieren", "prompt": "Schreiben Sie eine Python-Funktion, die eine Liste von Zahlen entgegennimmt und die Summe der geraden Zahlen zurückgibt."},
+      {"label": "Haiku schreiben", "prompt": "Schreiben Sie ein Haiku über die Schweizer Alpen."}
+    ]
+  }
+}
+</script>
+
+<style>
+/* sysf.io demo widget — scoped, theme-aware (site uses .dark on <html>) */
+.sd{--sd-surface:#fff;--sd-line:rgba(15,23,42,.12);--sd-ink:#1e293b;--sd-mute:#64748b;
+  --sd-teal:#0d9488;--sd-teal-soft:rgba(13,148,136,.08);--sd-red:#da291c;--sd-red-soft:rgba(218,41,28,.08);
+  --sd-field:#f8fafc;
+  border:1px solid var(--sd-line);border-radius:16px;background:var(--sd-surface);
+  box-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.05);overflow:hidden}
+.dark .sd{--sd-surface:#0d1526;--sd-line:rgba(255,255,255,.10);--sd-ink:#e2e8f0;--sd-mute:#94a3b8;
+  --sd-teal:#2dd4bf;--sd-teal-soft:rgba(45,212,191,.10);--sd-red:#f87171;--sd-red-soft:rgba(248,113,113,.10);
+  --sd-field:#0a111f;box-shadow:none}
+.sd-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--sd-line)}
+.sd-dot{width:8px;height:8px;border-radius:999px;background:var(--sd-mute);flex:none}
+.sd-dot[data-kind="ok"]{background:var(--sd-teal)}
+.sd-dot[data-kind="busy"]{background:var(--sd-teal);animation:sdPulse 1.1s ease-in-out infinite}
+.sd-dot[data-kind="err"]{background:var(--sd-red)}
+@keyframes sdPulse{50%{opacity:.35}}
+.sd-status{font-size:11px;letter-spacing:.12em;color:var(--sd-mute)}
+.sd-tabs{margin-left:auto;display:flex;gap:4px;background:var(--sd-field);border:1px solid var(--sd-line);border-radius:10px;padding:3px}
+.sd-tabs button{font-size:13px;font-weight:600;color:var(--sd-mute);padding:5px 14px;border-radius:8px;border:0;background:none;cursor:pointer}
+.sd-tabs button.on{color:var(--sd-teal);background:var(--sd-surface);box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.dark .sd-tabs button.on{box-shadow:none;background:rgba(255,255,255,.06)}
+.sd-panel{padding:22px 20px}
+.sd-gate-lead{margin:0 0 16px;font-size:14px;color:var(--sd-mute);max-width:52ch}
+.sd-cta{font-weight:700;font-size:14px;color:#fff;background:#0d9488;border:0;border-radius:10px;padding:11px 22px;cursor:pointer}
+.sd-cta:hover{background:#0f766e}.sd-cta:disabled{opacity:.5;cursor:default}
+.sd-note{margin:14px 0 0;font-size:13px;color:var(--sd-mute)}
+.sd-phase{font-size:11px;letter-spacing:.14em;color:var(--sd-teal);min-height:16px}
+.sd-track{height:6px;margin:12px 0 8px;border-radius:999px;background:var(--sd-line);overflow:hidden}
+.sd-track i{display:block;height:100%;width:0;background:var(--sd-teal);border-radius:999px;transition:width .25s}
+.sd-bytes{font-size:12px;color:var(--sd-mute)}
+.sd-err{font-size:12px;color:var(--sd-red);white-space:pre-wrap;margin:0 0 14px}
+.sd-panel-run{padding:0}
+.sd-thread{max-height:420px;min-height:120px;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:16px}
+.sd-msg{display:flex;flex-direction:column;gap:6px}
+.sd-role{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.16em;color:var(--sd-mute)}
+.sd-user{align-items:flex-end}
+.sd-user .sd-bubble{background:var(--sd-field);border:1px solid var(--sd-line);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--sd-ink);max-width:85%;white-space:pre-wrap}
+.sd-bot .sd-body{font-size:14px;color:var(--sd-ink)}
+.sd-bot .sd-body p{margin:0 0 8px}.sd-bot .sd-body p:last-child{margin:0}
+.sd-bot .sd-body code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--sd-field);border:1px solid var(--sd-line);border-radius:4px;padding:1px 5px}
+.sd-tri{display:flex;flex-direction:column;gap:8px;border:1px solid var(--sd-line);border-radius:12px;padding:14px 16px;background:var(--sd-field)}
+.sd-tri-row{display:flex;align-items:center;gap:12px}
+.sd-tri-k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--sd-mute);width:82px;flex:none}
+.sd-chip{font-size:13px;font-weight:600;color:var(--sd-teal);background:var(--sd-teal-soft);border-radius:7px;padding:3px 10px}
+.sd-chip[data-urg="high"]{color:var(--sd-red);background:var(--sd-red-soft)}
+.sd-tri-sum{align-items:flex-start}.sd-tri-v{font-size:14px;color:var(--sd-ink)}
+.sd-pend{display:inline-block;width:34px;height:8px;border-radius:4px;background:var(--sd-line);animation:sdPulse 1.1s ease-in-out infinite}
+.sd-caret{display:inline-block;width:7px;height:14px;margin-left:2px;background:var(--sd-teal);vertical-align:text-bottom;animation:sdPulse .8s steps(2) infinite}
+.sd-msg-meta{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--sd-mute)}
+.sd-ctxfull{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--sd-red);margin-top:6px}
+.sd-err-inline{font-size:13px;color:var(--sd-red)}
+.sd-seeds{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 12px}
+.sd-seed{font-size:12.5px;color:var(--sd-mute);background:none;border:1px solid var(--sd-line);border-radius:999px;padding:5px 13px;cursor:pointer}
+.sd-seed:hover{color:var(--sd-teal);border-color:var(--sd-teal)}
+.sd-seed:disabled{opacity:.4;cursor:default}
+.sd-composer{display:flex;align-items:flex-end;gap:10px;border-top:1px solid var(--sd-line);padding:12px 16px 6px 20px}
+.sd-composer textarea{flex:1;resize:none;border:0;background:none;font:inherit;font-size:14px;color:var(--sd-ink);outline:none;max-height:160px}
+.sd-send{width:36px;height:36px;flex:none;display:grid;place-items:center;border:0;border-radius:9px;background:#0d9488;color:#fff;cursor:pointer}
+.sd-send svg{width:17px;height:17px}
+.sd-send:disabled{opacity:.4;cursor:default}
+.sd-stopbtn{background:var(--sd-red)}
+.sd-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
+.sd-live{font-size:10px;letter-spacing:.1em;color:var(--sd-mute);min-height:14px}
+.sd-clear{font-size:10px;letter-spacing:.14em;color:var(--sd-mute);background:none;border:0;cursor:pointer;padding:4px}
+.sd-clear:hover{color:var(--sd-red)}.sd-clear:disabled{opacity:.4;cursor:default}
+@media (max-width:520px){.sd-thread{max-height:340px}.sd-tabs button{padding:5px 10px}}
+</style>
+<script type="module" src="/demo/app/demo-widget.js"></script>

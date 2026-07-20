@@ -13,7 +13,7 @@ faq:
     a: >-
       Le rapport le dit, avec les catégories d'échec détaillées — et la feuille de route de production explique ce qui comblerait l'écart et ce que cela coûterait, ou recommande d'arrêter. Un pilote à périmètre fixe qui peut se terminer par un « non » documenté est précisément ce qui donne de la valeur à son « oui ».
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -91,8 +91,10 @@ faq:
         {t:"Dérive & changement de données", d:"Nouveaux types de documents, nouvelle formulation de politique, nouveaux cas limites sont ajoutés au jeu d'évaluation dès leur apparition. Le jeu grandit avec votre réalité ; le système est revalidé face à lui."},
         {t:"Tout versionné", d:"Jeux d'évaluation, versions de modèle et leurs scores sont versionnés ensemble. Chaque réponse journalisée remonte à la version du modèle et à la version d'évaluation qui l'ont produite — aussi longtemps que votre politique de rétention conserve le journal. Cette traçabilité est ce que vos auditeurs demanderont."}
       ] %}
+      {% set prodIcons = ["gauge", "git-fork", "layers"] %}
       {% for p in prod %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(prodIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
       </div>

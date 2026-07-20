@@ -10,7 +10,7 @@ faq:
   - q: What happens if the system misses the bar?
     a: The report says so, with the failure categories broken out — and the production roadmap explains what would close the gap and what it would cost, or recommends stopping. A fixed-scope Pilot that can end in a documented "no" is precisely what makes its "yes" worth something.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -88,8 +88,10 @@ faq:
         {t:"Drift & data change", d:"New document types, new policy wording, new edge cases get added to the eval set as they appear. The set grows with your reality; the system is re-validated against it."},
         {t:"Versioned everything", d:"Eval sets, model builds and their scores are versioned together. Every logged answer traces to the model build and eval version that produced it — for as long as your retention policy keeps the log. That trace is what your auditors will ask for."}
       ] %}
+      {% set prodIcons = ["gauge", "git-fork", "layers"] %}
       {% for p in prod %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(prodIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
       </div>

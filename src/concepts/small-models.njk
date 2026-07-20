@@ -12,7 +12,7 @@ faq:
   - q: Doesn't fine-tuning become obsolete every time a better base model ships?
     a: The expensive assets survive model swaps. Your evaluation set, your curated training data and your retrieval corpus all carry over unchanged; re-running a LoRA fine-tune on a newer base model is days of work, not a rebuild. That's also why we stay model-agnostic — Apertus, Mistral, Llama or Qwen, whichever wins on your eval set within the tier your compliance allows.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 {% from "partials/charts.njk" import deltaBars, capabilityCurve, modelSpectrum, modelCatalog %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
@@ -86,8 +86,10 @@ faq:
         {t:"Retrieval (RAG)", d:"Supplies the facts: the current version of your policies, contracts and records, cited back to the source page. Knowledge updates the moment the document does — no retraining."},
         {t:"The ablation", d:"Every Pilot scores all four arms — base, retrieval, fine-tune, combined — on your evaluation set. The table says which system is worth buying."}
       ] %}
+      {% set roleIcons = ["sliders-horizontal", "database", "bar-chart-3"] %}
       {% for r in roles %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(roleIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ r.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ r.d }}</p>
       </div>
@@ -129,7 +131,7 @@ faq:
   <div class="mt-12">
     {% set catalogue = [
       {
-        region: "Swiss — maximum sovereignty", flag: "🇨🇭",
+        region: "Swiss — maximum sovereignty", icon: "shield-check",
         models: [
           { name:"Apertus", origin:"EPFL · ETH Zurich · CSCS (Switzerland)", sizes:"8B · 70B", transparency:"Fully open", tClass:"text-teal-700 dark:text-teal-300",
             hardware:"8B → workstation · 70B → node",
@@ -141,7 +143,7 @@ faq:
         ]
       },
       {
-        region: "Europe — EU-based, open weights", flag: "🇪🇺",
+        region: "Europe — EU-based, open weights", icon: "globe-lock",
         models: [
           { name:"Mistral", origin:"Mistral AI (France)", sizes:"8B · ~24B · larger", transparency:"Open weights", tClass:"text-teal-700 dark:text-teal-300",
             hardware:"8B → workstation · 24B → single 24–48 GB GPU",
@@ -160,7 +162,7 @@ faq:
         ]
       },
       {
-        region: "International — best open performance", flag: "🌐",
+        region: "International — best open performance", icon: "globe",
         models: [
           { name:"Llama", origin:"Meta (USA)", sizes:"8B · 70B · larger", transparency:"Open weights · community licence", tClass:"text-ink-700 dark:text-ink-300",
             hardware:"8B → workstation · 70B → node",
@@ -218,8 +220,10 @@ faq:
         {t:"Deep multi-hop reasoning", d:"Long chains of novel reasoning still favour larger models. Routine volume goes small; the hard tail escalates to a larger local model."},
         {t:"Non-sensitive, low-volume work", d:"If the data can leave and the volume is trivial, an API subscription is simpler. We'll say so in the scoping call."}
       ] %}
+      {% set limitIcons = ["messages-square", "globe", "git-fork", "plug"] %}
       {% for l in limits %}
       <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(limitIcons[loop.index0]) }}
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ l.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ l.d }}</p>
       </div>

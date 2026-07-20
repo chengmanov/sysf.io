@@ -13,7 +13,7 @@ faq:
     a: >-
       Der Bericht sagt es, mit aufgeschlüsselten Fehlerkategorien — und die Produktions-Roadmap erklärt, was die Lücke schliessen würde und was es kosten würde, oder empfiehlt aufzuhören. Ein Pilot mit festem Umfang, der in einem dokumentierten „Nein“ enden kann, ist genau das, was sein „Ja“ etwas wert macht.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -91,8 +91,10 @@ faq:
         {t:"Drift & Datenänderung", d:"Neue Dokumenttypen, neue Richtlinienformulierungen, neue Randfälle werden dem Evaluationsset hinzugefügt, sobald sie auftauchen. Das Set wächst mit Ihrer Realität; das System wird dagegen neu validiert."},
         {t:"Alles versioniert", d:"Evaluationssets, Modell-Builds und ihre Werte werden zusammen versioniert. Jede protokollierte Antwort geht auf den Modell-Build und die Eval-Version zurück, die sie erzeugt haben — so lange Ihre Aufbewahrungsrichtlinie das Protokoll behält. Diese Nachverfolgbarkeit ist, wonach Ihre Auditoren fragen werden."}
       ] %}
+      {% set prodIcons = ["gauge", "git-fork", "layers"] %}
       {% for p in prod %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(prodIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
       </div>

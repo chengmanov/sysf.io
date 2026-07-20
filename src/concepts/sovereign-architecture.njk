@@ -10,7 +10,7 @@ faq:
   - q: How do air-gapped systems get updates?
     a: Deliberately and verifiably — never over a wire. Model updates, retrieval-index rebuilds and software patches arrive as signed, checksummed offline bundles on scheduled maintenance windows, installed from documented runbooks your own staff can execute. Every update is re-validated against your evaluation set before it replaces the running version. Slower than cloud auto-update — which is exactly what your security team wants.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -33,8 +33,10 @@ faq:
       {t:"Node class", w:"70B-class, or several models", d:"A multi-GPU server in your datacentre or your Swiss cloud tenancy. Runs larger models, multiple concurrent workloads, and the escalation tier of the router below. The shape for organisation-wide rollouts."},
       {t:"Air-gapped / confidential", w:"Any size, maximum isolation", d:"Either physically disconnected infrastructure with offline update runbooks, or confidential-compute VMs with remote attestation — memory encrypted with keys the operator never holds. Chip-level detail in the FAQ below."}
     ] %}
+    {% set shapeIcons = ["cpu", "server", "shield"] %}
     {% for s in shapes %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(shapeIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
       <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>

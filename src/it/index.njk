@@ -17,7 +17,7 @@ faq:
   - q: Come iniziamo?
     a: Gli ingaggi iniziano con un Pilot a perimetro fisso su un singolo caso d'uso ad alto valore — dimostrate i numeri sui vostri dati, poi decidete sulla produzione con un rapporto di valutazione in mano. Prenotate una call e ne definiremo il perimetro insieme a voi.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 {% from "partials/charts.njk" import statBand, hbarChart %}
 
 <!-- Hero -->
@@ -83,8 +83,10 @@ faq:
           {t:"Dipendenza dal fornitore", d:"Prezzi, disponibilità e comportamento del modello possono cambiare senza preavviso."},
           {t:"Bloccati al PoC", d:"Le demo non superano una revisione di protezione dei dati o di sicurezza."}
         ] %}
+        {% set problemIcons = ["share-2", "eye-off", "lock", "flask-conical"] %}
         {% for p in problems %}
         <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          {{ iconChip(problemIcons[loop.index0]) }}
           <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
           <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
         </div>
@@ -160,8 +162,10 @@ faq:
           {t:"Detenete i runbook", d:"Pipeline di dati, harness di valutazione e runbook operativi sono deliverable, non segreti."},
           {t:"Il passaggio di consegne è un deliverable", d:"Ogni ingaggio include un passaggio di consegne documentato. La vostra strategia di uscita fa parte del perimetro, non di una trattativa."}
         ] %}
+        {% set ownIcons = ["key", "book-open", "package-check"] %}
         {% for o in owns %}
         <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          {{ iconChip(ownIcons[loop.index0]) }}
           <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ o.t }}</h3>
           <p class="mt-2 text-sm prose-muted">{{ o.d }}</p>
         </div>
@@ -182,8 +186,10 @@ faq:
       {n:"3", t:"Orchestrare", d:"Agenti, RAG e strumenti collegati ai vostri sistemi, con guardrail."},
       {n:"4", t:"Distribuire & gestire", d:"Deployment nel vostro cloud o data center, monitoraggio, valutazione e iterazione sotto contratto di supporto."}
     ] %}
+    {% set stepIcons = ["search", "sliders-horizontal", "workflow", "server"] %}
     {% for s in steps %}
     <li class="relative border-t-2 border-swiss pt-5">
+      <span class="mb-3 inline-flex text-teal-700 dark:text-teal-300">{{ icon(stepIcons[loop.index0], "h-6 w-6") }}</span>
       <div class="font-mono text-sm text-ink-500">Passo {{ s.n }}</div>
       <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
@@ -233,8 +239,10 @@ faq:
       {t:"Production", for:"Il pilot, irrobustito per l'uso quotidiano"},
       {t:"Air-gapped", for:"Regolamentato / massima sensibilità"}
     ] %}
+    {% set tierIcons = ["flask-conical", "server", "shield"] %}
     {% for t in tiers %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(tierIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
     </div>

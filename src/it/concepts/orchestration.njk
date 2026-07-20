@@ -16,7 +16,7 @@ faq:
     a: >-
       Sia nativamente sia tramite il Model Context Protocol, uno standard aperto per collegare i modelli a strumenti e fonti di dati. Dove esiste già un server MCP per un sistema che gestite, possiamo usarlo dietro la stessa disciplina di validazione di schema e minimo privilegio di qualsiasi strumento fatto a mano; dove non ne esiste, scriviamo lo strumento direttamente. Lo standard conta meno del wrapper — ogni chiamata di strumento è validata, registrata e con permessi definiti, indipendentemente dal trasporto.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -44,9 +44,10 @@ faq:
           {t:"Interruzioni human-in-the-loop", d:"Il grafo può mettersi in pausa in punti definiti e attendere una persona — è così che le azioni rilevanti (inviare, sottomettere, pagare, archiviare) restano sotto autorità umana per costruzione."},
           {t:"Chiamata di strumenti & integrazioni", d:"Un'interfaccia matura per chiamare i vostri sistemi, con l'ecosistema di integrazioni di LangChain dove aiuta e strumenti fatti a mano dove non aiuta."}
         ] %}
+        {% set givesIcons = ["workflow", "database", "shield-check", "plug"] %}
         {% for g in gives %}
         <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon(givesIcons[loop.index0], "h-5 w-5") }}</span>
           <div>
             <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
             <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
@@ -71,8 +72,10 @@ faq:
         {t:"Residenza di tracce & telemetria", d:"L'osservabilità di default dell'ecosistema è un SaaS ospitato — tracce piene dei vostri dati, spedite fuori; auto-ospitarla è un prodotto di livello enterprise. Noi distribuiamo invece un tracing self-hosted entro il vostro confine — Langfuse con la propria telemetria d'uso disattivata, o un backend OpenTelemetry."},
         {t:"Disciplina di versionamento", d:"Prompt, definizioni del grafo, build del modello e punteggi di valutazione versionati insieme, così ogni risposta di produzione risale alla configurazione esatta che l'ha prodotta."}
       ] %}
+      {% set gapIcons = ["lock", "file-check", "eye-off", "clipboard-check", "server", "layers"] %}
       {% for g in gaps %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(gapIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
       </div>

@@ -4,7 +4,7 @@ order: 4
 title: À propos
 description: sysf.io est un studio d'ingénierie suisse indépendant dédié à l'IA souveraine. Nous construisons des modèles sur mesure affinés sur Apertus et les livrons de bout en bout — pour que les organisations régulées adoptent l'IA sans renoncer au contrôle de leurs données.
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -69,8 +69,10 @@ description: sysf.io est un studio d'ingénierie suisse indépendant dédié à 
         {t:"Des produits, pas des démos", d:"La mise en service est conditionnée à un score d'évaluation convenu au cadrage, pas à une démo pour les parties prenantes."},
         {t:"Conformité par conception", d:"La cartographie LPD/RGPD et la documentation AI Act sont des livrables nommés dans le cahier des charges."}
       ] %}
+      {% set valIcons = ["shield-check", "book-open", "package-check", "file-check"] %}
       {% for v in vals %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(valIcons[loop.index0]) }}
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
       </div>

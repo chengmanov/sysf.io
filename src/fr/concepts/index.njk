@@ -3,7 +3,7 @@ layout: layouts/base.njk
 title: Concepts — L'ingénierie derrière l'IA souveraine
 description: Les concepts derrière l'approche de sysf.io, expliqués à une profondeur de praticien — pourquoi de petits modèles spécialisés par tâche gagnent le travail régulé, comment la quantification rend la souveraineté abordable, la livraison guidée par l'évaluation, et le runtime souverain de la workstation à l'air gap.
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -51,8 +51,10 @@ description: Les concepts derrière l'approche de sysf.io, expliqués à une pro
         d:"LangChain et LangGraph en production — ce que le framework fournit, les six choses qu'il vous laisse (RBAC, pistes d'audit, discipline PII, évaluation, résidence des traces, versionnage), et le durcissement qui transforme une démo d'agent en système exploitable."
       }
     ] %}
+    {% set topicIcons = ["cpu", "minimize-2", "clipboard-check", "server", "workflow"] %}
     {% for t in topics %}
     <a href="{{ t.u }}" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition hover:border-swiss/40 dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(topicIcons[loop.index0]) }}
       <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">{{ t.k }}</p>
       <h2 class="mt-3 flex items-start justify-between gap-4 text-xl font-bold tracking-tightest text-ink-900 dark:text-white">
         {{ t.t }}

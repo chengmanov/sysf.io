@@ -16,7 +16,7 @@ faq:
     a: >-
       Sowohl nativ als auch über das Model Context Protocol, einen offenen Standard zur Verbindung von Modellen mit Tools und Datenquellen. Wo bereits ein MCP-Server für ein System existiert, das Sie betreiben, können wir ihn hinter derselben Schema-Validierung und Least-Privilege-Disziplin nutzen wie jedes handgebaute Tool; wo keiner existiert, schreiben wir das Tool direkt. Der Standard zählt weniger als der Wrapper — jeder Tool-Aufruf wird validiert, protokolliert und berechtigungsbegrenzt, unabhängig vom Transport.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -44,9 +44,10 @@ faq:
           {t:"Human-in-the-Loop-Interrupts", d:"Der Graph kann an definierten Punkten pausieren und auf eine Person warten — so bleiben folgenreiche Aktionen (senden, einreichen, zahlen, ablegen) konstruktionsbedingt unter menschlicher Autorität."},
           {t:"Tool-Aufrufe & Integrationen", d:"Eine ausgereifte Schnittstelle für Aufrufe in Ihre Systeme, mit LangChains Integrations-Ökosystem, wo es hilft, und handgebauten Tools, wo nicht."}
         ] %}
+        {% set givesIcons = ["workflow", "database", "shield-check", "plug"] %}
         {% for g in gives %}
         <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon(givesIcons[loop.index0], "h-5 w-5") }}</span>
           <div>
             <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
             <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
@@ -71,8 +72,10 @@ faq:
         {t:"Trace- & Telemetrie-Residenz", d:"Die Standard-Observability des Ökosystems ist ein gehostetes SaaS — Traces voller Ihrer Daten, hinausgeschickt; das Selbst-Hosting ist ein Enterprise-Produkt. Wir deployen stattdessen selbst gehostetes Tracing innerhalb Ihrer Grenze — Langfuse mit ausgeschalteter eigener Nutzungstelemetrie oder ein OpenTelemetry-Backend."},
         {t:"Versionierungsdisziplin", d:"Prompts, Graphdefinitionen, Modell-Builds und Eval-Werte zusammen versioniert, sodass jede Produktionsantwort auf die exakte Konfiguration zurückgeht, die sie erzeugte."}
       ] %}
+      {% set gapIcons = ["lock", "file-check", "eye-off", "clipboard-check", "server", "layers"] %}
       {% for g in gaps %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(gapIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
       </div>

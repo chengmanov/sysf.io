@@ -14,7 +14,7 @@ faq:
     a: >-
       Apertus ist von Grund auf mehrsprachig — natives Deutsch, Französisch, Italienisch und Rätoromanisch, inklusive Schweizerdeutsch, plus über 1'000 weitere Sprachen.
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -97,9 +97,11 @@ faq:
       note:"On-prem / edge-freundlich · schützt operatives IP"
     }
   ] %}
+  {% set indIcons = ["landmark", "heart-pulse", "scale", "building-2", "shield-check", "factory"] %}
   {% for ind in industries %}
   <section class="grid gap-8 py-14 md:grid-cols-12 md:py-16">
     <div class="md:col-span-4">
+      {{ iconChip(indIcons[loop.index0]) }}
       <h2 class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ ind.k }}</h2>
       <p class="mt-4 text-sm prose-muted">{{ ind.p }}</p>
       <p class="mt-5 inline-flex items-center gap-2 text-xs font-medium text-swiss">

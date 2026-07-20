@@ -4,7 +4,7 @@ order: 4
 title: About
 description: sysf.io is an independent Swiss sovereign-AI engineering studio. We build custom fine-tuned models on Apertus and ship them end-to-end — so regulated organisations can adopt AI without giving up control of their data.
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -69,8 +69,10 @@ description: sysf.io is an independent Swiss sovereign-AI engineering studio. We
         {t:"Products, not demos", d:"Go-live is gated on an evaluation score agreed at scoping, not on a stakeholder demo."},
         {t:"Compliance by design", d:"FADP/GDPR mapping and EU AI Act documentation are named deliverables in the statement of work."}
       ] %}
+      {% set valIcons = ["shield-check", "book-open", "package-check", "file-check"] %}
       {% for v in vals %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(valIcons[loop.index0]) }}
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
       </div>

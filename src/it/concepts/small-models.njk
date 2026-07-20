@@ -16,7 +16,7 @@ faq:
     a: >-
       Gli asset costosi sopravvivono ai cambi di modello. Il vostro set di valutazione, i vostri dati di addestramento curati e il vostro corpus di retrieval si trasferiscono tutti invariati; rieseguire un'ottimizzazione LoRA su un modello di base più recente è questione di giorni, non una ricostruzione. È anche per questo che restiamo agnostici rispetto al modello — Apertus, Mistral, Llama o Qwen, quello che vince sul vostro set di valutazione all'interno del livello che la vostra conformità consente.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 {% from "partials/charts.njk" import deltaBars, capabilityCurve, modelSpectrum, modelCatalog %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
@@ -90,8 +90,10 @@ faq:
         {t:"Retrieval (RAG)", d:"Fornisce i fatti: la versione attuale delle vostre policy, contratti e archivi, citati fino alla pagina di origine. La conoscenza si aggiorna nel momento in cui lo fa il documento — nessun riaddestramento."},
         {t:"L'ablazione", d:"Ogni Pilot valuta tutti e quattro i bracci — base, retrieval, ottimizzazione, combinato — sul vostro set di valutazione. La tabella dice quale sistema vale la pena acquistare."}
       ] %}
+      {% set roleIcons = ["sliders-horizontal", "database", "bar-chart-3"] %}
       {% for r in roles %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(roleIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ r.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ r.d }}</p>
       </div>
@@ -133,7 +135,7 @@ faq:
   <div class="mt-12">
     {% set catalogue = [
       {
-        region: "Svizzera — sovranità massima", flag: "🇨🇭",
+        region: "Svizzera — sovranità massima", icon: "shield-check",
         models: [
           { name:"Apertus", origin:"EPFL · ETH Zurigo · CSCS (Svizzera)", sizes:"8B · 70B", transparency:"Interamente aperto", tClass:"text-teal-700 dark:text-teal-300",
             hardware:"8B → workstation · 70B → nodo",
@@ -145,7 +147,7 @@ faq:
         ]
       },
       {
-        region: "Europa — con base UE, pesi aperti", flag: "🇪🇺",
+        region: "Europa — con base UE, pesi aperti", icon: "globe-lock",
         models: [
           { name:"Mistral", origin:"Mistral AI (Francia)", sizes:"8B · ~24B · più grande", transparency:"Pesi aperti", tClass:"text-teal-700 dark:text-teal-300",
             hardware:"8B → workstation · 24B → singola GPU 24–48 GB",
@@ -164,7 +166,7 @@ faq:
         ]
       },
       {
-        region: "Internazionale — migliore performance aperta", flag: "🌐",
+        region: "Internazionale — migliore performance aperta", icon: "globe",
         models: [
           { name:"Llama", origin:"Meta (USA)", sizes:"8B · 70B · più grande", transparency:"Pesi aperti · licenza community", tClass:"text-ink-700 dark:text-ink-300",
             hardware:"8B → workstation · 70B → nodo",
@@ -222,8 +224,10 @@ faq:
         {t:"Ragionamento profondo a più passaggi", d:"Le lunghe catene di ragionamento inedito favoriscono ancora i modelli più grandi. Il volume di routine va al piccolo; la coda difficile scala a un modello locale più grande."},
         {t:"Lavoro non sensibile e a basso volume", d:"Se i dati possono uscire e il volume è trascurabile, un abbonamento API è più semplice. Ve lo diremo nella call di definizione del perimetro."}
       ] %}
+      {% set limitIcons = ["messages-square", "globe", "git-fork", "plug"] %}
       {% for l in limits %}
       <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(limitIcons[loop.index0]) }}
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ l.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ l.d }}</p>
       </div>

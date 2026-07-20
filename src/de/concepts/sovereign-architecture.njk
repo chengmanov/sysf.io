@@ -13,7 +13,7 @@ faq:
     a: >-
       Bewusst und verifizierbar — nie über eine Leitung. Modell-Updates, Retrieval-Index-Neuaufbauten und Software-Patches treffen als signierte, checksummierte Offline-Bundles in geplanten Wartungsfenstern ein, installiert aus dokumentierten Runbooks, die Ihr eigenes Personal ausführen kann. Jedes Update wird gegen Ihr Evaluationsset neu validiert, bevor es die laufende Version ersetzt. Langsamer als Cloud-Auto-Update — genau das, was Ihr Sicherheitsteam will.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -36,8 +36,10 @@ faq:
       {t:"Knoten-Klasse", w:"70B-Klasse oder mehrere Modelle", d:"Ein Multi-GPU-Server in Ihrem Rechenzentrum oder Ihrer Schweizer Cloud-Tenancy. Betreibt grössere Modelle, mehrere gleichzeitige Workloads und die Eskalationsstufe des Routers unten. Die Form für organisationsweite Rollouts."},
       {t:"Air-gapped / Confidential", w:"Jede Grösse, maximale Isolation", d:"Entweder physisch getrennte Infrastruktur mit Offline-Update-Runbooks oder Confidential-Compute-VMs mit Remote Attestation — Speicher verschlüsselt mit Schlüsseln, die der Betreiber nie besitzt. Detail auf Chip-Ebene in den FAQ unten."}
     ] %}
+    {% set shapeIcons = ["cpu", "server", "shield"] %}
     {% for s in shapes %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(shapeIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
       <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>

@@ -5,6 +5,7 @@ title: Contatto
 description: Prenotate una call di definizione del perimetro con sysf.io per delineare il vostro primo caso d'uso di IA sovrana — modelli su misura ottimizzati su Apertus, distribuiti nella vostra giurisdizione svizzera o UE, o on-prem.
 ogType: website
 ---
+{% from "partials/components.njk" import icon %}
 <section class="container-x py-16 md:py-24">
   <div class="grid gap-14 md:grid-cols-12">
     <!-- Left -->
@@ -26,7 +27,7 @@ ogType: website
           <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Cosa aspettarsi</div>
           <ul class="mt-2 space-y-2 text-sm prose-muted">
             {% for x in ["Una call di 30 minuti con l'ingegnere che costruirà il vostro sistema", "Una proposta di Pilot a perimetro fisso sui vostri dati — entro una settimana", "Un no chiaro entro il minuto 20 se un modello aperto ottimizzato non è la scelta giusta"] %}
-            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            <li class="flex items-start gap-2.5"><span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon("check", "h-4 w-4") }}</span>{{ x }}</li>
             {% endfor %}
           </ul>
         </div>

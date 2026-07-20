@@ -4,7 +4,7 @@ order: 4
 title: Über uns
 description: sysf.io ist ein unabhängiges Schweizer Engineering-Studio für souveräne KI. Wir bauen massgeschneiderte, auf Apertus feinabgestimmte Modelle und liefern sie end-to-end — damit regulierte Organisationen KI einsetzen können, ohne die Kontrolle über ihre Daten aufzugeben.
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -69,8 +69,10 @@ description: sysf.io ist ein unabhängiges Schweizer Engineering-Studio für sou
         {t:"Produkte, keine Demos", d:"Der Go-live ist an einen beim Scoping vereinbarten Evaluationswert gebunden, nicht an eine Stakeholder-Demo."},
         {t:"Compliance by design", d:"DSG-/DSGVO-Zuordnung und EU-AI-Act-Dokumentation sind benannte Lieferergebnisse im Statement of Work."}
       ] %}
+      {% set valIcons = ["shield-check", "book-open", "package-check", "file-check"] %}
       {% for v in vals %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(valIcons[loop.index0]) }}
         <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
       </div>

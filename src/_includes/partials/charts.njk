@@ -5,6 +5,7 @@
     · Teal is the chart colour; Swiss red is reserved for ONE decisive thing per view.
     · Bars scale on a 0–100% axis, so a value in % maps directly to bar width.
 #}
+{% from "partials/components.njk" import icon %}
 
 {# Big-number stat band. items: [{v, label, sub}].  cols ∈ {2,3,4} (default 4). #}
 {% macro statBand(items, cols) %}
@@ -179,8 +180,8 @@
 <div class="space-y-10">
   {% for g in groups %}
   <div>
-    <div class="mb-4 flex items-center gap-2">
-      <span class="text-lg" aria-hidden="true">{{ g.flag }}</span>
+    <div class="mb-4 flex items-center gap-2.5">
+      <span class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-teal-50 text-teal-700 dark:bg-white/5 dark:text-teal-300" aria-hidden="true">{{ icon(g.icon, "h-4 w-4") }}</span>
       <h3 class="text-sm font-semibold uppercase tracking-[0.14em] text-ink-700 dark:text-ink-300">{{ g.region }}</h3>
       <span class="h-px flex-1 bg-neutral-200 dark:bg-white/10"></span>
     </div>

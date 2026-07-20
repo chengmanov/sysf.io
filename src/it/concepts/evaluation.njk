@@ -13,7 +13,7 @@ faq:
     a: >-
       Il rapporto lo dice, con le categorie di errore dettagliate — e la roadmap di produzione spiega cosa colmerebbe il divario e quanto costerebbe, oppure raccomanda di fermarsi. Un Pilot a perimetro fisso che può concludersi con un «no» documentato è precisamente ciò che rende prezioso il suo «sì».
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -91,8 +91,10 @@ faq:
         {t:"Drift & cambiamento dei dati", d:"Nuovi tipi di documento, nuove formulazioni di policy, nuovi casi limite vengono aggiunti al set di valutazione non appena compaiono. Il set cresce con la vostra realtà; il sistema viene rivalidato rispetto ad esso."},
         {t:"Tutto versionato", d:"Set di valutazione, build del modello e i loro punteggi sono versionati insieme. Ogni risposta registrata risale al build del modello e alla versione di valutazione che l'hanno prodotta — finché la vostra policy di conservazione mantiene il log. Quella tracciabilità è ciò che i vostri auditor chiederanno."}
       ] %}
+      {% set prodIcons = ["gauge", "git-fork", "layers"] %}
       {% for p in prod %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(prodIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
       </div>

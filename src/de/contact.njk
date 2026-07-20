@@ -5,6 +5,7 @@ title: Kontakt
 description: Buchen Sie einen Scoping-Termin mit sysf.io, um Ihren ersten souveränen KI-Use-Case zu umreissen — massgeschneiderte, auf Apertus feinabgestimmte Modelle, betrieben in Ihrer Schweizer oder EU-Jurisdiktion oder on-prem.
 ogType: website
 ---
+{% from "partials/components.njk" import icon %}
 <section class="container-x py-16 md:py-24">
   <div class="grid gap-14 md:grid-cols-12">
     <!-- Left -->
@@ -26,7 +27,7 @@ ogType: website
           <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Was Sie erwartet</div>
           <ul class="mt-2 space-y-2 text-sm prose-muted">
             {% for x in ["Ein 30-minütiges Gespräch mit dem Ingenieur, der Ihr System baut", "Ein Pilot-Vorschlag mit festem Umfang auf Ihren Daten — innerhalb einer Woche", "Ein klares Nein bis Minute 20, falls ein feinabgestimmtes offenes Modell nicht passt"] %}
-            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            <li class="flex items-start gap-2.5"><span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon("check", "h-4 w-4") }}</span>{{ x }}</li>
             {% endfor %}
           </ul>
         </div>

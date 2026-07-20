@@ -5,6 +5,7 @@ title: Contact
 description: Réservez un appel de cadrage avec sysf.io pour définir votre premier cas d'usage d'IA souveraine — modèles sur mesure affinés sur Apertus, déployés dans votre juridiction suisse ou européenne, ou on-prem.
 ogType: website
 ---
+{% from "partials/components.njk" import icon %}
 <section class="container-x py-16 md:py-24">
   <div class="grid gap-14 md:grid-cols-12">
     <!-- Left -->
@@ -26,7 +27,7 @@ ogType: website
           <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">À quoi vous attendre</div>
           <ul class="mt-2 space-y-2 text-sm prose-muted">
             {% for x in ["Un appel de 30 minutes avec l'ingénieur qui construira votre système", "Une proposition de pilote à périmètre fixe sur vos données — sous une semaine", "Un non clair avant la 20e minute si un modèle ouvert affiné n'est pas le bon choix"] %}
-            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            <li class="flex items-start gap-2.5"><span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon("check", "h-4 w-4") }}</span>{{ x }}</li>
             {% endfor %}
           </ul>
         </div>

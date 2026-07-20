@@ -13,7 +13,7 @@ faq:
     a: >-
       Deliberatamente e in modo verificabile — mai via cavo. Aggiornamenti del modello, ricostruzioni dell'indice di retrieval e patch software arrivano come pacchetti offline firmati e con checksum, in finestre di manutenzione pianificate, installati da runbook documentati che il vostro personale può eseguire. Ogni aggiornamento viene rivalidato rispetto al vostro set di valutazione prima di sostituire la versione in esecuzione. Più lento dell'aggiornamento automatico cloud — che è esattamente ciò che vuole il vostro team di sicurezza.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -36,8 +36,10 @@ faq:
       {t:"Classe nodo", w:"Classe 70B, o più modelli", d:"Un server multi-GPU nel vostro data center o nel vostro cloud svizzero. Esegue modelli più grandi, più carichi di lavoro concorrenti, e il livello di escalation del router qui sotto. La forma per i rollout a livello di organizzazione."},
       {t:"Air-gapped / confidenziale", w:"Qualsiasi dimensione, massima isolazione", d:"O infrastruttura fisicamente scollegata con runbook di aggiornamento offline, o VM di confidential computing con attestazione remota — memoria cifrata con chiavi che l'operatore non detiene mai. Dettaglio a livello di chip nelle FAQ qui sotto."}
     ] %}
+    {% set shapeIcons = ["cpu", "server", "shield"] %}
     {% for s in shapes %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(shapeIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
       <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>

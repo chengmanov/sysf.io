@@ -12,7 +12,7 @@ faq:
   - q: How do tools connect to our systems — do you support MCP?
     a: Both natively and via the Model Context Protocol, an open standard for connecting models to tools and data sources. Where an MCP server already exists for a system you run, we can use it behind the same schema-validation and least-privilege discipline as any hand-built tool; where none exists, we write the tool directly. The standard matters less than the wrapper — every tool call is validated, logged and permission-scoped regardless of transport.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -40,9 +40,10 @@ faq:
           {t:"Human-in-the-loop interrupts", d:"The graph can pause at defined points and wait for a person — which is how consequential actions (send, submit, pay, file) stay under human authority by construction."},
           {t:"Tool calling & integrations", d:"A mature interface for calling into your systems, with LangChain's integration ecosystem where it helps and hand-built tools where it doesn't."}
         ] %}
+        {% set givesIcons = ["workflow", "database", "shield-check", "plug"] %}
         {% for g in gives %}
         <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon(givesIcons[loop.index0], "h-5 w-5") }}</span>
           <div>
             <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
             <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
@@ -67,8 +68,10 @@ faq:
         {t:"Trace & telemetry residency", d:"The ecosystem's default observability is a hosted SaaS — traces full of your data, shipped out; self-hosting it is an enterprise-tier product. We deploy self-hosted tracing inside your boundary instead — Langfuse with its own usage telemetry switched off, or an OpenTelemetry backend."},
         {t:"Versioning discipline", d:"Prompts, graph definitions, model builds and eval scores versioned together, so every production answer traces to the exact configuration that produced it."}
       ] %}
+      {% set gapIcons = ["lock", "file-check", "eye-off", "clipboard-check", "server", "layers"] %}
       {% for g in gaps %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(gapIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
       </div>

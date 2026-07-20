@@ -13,7 +13,7 @@ faq:
     a: >-
       Délibérément et de façon vérifiable — jamais par un fil. Les mises à jour de modèle, les reconstructions d'index de recherche et les correctifs logiciels arrivent sous forme de lots hors ligne signés et à somme de contrôle, lors de fenêtres de maintenance planifiées, installés à partir de runbooks documentés que votre propre personnel peut exécuter. Chaque mise à jour est revalidée face à votre jeu d'évaluation avant de remplacer la version en cours. Plus lent qu'une mise à jour cloud automatique — c'est exactement ce que veut votre équipe de sécurité.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -36,8 +36,10 @@ faq:
       {t:"Classe nœud", w:"Classe 70B, ou plusieurs modèles", d:"Un serveur multi-GPU dans votre centre de données ou votre cloud suisse. Fait tourner des modèles plus grands, plusieurs charges concurrentes, et le palier d'escalade du routeur ci-dessous. La forme pour les déploiements à l'échelle de l'organisation."},
       {t:"Air-gapped / confidentiel", w:"Toute taille, isolation maximale", d:"Soit une infrastructure physiquement déconnectée avec des runbooks de mise à jour hors ligne, soit des VM de confidential computing avec attestation à distance — mémoire chiffrée avec des clés que l'opérateur ne détient jamais. Détail au niveau de la puce dans la FAQ ci-dessous."}
     ] %}
+    {% set shapeIcons = ["cpu", "server", "shield"] %}
     {% for s in shapes %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(shapeIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
       <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>

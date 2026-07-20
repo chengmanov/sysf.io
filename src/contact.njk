@@ -5,6 +5,7 @@ title: Contact
 description: Book a scoping call with sysf.io to map your first sovereign AI use case — custom models fine-tuned on Apertus, deployed in your Swiss or EU jurisdiction, or on-prem.
 ogType: website
 ---
+{% from "partials/components.njk" import icon %}
 <section class="container-x py-16 md:py-24">
   <div class="grid gap-14 md:grid-cols-12">
     <!-- Left -->
@@ -26,7 +27,7 @@ ogType: website
           <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">What to expect</div>
           <ul class="mt-2 space-y-2 text-sm prose-muted">
             {% for x in ["A 30-minute call with the engineer who will build your system", "A fixed-scope Pilot proposal on your data — within one week", "A clear no by minute 20 if a fine-tuned open model isn't the right fit"] %}
-            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            <li class="flex items-start gap-2.5"><span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon("check", "h-4 w-4") }}</span>{{ x }}</li>
             {% endfor %}
           </ul>
         </div>

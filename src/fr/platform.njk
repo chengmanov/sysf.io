@@ -20,7 +20,7 @@ faq:
     a: >-
       Là où votre gouvernance des données l'exige — votre cloud suisse ou européen, votre propre centre de données, ou un environnement air-gapped avec confidential computing (AMD SEV-SNP ou Intel TDX avec attestation à distance). Ce que cela apporte, et sa réserve concernant le GPU, figure sur la <a class="link-underline" href="/fr/concepts/sovereign-architecture/">page du runtime souverain</a>. Rien ne dépend d'API LLM américaines externes.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -47,9 +47,10 @@ faq:
       {n:"06", t:"Déploiement souverain", d:"Déploiement conteneurisé dans votre cloud suisse, sur votre propre matériel, ou sur des VM de confidential computing (AMD SEV-SNP / Intel TDX avec attestation à distance)."},
       {n:"07", t:"Monitoring & itération", d:"Monitoring continu de la qualité, de la dérive et de l'usage, avec une cadence de maintenance et un contrat de support."}
     ] %}
+    {% set pipeIcons = ["search", "database", "sliders-horizontal", "workflow", "clipboard-check", "server", "gauge"] %}
     {% for s in steps %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
-      <div class="font-mono text-sm text-swiss">{{ s.n }}</div>
+      <div class="mb-4 flex items-center gap-3">{{ iconChip(pipeIcons[loop.index0], "!mb-0") }}<span class="font-mono text-sm text-ink-500">{{ s.n }}</span></div>
       <h3 class="mt-3 text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-2 text-sm prose-muted">{{ s.d | safe }}</p>
     </div>
@@ -70,9 +71,10 @@ faq:
           {t:"Garde-fous & évaluation", d:"Contrôles de sécurité, PII et qualité, surveillés en production."},
           {t:"Runtime souverain", d:"On-premise, cloud suisse, ou confidential computing."}
         ] %}
+        {% set archIcons = ["cpu", "workflow", "database", "shield-check", "server"] %}
         {% for a in arch %}
         <li class="flex gap-4">
-          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon(archIcons[loop.index0], "h-5 w-5") }}</span>
           <div>
             <div class="font-semibold text-ink-900 dark:text-white">{{ a.t }}</div>
             <div class="text-sm prose-muted">{{ a.d }}</div>
@@ -98,8 +100,10 @@ faq:
       {t:"RGPD européen", d:"Minimisation des données, limitation des finalités et résidence, gérées par conception pour les opérations dans l'UE."},
       {t:"AI Act européen", d:"Le règlement classe selon le risque d'usage et impose des devoirs de transparence au fournisseur du modèle — il ne restreint pas une base selon le pays d'origine. Apertus va le plus loin, avec des données d'entraînement publiquement documentées qu'aucun modèle fermé n'offre ; quelle que soit la base choisie, nous ajoutons la fiche de classification des risques et la documentation technique qu'il exige."}
     ] %}
+    {% set compIcons = ["shield-check", "shield", "file-check"] %}
     {% for c in comp %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(compIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ c.t }}</h3>
       <p class="mt-2 text-sm prose-muted">{{ c.d }}</p>
     </div>

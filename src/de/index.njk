@@ -17,7 +17,7 @@ faq:
   - q: Wie fangen wir an?
     a: Engagements starten mit einem Pilot mit festem Umfang auf einem einzelnen, wertvollen Use Case — beweisen Sie die Zahlen auf Ihren eigenen Daten und entscheiden Sie dann mit einem Evaluationsbericht in der Hand über die Produktion. Buchen Sie einen Termin, und wir umreissen ihn gemeinsam.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 {% from "partials/charts.njk" import statBand, hbarChart %}
 
 <!-- Hero -->
@@ -83,8 +83,10 @@ faq:
           {t:"Vendor-Lock-in", d:"Preise, Verfügbarkeit und Modellverhalten können sich ohne Vorwarnung ändern."},
           {t:"Steckenbleiben beim PoC", d:"Demos überstehen keine Datenschutz- oder Sicherheitsprüfung."}
         ] %}
+        {% set problemIcons = ["share-2", "eye-off", "lock", "flask-conical"] %}
         {% for p in problems %}
         <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          {{ iconChip(problemIcons[loop.index0]) }}
           <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
           <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
         </div>
@@ -160,8 +162,10 @@ faq:
           {t:"Sie halten die Runbooks", d:"Datenpipelines, Evaluations-Harness und operative Runbooks sind Lieferergebnisse, keine Geheimnisse."},
           {t:"Übergabe ist ein Lieferergebnis", d:"Jedes Engagement enthält eine dokumentierte Übergabe. Ihre Exit-Strategie ist Teil des Umfangs, keine Verhandlung."}
         ] %}
+        {% set ownIcons = ["key", "book-open", "package-check"] %}
         {% for o in owns %}
         <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          {{ iconChip(ownIcons[loop.index0]) }}
           <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ o.t }}</h3>
           <p class="mt-2 text-sm prose-muted">{{ o.d }}</p>
         </div>
@@ -182,8 +186,10 @@ faq:
       {n:"3", t:"Orchestrieren", d:"Agenten, RAG und Tools an Ihre Systeme angebunden, mit Guardrails."},
       {n:"4", t:"Deployen & betreiben", d:"Deployment in Ihrer Tenancy oder Ihrem Rechenzentrum, Monitoring, Evaluation und Iteration unter einem Supportvertrag."}
     ] %}
+    {% set stepIcons = ["search", "sliders-horizontal", "workflow", "server"] %}
     {% for s in steps %}
     <li class="relative border-t-2 border-swiss pt-5">
+      <span class="mb-3 inline-flex text-teal-700 dark:text-teal-300">{{ icon(stepIcons[loop.index0], "h-6 w-6") }}</span>
       <div class="font-mono text-sm text-ink-500">Schritt {{ s.n }}</div>
       <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
@@ -233,8 +239,10 @@ faq:
       {t:"Production", for:"Der Pilot, gehärtet für den täglichen Einsatz"},
       {t:"Air-gapped", for:"Reguliert / höchst sensibel"}
     ] %}
+    {% set tierIcons = ["flask-conical", "server", "shield"] %}
     {% for t in tiers %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(tierIcons[loop.index0]) }}
       <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
       <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
     </div>

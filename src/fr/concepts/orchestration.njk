@@ -16,7 +16,7 @@ faq:
     a: >-
       Nativement et via le Model Context Protocol, un standard ouvert pour connecter les modèles aux outils et aux sources de données. Là où un serveur MCP existe déjà pour un système que vous exploitez, nous pouvons l'utiliser derrière la même discipline de validation de schéma et de moindre privilège que tout outil fait main ; là où il n'en existe pas, nous écrivons l'outil directement. Le standard importe moins que l'enveloppe — chaque appel d'outil est validé, journalisé et à périmètre de permission défini, quel que soit le transport.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -44,9 +44,10 @@ faq:
           {t:"Interruptions human-in-the-loop", d:"Le graphe peut se mettre en pause à des points définis et attendre une personne — c'est ainsi que les actions conséquentes (envoyer, soumettre, payer, classer) restent sous autorité humaine par construction."},
           {t:"Appel d'outils & intégrations", d:"Une interface mature pour appeler vos systèmes, avec l'écosystème d'intégrations de LangChain là où il aide et des outils faits main là où il n'aide pas."}
         ] %}
+        {% set givesIcons = ["workflow", "database", "shield-check", "plug"] %}
         {% for g in gives %}
         <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <span class="mt-0.5 shrink-0 text-teal-700 dark:text-teal-300">{{ icon(givesIcons[loop.index0], "h-5 w-5") }}</span>
           <div>
             <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
             <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
@@ -71,8 +72,10 @@ faq:
         {t:"Résidence des traces & de la télémétrie", d:"L'observabilité par défaut de l'écosystème est un SaaS hébergé — des traces pleines de vos données, expédiées ; l'auto-héberger est un produit de palier entreprise. Nous déployons plutôt un traçage auto-hébergé dans votre frontière — Langfuse avec sa propre télémétrie d'usage désactivée, ou un backend OpenTelemetry."},
         {t:"Discipline de versionnage", d:"Prompts, définitions de graphe, versions de modèle et scores d'évaluation versionnés ensemble, de sorte que chaque réponse de production remonte à la configuration exacte qui l'a produite."}
       ] %}
+      {% set gapIcons = ["lock", "file-check", "eye-off", "clipboard-check", "server", "layers"] %}
       {% for g in gaps %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        {{ iconChip(gapIcons[loop.index0]) }}
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
         <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
       </div>

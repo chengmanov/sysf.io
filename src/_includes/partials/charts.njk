@@ -73,6 +73,146 @@
   Single-metric "before → after" bars on a 0–100% axis.
   bars: [{ label, v, cls, tag }] — value sits to the right (mono, ink) so any fill works.
 #}
+{#
+  Capability-vs-size schematic (SVG, theme-aware via fill-current/stroke-current + text-* classes).
+  ILLUSTRATIVE, not a benchmark. Geometry + proper-noun point labels are fixed; `t` carries the
+  localizable strings. t = { yLabel, xLabel, bandHigh:{name,ex}, bandMid:{name,ex}, bandLow:{name,ex},
+                             lift, baseDot, tunedDot, caption }
+#}
+{% macro capabilityCurve(t) %}
+<figure class="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-6">
+  <div class="overflow-x-auto">
+  <svg viewBox="0 0 760 452" class="w-full min-w-[560px]" role="img" aria-label="{{ t.yLabel }} vs {{ t.xLabel }}">
+    {# capability bands (low-contrast teal fills) #}
+    <g>
+      <rect x="90" y="30"  width="630" height="107" class="fill-teal-500" fill-opacity="0.05"/>
+      <rect x="90" y="137" width="630" height="107" class="fill-teal-500" fill-opacity="0.09"/>
+      <rect x="90" y="244" width="630" height="106" class="fill-teal-500" fill-opacity="0.13"/>
+      <line x1="90" y1="137" x2="720" y2="137" class="stroke-neutral-300 dark:stroke-white/15" stroke-width="1" stroke-dasharray="3 4"/>
+      <line x1="90" y1="244" x2="720" y2="244" class="stroke-neutral-300 dark:stroke-white/15" stroke-width="1" stroke-dasharray="3 4"/>
+    </g>
+    {# axes #}
+    <g class="stroke-neutral-300 dark:stroke-white/20" stroke-width="1.5">
+      <line x1="90" y1="30" x2="90" y2="350"/>
+      <line x1="90" y1="350" x2="720" y2="350"/>
+    </g>
+    {# diminishing-returns capability curve (teal) #}
+    <path d="M140 315 C 210 292, 235 278, 250 270 S 360 222, 410 200 S 520 162, 560 150 640 126, 690 118"
+          fill="none" class="stroke-teal-600 dark:stroke-teal-300" stroke-width="3" stroke-linecap="round"/>
+    {# base model dots on the curve #}
+    <g class="fill-ink-900 dark:fill-white">
+      <circle cx="140" cy="315" r="4.5"/>
+      <circle cx="250" cy="270" r="4.5"/>
+      <circle cx="410" cy="200" r="4.5"/>
+      <circle cx="560" cy="150" r="4.5"/>
+      <circle cx="690" cy="118" r="4.5"/>
+    </g>
+    {# the one decisive thing: fine-tuning lifts a small model up a band (Swiss red) #}
+    <g class="stroke-red-600 dark:stroke-red-400" stroke-width="2.5">
+      <line x1="250" y1="264" x2="250" y2="192" stroke-linecap="round"/>
+      <path d="M244 202 L250 190 L256 202" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <circle cx="250" cy="186" r="5" class="fill-red-600 dark:fill-red-400"/>
+    <text x="262" y="182" class="fill-red-700 dark:fill-red-400" font-size="12.5" font-weight="700">{{ t.tunedDot }}</text>
+    <text x="262" y="197" class="fill-ink-500 dark:fill-ink-300" font-size="11">{{ t.lift }}</text>
+    <text x="150" y="312" class="fill-ink-500 dark:fill-ink-300" font-size="11">{{ t.baseDot }}</text>
+    {# band labels + example tasks, placed in the empty corners the curve leaves #}
+    <g font-size="12.5" font-weight="700" class="fill-ink-900 dark:fill-white">
+      <text x="104" y="58">{{ t.bandHigh.name }}</text>
+      <text x="104" y="170">{{ t.bandMid.name }}</text>
+      <text x="432" y="300">{{ t.bandLow.name }}</text>
+    </g>
+    <g font-size="11" class="fill-ink-500 dark:fill-ink-300">
+      <text x="104" y="75">{{ t.bandHigh.ex }}</text>
+      <text x="104" y="187">{{ t.bandMid.ex }}</text>
+      <text x="432" y="317">{{ t.bandLow.ex }}</text>
+    </g>
+    {# x-axis size ticks #}
+    <g font-size="11" text-anchor="middle" class="fill-ink-500 dark:fill-ink-300" font-family="'IBM Plex Mono', monospace">
+      <text x="140" y="370">1B</text>
+      <text x="250" y="370">8B</text>
+      <text x="410" y="370">30B</text>
+      <text x="560" y="370">70B</text>
+      <text x="690" y="370">235B</text>
+    </g>
+    {# axis titles #}
+    <text x="405" y="398" text-anchor="middle" font-size="12" font-weight="600" class="fill-ink-700 dark:fill-ink-300">{{ t.xLabel }} →</text>
+    <text x="70" y="190" text-anchor="middle" font-size="12" font-weight="600" transform="rotate(-90 70 190)" class="fill-ink-700 dark:fill-ink-300">{{ t.yLabel }} →</text>
+  </svg>
+  </div>
+  {% if t.caption %}<figcaption class="mt-3 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10">{{ t.caption | safe }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+{#
+  Base-model spectrum: strictest sovereignty → most flexible, as a teal gradient rail with 3 stops.
+  t = { leftLabel, rightLabel, tiers:[{tag, title, models, note}], caption }
+#}
+{% macro modelSpectrum(t) %}
+<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
+  <div class="mb-5 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+    <span>← {{ t.leftLabel }}</span><span>{{ t.rightLabel }} →</span>
+  </div>
+  <div class="h-2 w-full rounded-full" style="background:linear-gradient(90deg,#466e78 0%,#5a8288 45%,#93babc 100%)"></div>
+  <div class="mt-5 grid gap-4 md:grid-cols-3">
+    {% for tier in t.tiers %}
+    <div class="rounded-lg border border-neutral-200 bg-neutral-25 p-5 dark:border-white/10 dark:bg-white/[0.03]">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-700 dark:text-teal-300">{{ tier.tag }}</p>
+      <h3 class="mt-2 text-base font-bold text-ink-900 dark:text-white">{{ tier.title }}</h3>
+      <p class="mt-1 font-mono text-xs font-semibold text-ink-700 dark:text-ink-300">{{ tier.models }}</p>
+      <p class="mt-2 text-sm prose-muted">{{ tier.note | safe }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if t.caption %}<figcaption class="mt-5 border-t border-neutral-200 pt-4 text-xs prose-muted dark:border-white/10">{{ t.caption | safe }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+{#
+  Base-model catalogue, grouped by origin. groups = [{ region, flag, tint, models:[...] }]
+  model = { name, origin, sizes, transparency, tClass, hardware, desc, uses, perf, strength, tradeoff }
+  tClass = badge colour for the transparency chip (e.g. "text-teal-700 …").
+#}
+{% macro modelCatalog(groups, labels) %}
+<div class="space-y-10">
+  {% for g in groups %}
+  <div>
+    <div class="mb-4 flex items-center gap-2">
+      <span class="text-lg" aria-hidden="true">{{ g.flag }}</span>
+      <h3 class="text-sm font-semibold uppercase tracking-[0.14em] text-ink-700 dark:text-ink-300">{{ g.region }}</h3>
+      <span class="h-px flex-1 bg-neutral-200 dark:bg-white/10"></span>
+    </div>
+    <div class="grid gap-4 lg:grid-cols-2">
+      {% for m in g.models %}
+      <div class="flex flex-col rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h4 class="text-lg font-bold text-ink-900 dark:text-white">{{ m.name }}</h4>
+            <p class="mt-0.5 text-xs prose-muted">{{ m.origin }}</p>
+          </div>
+          <span class="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide dark:bg-white/10 {{ m.tClass }}">{{ m.transparency }}</span>
+        </div>
+        <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-neutral-200 py-3 text-xs dark:border-white/10">
+          <div><dt class="font-semibold uppercase tracking-wide text-ink-500 text-[10px]">{{ labels.sizes }}</dt><dd class="mt-0.5 font-mono font-semibold text-ink-900 dark:text-white">{{ m.sizes }}</dd></div>
+          <div><dt class="font-semibold uppercase tracking-wide text-ink-500 text-[10px]">{{ labels.hardware }}</dt><dd class="mt-0.5 text-ink-800 dark:text-ink-200">{{ m.hardware }}</dd></div>
+        </dl>
+        <p class="mt-3 text-sm prose-muted">{{ m.desc }}</p>
+        <div class="mt-3 space-y-1.5 text-xs">
+          <p><span class="font-semibold text-ink-700 dark:text-ink-300">{{ labels.uses }}:</span> <span class="prose-muted">{{ m.uses }}</span></p>
+          <p><span class="font-semibold text-ink-700 dark:text-ink-300">{{ labels.perf }}:</span> <span class="prose-muted">{{ m.perf }}</span></p>
+        </div>
+        <div class="mt-4 grid gap-2 sm:grid-cols-2">
+          <p class="rounded-md bg-teal-50 px-3 py-2 text-xs text-teal-800 dark:bg-teal-500/10 dark:text-teal-200"><span class="font-semibold">+ {{ labels.strength }}</span><br>{{ m.strength }}</p>
+          <p class="rounded-md bg-neutral-50 px-3 py-2 text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300"><span class="font-semibold">△ {{ labels.tradeoff }}</span><br>{{ m.tradeoff }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
 {% macro deltaBars(bars, caption) %}
 <figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
   <div class="space-y-4">

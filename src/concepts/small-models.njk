@@ -1,17 +1,19 @@
 ---
 layout: layouts/base.njk
-title: Small Models, Measured — Why a Fine-Tuned 8B Beats an API You Rent
-description: Why task-tuned small language models outperform frontier APIs on narrow regulated workflows — the specialisation effect, the fine-tuning vs. RAG division of labour, the economics, and when a small model is the wrong choice.
+title: Small Models, Measured — Model Sizes, the Right Base, and What Each Can Do
+description: How to choose a local model — capability versus size, what tasks each size class can actually run, and the base-model spectrum from fully-Swiss Apertus to European and international open-weight models. With the honest limits and the compliance framing included.
 faq:
   - q: Is an 8B model really good enough for German legal or clinical text?
     a: For a scoped task, usually yes — but we never ask you to take that on faith. Every engagement starts by building an evaluation set from your own documents and measuring base model, RAG, fine-tune and the combination against it. If the small model doesn't clear the bar we agree up front, you see that in the report before you spend on production. The Canton of Ticino's fine-tuned Apertus-8B runs cantonal translation in production at 94% accuracy — the pattern is real, but the evaluation decides for your task.
+  - q: Can you use a non-Swiss base like Mistral or Qwen — and does the EU AI Act allow it?
+    a: Yes. Apertus is our default because it's fully Swiss and the only base that publishes its training data — but if your policy allows it, a European model like Mistral or an international one like Qwen can enter the evaluation and ship if it wins, still running on your own infrastructure with weights you own. On the AI Act specifically&#58; it classifies systems by <em>use-case risk</em> and puts transparency duties on the model's <em>provider</em> — it does not restrict a base model by its country of origin. The real gate is usually your own procurement and data-governance policy, which we map with you during scoping. Not legal advice — we work alongside your compliance and legal teams.
   - q: What about reasoning-heavy work?
     a: Deep multi-hop reasoning over open-ended questions is where model size still pays. Our answer is architectural, not ideological — a small model handles the routine volume, and requests it can't handle confidently escalate to a larger open-weight model running on the same infrastructure. Nothing escalates to a cloud API. The <a class="link-underline" href="/concepts/sovereign-architecture/">sovereign runtime page</a> describes how that router works.
   - q: Doesn't fine-tuning become obsolete every time a better base model ships?
-    a: The expensive assets survive model swaps. Your evaluation set, your curated training data and your retrieval corpus all carry over unchanged; re-running a LoRA fine-tune on a newer base model is days of work, not a rebuild. That's also why we stay model-agnostic — Apertus, Llama or Mistral, whichever wins on your eval set at the time.
+    a: The expensive assets survive model swaps. Your evaluation set, your curated training data and your retrieval corpus all carry over unchanged; re-running a LoRA fine-tune on a newer base model is days of work, not a rebuild. That's also why we stay model-agnostic — Apertus, Mistral, Llama or Qwen, whichever wins on your eval set within the tier your compliance allows.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
-{% from "partials/charts.njk" import deltaBars %}
+{% from "partials/charts.njk" import deltaBars, capabilityCurve, modelSpectrum, modelCatalog %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -20,13 +22,41 @@ faq:
       Small models, measured.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      A fine-tuned 4–8B model that knows your documents beats a frontier model that has never seen them — on the narrow, high-volume tasks that actually matter in regulated work. Here's why, with the honest limits included.
+      Two questions decide a sovereign build: <em>how big a model does the task need</em>, and <em>which base do you start from</em>. This page answers both — capability versus size, what each size class can actually do, and the spectrum from fully-Swiss Apertus to European and international open-weight models — with the honest limits and the compliance framing included.
     </p>
   </div>
 </section>
 
-<!-- Specialization -->
+<!-- Capability vs size -->
 <section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Size", "How much model does the task need?", "Capability rises with size — but it flattens, and the returns get expensive fast. Most regulated work doesn't live at the frontier; it lives in the bands a small model can reach.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Model size is measured in parameters — from ~1B up past 200B. More parameters buy broader knowledge and deeper reasoning, but the curve bends: the jump from 1B to 8B is transformative, 8B to 70B is real but costly, and beyond that you pay a lot for a little on most tasks.</p>
+      <p>The trick is that the size you need is set by the <em>task</em>, not by ambition. Extraction, classification, routing and structured drafting sit in the lower bands — a small model's home turf. And the red arrow below is the whole point of this page: <strong class="font-semibold text-ink-900 dark:text-white">fine-tuning a small model on one narrow task lifts its effective capability into the band above</strong>, so a tuned 8B beats a far larger generalist on the work you actually run.</p>
+    </div>
+  </div>
+  <div class="mt-12">
+    {% set cap = {
+      yLabel: "Task capability",
+      xLabel: "Model size",
+      bandHigh: { name: "Frontier reasoning", ex: "open-ended research · novel synthesis" },
+      bandMid:  { name: "Applied knowledge work", ex: "domain Q&A with citation · translation · drafting" },
+      bandLow:  { name: "Structured routine work", ex: "extraction · classification · routing · form-filling" },
+      lift: "on your narrow task",
+      baseDot: "base 8B",
+      tunedDot: "fine-tuned 8B",
+      caption: "Illustrative, not a benchmark. Raw capability rises with parameter count but flattens — and the returns get expensive. Fine-tuning a small model on one narrow task lifts its <em>effective</em> capability into the band above, which is why a tuned 8B can beat a far larger general model on your scoped work. The real numbers come from the evaluation on your task."
+    } %}
+    {{ capabilityCurve(cap) }}
+  </div>
+</section>
+
+<!-- Specialization -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("The effect", "Specialisation beats scale on narrow tasks.", "General benchmarks reward breadth. Your workflow rewards depth — your templates, your terminology, your formats, your edge cases.") }}
@@ -44,11 +74,11 @@ faq:
     ] %}
     {{ deltaBars(ticino, "Canton of Ticino — translation accuracy on cantonal text, before and after fine-tuning Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Source: CSCS</a>.") }}
   </div>
+  </div>
 </section>
 
 <!-- Division of labour -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("The method", "Fine-tuning teaches behaviour. Retrieval supplies facts.", "The two are routinely conflated — and the conflation is where AI projects go wrong.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-3">
       {% set roles = [
@@ -64,11 +94,107 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">Measured, the split is stark: in <a class="link-underline" href="/reports/finma-ablation/">our FINMA ablation</a>, fine-tuning alone took format compliance from ~2% to 100% yet left answer-plus-citation accuracy at 1.6% — behaviour learned, facts not. Retrieval alone: 22.4%. Combined: 45.4%.</p>
+</section>
+
+<!-- The base-model spectrum -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("The base", "Fully Swiss, or as flexible as your compliance allows.", "Apertus is our default — Switzerland's fully open, fully transparent LLM. But sovereignty isn't only Swiss. Where your policy permits, a European or international open-weight base can win your evaluation and still run entirely on your infrastructure.") }}
+    <div class="mt-12">
+      {% set spectrum = {
+        leftLabel: "Strictest sovereignty & transparency",
+        rightLabel: "Maximum capability & flexibility",
+        tiers: [
+          {tag:"Fully Swiss", title:"Sovereign & fully transparent", models:"Apertus", note:"Open weights <em>and</em> open training data, Swiss origin. The choice when every layer has to be auditable — public sector, or the strictest compliance postures."},
+          {tag:"European", title:"EU-based, open weights", models:"Mistral · Teuken · EuroLLM", note:"European providers, open weights, strong EU-language coverage. Provenance stays inside Europe; training data is typically not published."},
+          {tag:"International", title:"Best open performance", models:"Llama · Qwen · Gemma", note:"The strongest open-weight models regardless of origin. Maximum capability and ecosystem — the trade is training-data transparency and, for some, country of origin."}
+        ],
+        caption: "Every option runs the same way: open weights, on your infrastructure, your data never leaving. Moving right buys capability and ecosystem; moving left buys provenance transparency. Where your organisation sits is a compliance and procurement decision — and within your chosen tier, the evaluation still decides which model wins."
+      } %}
+      {{ modelSpectrum(spectrum) }}
+    </div>
+    <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
+      <h3 class="text-base font-bold text-ink-900 dark:text-white">Does the EU AI Act let you use a model like Qwen?</h3>
+      <div class="mt-3 max-w-3xl space-y-3 text-sm prose-muted">
+        <p>Short version: the Act regulates by <strong class="font-semibold text-ink-900 dark:text-white">use-case risk</strong> and places transparency obligations on the <strong class="font-semibold text-ink-900 dark:text-white">provider</strong> of a general-purpose model — it does <em>not</em> restrict a base model by its country of origin. Running any open-weight model on your own infrastructure keeps your data in your jurisdiction regardless of where the weights were trained.</p>
+        <p>What can rule a model out is your <strong class="font-semibold text-ink-900 dark:text-white">own</strong> procurement or data-governance policy: several Swiss and EU public bodies restrict Chinese-origin technology by internal policy, not by the Act. That's a decision we map with you in scoping — and it's exactly why the fully-Swiss option exists. <span class="text-ink-500">Not legal advice; we work alongside your compliance and legal teams.</span></p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Economics -->
+<!-- Base-model catalogue -->
 <section class="container-x py-20 md:py-28">
+  {{ sectionHead("The catalogue", "The base models we build on.", "A working shortlist, grouped by origin. Sizes and hardware are facts; performance and speed are qualitative — the real ranking always comes from the evaluation on your task.") }}
+  <div class="mt-12">
+    {% set catalogue = [
+      {
+        region: "Swiss — maximum sovereignty", flag: "🇨🇭",
+        models: [
+          { name:"Apertus", origin:"EPFL · ETH Zurich · CSCS (Switzerland)", sizes:"8B · 70B", transparency:"Fully open", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → workstation · 70B → node",
+            desc:"Switzerland's sovereign LLM — the only base here that publishes its training data and recipe, not just its weights. Multilingual by construction, including Swiss German and Romansh.",
+            uses:"Public sector, regulated Q&A, translation — anywhere full auditability is the requirement",
+            perf:"Strong on tuned narrow tasks and Swiss-national languages; trails the largest international models on open-ended general work",
+            strength:"Complete data lineage an auditor can inspect; Swiss origin and jurisdiction",
+            tradeoff:"Younger ecosystem and fewer sizes than the incumbents" }
+        ]
+      },
+      {
+        region: "Europe — EU-based, open weights", flag: "🇪🇺",
+        models: [
+          { name:"Mistral", origin:"Mistral AI (France)", sizes:"8B · ~24B · larger", transparency:"Open weights", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → workstation · 24B → single 24–48 GB GPU",
+            desc:"Efficient French open-weight family with permissive (Apache-2.0) releases and strong European-language coverage.",
+            uses:"Multilingual EU document work, drafting and summarisation on a tight hardware budget",
+            perf:"Excellent capability-per-parameter; a frequent evaluation winner on European multilingual tasks",
+            strength:"EU-based, permissive licences, very strong performance for the size",
+            tradeoff:"Training data not published; the largest tiers aren't all open" },
+          { name:"Teuken · EuroLLM", origin:"OpenGPT-X / EU consortia (Europe)", sizes:"7B · 9B", transparency:"Open · EU-funded", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"→ workstation",
+            desc:"Publicly-funded European models trained for broad EU-language coverage — all 24 official languages — with unusually open documentation.",
+            uses:"EU-sovereign deployments that want a European public-research provenance story and wide-language coverage",
+            perf:"Solid multilingual coverage at small size; a smaller ecosystem and fewer tuned checkpoints than Mistral",
+            strength:"European public-research provenance; broad official-language coverage",
+            tradeoff:"Smaller and less battle-tested than the market leaders" }
+        ]
+      },
+      {
+        region: "International — best open performance", flag: "🌐",
+        models: [
+          { name:"Llama", origin:"Meta (USA)", sizes:"8B · 70B · larger", transparency:"Open weights · community licence", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → workstation · 70B → node",
+            desc:"Meta's open-weight family — the most mature tooling and community ecosystem of any open model.",
+            uses:"General-purpose baselines and agentic tooling where ecosystem maturity matters",
+            perf:"Strong general capability across sizes; a reliable evaluation contender",
+            strength:"Unmatched ecosystem, tooling and fine-tuning support",
+            tradeoff:"US origin; a community licence with use restrictions; training data not public" },
+          { name:"Qwen", origin:"Alibaba (China)", sizes:"7B–72B dense · 235B MoE", transparency:"Open weights (Apache-2.0)", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → workstation · 32B → single GPU · 72B / MoE → node",
+            desc:"Among the strongest open models on reasoning, coding and multilingual work, with the widest size range — including memory-efficient mixture-of-experts.",
+            uses:"The most demanding open-weight tasks where capability is the priority and policy permits it",
+            perf:"Frontier-open-tier on reasoning and multilingual benchmarks; MoE variants run faster than a dense model of the same total size",
+            strength:"Top open performance, permissive licences, a size for every hardware budget",
+            tradeoff:"China origin — some Swiss and EU public-sector procurement policies exclude it; training data not public" },
+          { name:"Gemma", origin:"Google (USA)", sizes:"2B · 9B · 27B", transparency:"Open weights", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"→ workstation (all sizes)",
+            desc:"Google's compact open-weight family, tuned for strong quality at small and mid sizes that fit a single GPU.",
+            uses:"Latency-sensitive single-GPU and edge workloads",
+            perf:"Competitive quality-per-parameter in the small and mid range",
+            strength:"Small, fast, easy to run on modest hardware",
+            tradeoff:"US origin; capped at 27B; training data not public" }
+        ]
+      }
+    ] %}
+    {% set catLabels = { sizes:"Sizes", hardware:"Hardware", uses:"Best for", perf:"Performance & speed", strength:"Strength", tradeoff:"Trade-off" } %}
+    {{ modelCatalog(catalogue, catLabels) }}
+  </div>
+  <p class="mt-10 max-w-2xl text-base prose-muted">Sizing the hardware behind these is its own discipline — see <a class="link-underline" href="/concepts/quantization/">quantization</a> for how a 70B fits in ~40 GB and an 8B in under 5 GB, and <a class="link-underline" href="/concepts/sovereign-architecture/">the sovereign runtime</a> for the deployment shapes.</p>
+</section>
+
+<!-- Economics -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("The economics", "An order of magnitude cheaper to run — and faster.", "Small models don't just fit your compliance envelope. They fit your budget — in francs and in milliseconds.") }}
@@ -79,11 +205,11 @@ faq:
       <p><strong class="font-semibold text-ink-900 dark:text-white">The sovereignty multiplier:</strong> every parameter you don't need is compliance you don't have to buy. A task-tuned small model runs on one machine — the workstation shape in <a class="link-underline" href="/concepts/sovereign-architecture/">the sovereign runtime</a> — which opens the air-gapped and edge deployments (shop floor, clinic, field service) where hosted platforms and US APIs structurally cannot follow.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- Honest limits -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("The limits", "When a small model is the wrong choice.", "An expert who won't tell you when their favourite tool loses isn't an expert. Small models lose here:") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {% set limits = [
@@ -100,14 +226,15 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">The dividing line isn't opinion — it's the evaluation set. That's why every engagement starts with one: <a class="link-underline" href="/concepts/evaluation/">evaluation-first delivery</a>.</p>
-  </div>
 </section>
 
 <!-- FAQ -->
-<section class="container-x py-20 md:py-28">
+<section class="border-t border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-4">{{ sectionHead("FAQ", "Small-model questions.") }}</div>
     <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
   </div>
 </section>
 

@@ -80,7 +80,7 @@ faq:
         </li>
         {% endfor %}
       </ul>
-      <p class="mt-6 text-sm text-ink-500">Agnostique au modèle par conception : Apertus, Llama ou Mistral — celui qui l'emporte sur votre jeu d'évaluation.</p>
+      <p class="mt-6 text-sm text-ink-500">Agnostique au modèle par conception : l'Apertus entièrement suisse par défaut, ou une base ouverte européenne (Mistral) ou internationale (Llama, Qwen) là où votre conformité le permet — celle qui l'emporte sur votre évaluation, le tout sur votre propre infrastructure. Voir le <a class="link-underline" href="/fr/concepts/small-models/">spectre des modèles de base</a>.</p>
       <p class="mt-3 text-sm text-ink-500">Vous voulez la profondeur derrière chaque couche ? Les <a class="link-underline" href="/fr/concepts/">pages concepts</a> couvrent en détail les petits modèles, la quantification, l'évaluation et le runtime souverain.</p>
     </div>
     <div class="md:col-span-5 md:col-start-8">
@@ -96,7 +96,7 @@ faq:
     {% set comp = [
       {t:"LPD / nLPD suisse", d:"Le traitement en juridiction et une traçabilité claire des données maintiennent les données personnelles sous droit et contrôle suisses."},
       {t:"RGPD européen", d:"Minimisation des données, limitation des finalités et résidence, gérées par conception pour les opérations dans l'UE."},
-      {t:"AI Act européen", d:"Les données d'entraînement d'Apertus sont publiquement documentées — une avance qu'aucun modèle fermé n'offre. Nous ajoutons la fiche de classification des risques au titre de l'AI Act et la documentation technique qu'il exige."}
+      {t:"AI Act européen", d:"Le règlement classe selon le risque d'usage et impose des devoirs de transparence au fournisseur du modèle — il ne restreint pas une base selon le pays d'origine. Apertus va le plus loin, avec des données d'entraînement publiquement documentées qu'aucun modèle fermé n'offre ; quelle que soit la base choisie, nous ajoutons la fiche de classification des risques et la documentation technique qu'il exige."}
     ] %}
     {% for c in comp %}
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">

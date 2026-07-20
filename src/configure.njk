@@ -7,7 +7,7 @@ faq:
   - q: Does anything leave my browser while I configure?
     a: "No. Every answer stays in your browser as you go — nothing is sent anywhere until you press Send to sysf.io, which opens your own email client with the spec pre-filled. It's the same principle as everything we build: the model comes to your data — your data never comes to us."
   - q: Can I really choose the model?
-    a: "This configurator scopes the starting point. Apertus is our default — Switzerland's fully open LLM. But in a real engagement the evaluation decides: we test open-weight models on a set built from your documents and ship whichever wins. Apertus, Llama or Mistral — the evaluation decides, not the logo."
+    a: "This configurator scopes the starting point. Apertus is our default — Switzerland's fully open, fully transparent LLM. But sovereignty isn't only Swiss: where your compliance allows, a European base like Mistral or an international one like Qwen can enter the evaluation too. We test the models your policy permits on a set built from your documents and ship whichever wins — the evaluation decides, not the logo."
   - q: Is the build spec a quote?
     a: "No — it's a structured brief, not a quote. It gives us enough to come back with a fixed-scope proposal after a short call. Why we don't publish fixed prices is answered on the <a class='link-underline' href='/pricing/'>pricing page</a>."
   - q: Where do the numbers in the calculators come from?
@@ -176,7 +176,8 @@ faq:
       { id: "apertus", label: "Apertus", sub: "Recommended · Swiss", imp: "Switzerland's fully open LLM from EPFL, ETH Zurich and CSCS — open weights and documented training data, exactly what auditors want to see. Our default, and the Canton of Ticino production reference." },
       { id: "llama", label: "Llama", sub: "Meta · open weights", imp: "Meta's open-weight family — a strong general contender we regularly test, with sizes in both our classes. If it wins on your evaluation set, it ships; the weights still live in your infrastructure." },
       { id: "mistral", label: "Mistral", sub: "European · open weights", imp: "European open-weight models and a frequent contender on multilingual tasks. Same rule: it ships only if it wins your evaluation." },
-      { id: "eval", label: "Let the evaluation decide", sub: "How we'd do it", imp: "We benchmark Apertus, Llama and Mistral on a set built from your documents and ship the winner — you see the numbers before anything ships." },
+      { id: "qwen", label: "Qwen", sub: "International · open weights", imp: "Among the strongest open models on reasoning and multilingual work, with the widest size range. China-origin, so some public-sector procurement policies exclude it — a compliance call we make with you. Where policy allows, it enters the evaluation like any other." },
+      { id: "eval", label: "Let the evaluation decide", sub: "How we'd do it", imp: "We benchmark the models your compliance allows — Apertus, Mistral, Llama, Qwen — on a set built from your documents and ship the winner. You see the numbers before anything ships." },
       { id: "other", label: "Another open-weight model", imp: "Name it in the box — if the weights are open and it runs in your jurisdiction, it can enter the evaluation." }
     ]},
     size: { title: "Model size class", type: "single", cols: 2, opts: [
@@ -322,7 +323,7 @@ faq:
     }).join(", ");
   }
   function familyLabel() {
-    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", eval: "Eval-decided" }[state.model];
+    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", qwen: "Qwen", eval: "Eval-decided" }[state.model];
     if (m) return m;
     return state.other.model ? "Other — " + state.other.model : "Other";
   }
@@ -656,7 +657,7 @@ faq:
     b += line("Data formats", multiWithOther("dataFormats"));
     b += line("Data location", labelOf("dataLocation", state.dataLocation));
     b += line("PII handling", labelOf("pii", state.pii));
-    b += line("Model", state.model === "eval" ? "Evaluation-decided (Apertus / Llama / Mistral)" : labelWithOther("model"));
+    b += line("Model", state.model === "eval" ? "Evaluation-decided (Apertus / Mistral / Llama / Qwen)" : labelWithOther("model"));
     b += line("Size class", labelOf("size", state.size));
     b += line("Quantization", labelOf("quant", state.quant));
     b += line("Approach", labelOf("approach", state.approach));
@@ -697,7 +698,7 @@ faq:
       var t = state.other.model || "Custom";
       return t.length > 16 ? t.slice(0, 15) + "…" : t; // full name lives in the recap + brief
     }
-    return { llama: "Llama", mistral: "Mistral" }[state.model] || "—";
+    return { llama: "Llama", mistral: "Mistral", qwen: "Qwen" }[state.model] || "—";
   }
   // Healthcare + intake needs an explicit scope note — the site's MDR exemption
   // rests on having no clinical triage function.

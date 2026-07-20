@@ -9,7 +9,7 @@ faq:
       Nein. Jede Antwort bleibt während der Konfiguration in Ihrem Browser — nichts wird irgendwohin gesendet, bis Sie „An sysf.io senden“ drücken, was Ihr eigenes E-Mail-Programm mit vorausgefüllter Spezifikation öffnet. Dasselbe Prinzip wie bei allem, was wir bauen: Das Modell kommt zu Ihren Daten — Ihre Daten kommen nie zu uns.
   - q: Kann ich das Modell wirklich wählen?
     a: >-
-      Dieser Konfigurator umreisst den Ausgangspunkt. Apertus ist unser Standard — das vollständig offene LLM der Schweiz. Aber in einem echten Engagement entscheidet die Evaluation: Wir testen offene Modelle auf einem aus Ihren Dokumenten erstellten Set und setzen das ein, das gewinnt. Apertus, Llama oder Mistral — die Evaluation entscheidet, nicht das Logo.
+      Dieser Konfigurator umreisst den Ausgangspunkt. Apertus ist unser Standard — das vollständig offene, vollständig transparente LLM der Schweiz. Aber Souveränität ist nicht nur schweizerisch: Wo Ihre Compliance es erlaubt, kann eine europäische Basis wie Mistral oder eine internationale wie Qwen ebenfalls in die Evaluation eintreten. Wir testen die von Ihrer Richtlinie erlaubten Modelle auf einem aus Ihren Dokumenten erstellten Set und setzen das ein, das gewinnt — die Evaluation entscheidet, nicht das Logo.
   - q: Ist die Build-Spezifikation ein Angebot?
     a: >-
       Nein — es ist ein strukturiertes Briefing, kein Angebot. Es gibt uns genug, um nach einem kurzen Gespräch mit einem Vorschlag mit festem Umfang zurückzukommen. Warum wir keine Fixpreise veröffentlichen, wird auf der <a class='link-underline' href='/de/pricing/'>Preisseite</a> beantwortet.
@@ -181,7 +181,8 @@ faq:
       { id: "apertus", label: "Apertus", sub: "Empfohlen · Schweizerisch", imp: "Das vollständig offene LLM der Schweiz von EPFL, ETH Zürich und CSCS — offene Gewichte und dokumentierte Trainingsdaten, genau das, was Auditoren sehen wollen. Unser Standard und die produktive Referenz des Kantons Tessin." },
       { id: "llama", label: "Llama", sub: "Meta · offene Gewichte", imp: "Metas offene Familie — ein starker allgemeiner Kandidat, den wir regelmässig testen, mit Grössen in beiden Klassen. Gewinnt es auf Ihrem Evaluationsset, wird es ausgeliefert; die Gewichte liegen weiterhin in Ihrer Infrastruktur." },
       { id: "mistral", label: "Mistral", sub: "Europäisch · offene Gewichte", imp: "Europäische offene Modelle und ein häufiger Kandidat bei mehrsprachigen Aufgaben. Dieselbe Regel: Es wird nur ausgeliefert, wenn es Ihre Evaluation gewinnt." },
-      { id: "eval", label: "Die Evaluation entscheiden lassen", sub: "Wie wir es täten", imp: "Wir benchmarken Apertus, Llama und Mistral auf einem aus Ihren Dokumenten erstellten Set und liefern den Sieger — Sie sehen die Zahlen, bevor etwas ausgeliefert wird." },
+      { id: "qwen", label: "Qwen", sub: "International · offene Gewichte", imp: "Unter den stärksten offenen Modellen bei Reasoning und mehrsprachiger Arbeit, mit der breitesten Grössenpalette. China-Herkunft, daher schliessen manche Beschaffungsrichtlinien es aus — eine Compliance-Entscheidung, die wir mit Ihnen treffen. Wo die Richtlinie es erlaubt, tritt es wie jedes andere in die Evaluation ein." },
+      { id: "eval", label: "Die Evaluation entscheiden lassen", sub: "Wie wir es täten", imp: "Wir benchmarken die von Ihrer Compliance erlaubten Modelle — Apertus, Mistral, Llama, Qwen — auf einem aus Ihren Dokumenten erstellten Set und liefern den Sieger. Sie sehen die Zahlen, bevor etwas ausgeliefert wird." },
       { id: "other", label: "Ein anderes offenes Modell", imp: "Nennen Sie es im Feld — sind die Gewichte offen und läuft es in Ihrer Jurisdiktion, kann es in die Evaluation." }
     ]},
     size: { title: "Modellgrössenklasse", type: "single", cols: 2, opts: [
@@ -327,7 +328,7 @@ faq:
     }).join(", ");
   }
   function familyLabel() {
-    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", eval: "Eval-entschieden" }[state.model];
+    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", qwen: "Qwen", eval: "Eval-entschieden" }[state.model];
     if (m) return m;
     return state.other.model ? "Andere — " + state.other.model : "Andere";
   }
@@ -661,7 +662,7 @@ faq:
     b += line("Datenformate", multiWithOther("dataFormats"));
     b += line("Datenstandort", labelOf("dataLocation", state.dataLocation));
     b += line("PII-Behandlung", labelOf("pii", state.pii));
-    b += line("Modell", state.model === "eval" ? "Evaluations-entschieden (Apertus / Llama / Mistral)" : labelWithOther("model"));
+    b += line("Modell", state.model === "eval" ? "Evaluations-entschieden (Apertus / Mistral / Llama / Qwen)" : labelWithOther("model"));
     b += line("Grössenklasse", labelOf("size", state.size));
     b += line("Quantisierung", labelOf("quant", state.quant));
     b += line("Ansatz", labelOf("approach", state.approach));
@@ -702,7 +703,7 @@ faq:
       var t = state.other.model || "Individuell";
       return t.length > 16 ? t.slice(0, 15) + "…" : t; // full name lives in the recap + brief
     }
-    return { llama: "Llama", mistral: "Mistral" }[state.model] || "—";
+    return { llama: "Llama", mistral: "Mistral", qwen: "Qwen" }[state.model] || "—";
   }
   // Healthcare + intake needs an explicit scope note — the site's MDR exemption
   // rests on having no clinical triage function.

@@ -1,20 +1,23 @@
 ---
 layout: layouts/base.njk
-title: Kleine Modelle, gemessen — warum ein feinabgestimmtes 8B eine gemietete API schlägt
-description: Warum aufgabenspezifisch abgestimmte kleine Sprachmodelle Frontier-APIs bei engen regulierten Workflows übertreffen — der Spezialisierungseffekt, die Arbeitsteilung Fine-Tuning vs. RAG, die Ökonomie, und wann ein kleines Modell die falsche Wahl ist.
+title: Kleine Modelle, gemessen — Modellgrössen, die richtige Basis und was jede kann
+description: Wie man ein lokales Modell wählt — Leistung versus Grösse, welche Aufgaben jede Grössenklasse tatsächlich ausführt, und das Basismodell-Spektrum vom vollständig schweizerischen Apertus bis zu europäischen und internationalen Open-Weight-Modellen. Samt ehrlichen Grenzen und Compliance-Einordnung.
 faq:
   - q: Ist ein 8B-Modell wirklich gut genug für deutsche Rechts- oder klinische Texte?
     a: >-
       Für eine umrissene Aufgabe meist ja — aber wir verlangen nie, dass Sie das glauben. Jedes Engagement beginnt damit, ein Evaluationsset aus Ihren eigenen Dokumenten zu erstellen und Basismodell, RAG, Fine-Tune und die Kombination dagegen zu messen. Erreicht das kleine Modell die vorab vereinbarte Messlatte nicht, sehen Sie das im Bericht, bevor Sie für die Produktion ausgeben. Das feinabgestimmte Apertus-8B des Kantons Tessin betreibt kantonale Übersetzung in Produktion mit 94 % Genauigkeit — das Muster ist real, aber die Evaluation entscheidet für Ihre Aufgabe.
+  - q: Können Sie eine nicht-schweizerische Basis wie Mistral oder Qwen nutzen — und erlaubt der EU AI Act das?
+    a: >-
+      Ja. Apertus ist unsere Vorgabe, weil es vollständig schweizerisch ist und die einzige Basis, die ihre Trainingsdaten veröffentlicht — aber wenn Ihre Richtlinie es erlaubt, kann ein europäisches Modell wie Mistral oder ein internationales wie Qwen in die Evaluation eintreten und ausgeliefert werden, wenn es gewinnt, weiterhin auf Ihrer eigenen Infrastruktur mit Gewichten, die Ihnen gehören. Zum AI Act konkret: Er klassifiziert Systeme nach <em>Anwendungsrisiko</em> und legt Transparenzpflichten dem <em>Anbieter</em> des Modells auf — er beschränkt ein Basismodell nicht nach Herkunftsland. Das eigentliche Tor ist meist Ihre eigene Beschaffungs- und Datenschutzrichtlinie, die wir im Scoping mit Ihnen einordnen. Keine Rechtsberatung — wir arbeiten mit Ihren Compliance- und Rechtsteams.
   - q: Was ist mit reasoning-lastiger Arbeit?
     a: >-
       Tiefes Multi-Hop-Reasoning über offene Fragen ist der Bereich, in dem Modellgrösse noch zählt. Unsere Antwort ist architektonisch, nicht ideologisch — ein kleines Modell bewältigt das Routinevolumen, und Anfragen, die es nicht sicher bewältigen kann, eskalieren zu einem grösseren offenen Modell auf derselben Infrastruktur. Nichts eskaliert zu einer Cloud-API. Die <a class="link-underline" href="/de/concepts/sovereign-architecture/">Seite zur souveränen Laufzeitumgebung</a> beschreibt, wie dieser Router funktioniert.
   - q: Wird Fine-Tuning nicht obsolet, sobald ein besseres Basismodell erscheint?
     a: >-
-      Die teuren Assets überleben Modellwechsel. Ihr Evaluationsset, Ihre kuratierten Trainingsdaten und Ihr Retrieval-Korpus werden unverändert übernommen; ein LoRA-Fine-Tune auf einem neueren Basismodell erneut auszuführen ist eine Sache von Tagen, kein Neubau. Genau deshalb bleiben wir modellagnostisch — Apertus, Llama oder Mistral, was auch immer zum jeweiligen Zeitpunkt auf Ihrem Evaluationsset gewinnt.
+      Die teuren Assets überleben Modellwechsel. Ihr Evaluationsset, Ihre kuratierten Trainingsdaten und Ihr Retrieval-Korpus werden unverändert übernommen; ein LoRA-Fine-Tune auf einem neueren Basismodell erneut auszuführen ist eine Sache von Tagen, kein Neubau. Genau deshalb bleiben wir modellagnostisch — Apertus, Mistral, Llama oder Qwen, was auch immer auf Ihrem Evaluationsset innerhalb der von Ihrer Compliance erlaubten Stufe gewinnt.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
-{% from "partials/charts.njk" import deltaBars %}
+{% from "partials/charts.njk" import deltaBars, capabilityCurve, modelSpectrum, modelCatalog %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -23,13 +26,41 @@ faq:
       Kleine Modelle, gemessen.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Ein feinabgestimmtes 4–8B-Modell, das Ihre Dokumente kennt, schlägt ein Frontier-Modell, das sie nie gesehen hat — bei den engen, hochvolumigen Aufgaben, auf die es in regulierter Arbeit wirklich ankommt. Hier ist der Grund, samt der ehrlichen Grenzen.
+      Zwei Fragen entscheiden einen souveränen Build: <em>wie gross muss das Modell für die Aufgabe sein</em> und <em>von welcher Basis starten Sie</em>. Diese Seite beantwortet beide — Leistung versus Grösse, was jede Grössenklasse tatsächlich leisten kann, und das Spektrum vom vollständig schweizerischen Apertus bis zu europäischen und internationalen Open-Weight-Modellen — samt der ehrlichen Grenzen und der Compliance-Einordnung.
     </p>
   </div>
 </section>
 
-<!-- Specialization -->
+<!-- Capability vs size -->
 <section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Grösse", "Wie viel Modell braucht die Aufgabe?", "Leistung steigt mit der Grösse — aber sie flacht ab, und die Erträge werden schnell teuer. Die meiste regulierte Arbeit lebt nicht an der Frontier; sie lebt in den Bändern, die ein kleines Modell erreicht.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Modellgrösse wird in Parametern gemessen — von ~1B bis über 200B. Mehr Parameter bringen breiteres Wissen und tieferes Reasoning, aber die Kurve biegt sich: Der Sprung von 1B auf 8B ist transformativ, 8B auf 70B ist real, aber teuer, und darüber hinaus zahlen Sie bei den meisten Aufgaben viel für wenig.</p>
+      <p>Der Kniff: Die nötige Grösse bestimmt die <em>Aufgabe</em>, nicht der Ehrgeiz. Extraktion, Klassifikation, Routing und strukturiertes Verfassen liegen in den unteren Bändern — das Heimspiel eines kleinen Modells. Und der rote Pfeil unten ist der ganze Punkt dieser Seite: <strong class="font-semibold text-ink-900 dark:text-white">Fine-Tuning eines kleinen Modells auf eine enge Aufgabe hebt seine effektive Leistung ins Band darüber</strong>, sodass ein abgestimmtes 8B einen weit grösseren Generalisten bei der Arbeit schlägt, die Sie tatsächlich ausführen.</p>
+    </div>
+  </div>
+  <div class="mt-12">
+    {% set cap = {
+      yLabel: "Aufgabenleistung",
+      xLabel: "Modellgrösse",
+      bandHigh: { name: "Frontier-Reasoning", ex: "offene Recherche · neuartige Synthese" },
+      bandMid:  { name: "Angewandte Wissensarbeit", ex: "Fach-Q&A mit Fundstelle · Übersetzung" },
+      bandLow:  { name: "Strukturierte Routinearbeit", ex: "Extraktion · Klassifikation · Routing" },
+      lift: "auf Ihrer engen Aufgabe",
+      baseDot: "Basis 8B",
+      tunedDot: "abgestimmtes 8B",
+      caption: "Illustrativ, kein Benchmark. Rohe Leistung steigt mit der Parameterzahl, flacht aber ab — und die Erträge werden teuer. Fine-Tuning eines kleinen Modells auf eine enge Aufgabe hebt seine <em>effektive</em> Leistung ins Band darüber; deshalb kann ein abgestimmtes 8B ein weit grösseres allgemeines Modell bei Ihrer umrissenen Arbeit schlagen. Die echten Zahlen liefert die Evaluation auf Ihrer Aufgabe."
+    } %}
+    {{ capabilityCurve(cap) }}
+  </div>
+</section>
+
+<!-- Specialization -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("Der Effekt", "Spezialisierung schlägt Grösse bei engen Aufgaben.", "Allgemeine Benchmarks belohnen Breite. Ihr Workflow belohnt Tiefe — Ihre Vorlagen, Ihre Terminologie, Ihre Formate, Ihre Randfälle.") }}
@@ -47,11 +78,11 @@ faq:
     ] %}
     {{ deltaBars(ticino, "Kanton Tessin — Übersetzungsgenauigkeit auf kantonalem Text, vor und nach dem Fine-Tuning von Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Quelle: CSCS</a>.") }}
   </div>
+  </div>
 </section>
 
 <!-- Division of labour -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("Die Methode", "Fine-Tuning vermittelt Verhalten. Retrieval liefert Fakten.", "Die beiden werden regelmässig verwechselt — und die Verwechslung ist der Punkt, an dem KI-Projekte scheitern.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-3">
       {% set roles = [
@@ -67,11 +98,107 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">Gemessen ist die Aufteilung deutlich: In <a class="link-underline" href="/de/reports/finma-ablation/">unserer FINMA-Ablation</a> brachte Fine-Tuning allein die Format-Compliance von ~2 % auf 100 %, liess aber die Genauigkeit von Antwort-plus-Fundstelle bei 1,6 % — Verhalten gelernt, Fakten nicht. Retrieval allein: 22,4 %. Kombiniert: 45,4 %.</p>
+</section>
+
+<!-- The base-model spectrum -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die Basis", "Vollständig schweizerisch — oder so flexibel, wie Ihre Compliance es erlaubt.", "Apertus ist unsere Vorgabe — das vollständig offene, vollständig transparente LLM der Schweiz. Aber Souveränität ist nicht nur schweizerisch. Wo Ihre Richtlinie es zulässt, kann eine europäische oder internationale Open-Weight-Basis Ihre Evaluation gewinnen und trotzdem vollständig auf Ihrer Infrastruktur laufen.") }}
+    <div class="mt-12">
+      {% set spectrum = {
+        leftLabel: "Strengste Souveränität & Transparenz",
+        rightLabel: "Maximale Leistung & Flexibilität",
+        tiers: [
+          {tag:"Vollständig schweizerisch", title:"Souverän & vollständig transparent", models:"Apertus", note:"Offene Gewichte <em>und</em> offene Trainingsdaten, Schweizer Herkunft. Die Wahl, wenn jede Ebene prüfbar sein muss — öffentlicher Sektor oder die strengsten Compliance-Haltungen."},
+          {tag:"Europäisch", title:"EU-basiert, offene Gewichte", models:"Mistral · Teuken · EuroLLM", note:"Europäische Anbieter, offene Gewichte, starke Abdeckung der EU-Sprachen. Die Herkunft bleibt in Europa; Trainingsdaten werden meist nicht veröffentlicht."},
+          {tag:"International", title:"Beste offene Leistung", models:"Llama · Qwen · Gemma", note:"Die stärksten Open-Weight-Modelle unabhängig von der Herkunft. Maximale Leistung und Ökosystem — der Kompromiss liegt bei der Transparenz der Trainingsdaten und, bei manchen, dem Herkunftsland."}
+        ],
+        caption: "Jede Option läuft gleich: offene Gewichte, auf Ihrer Infrastruktur, Ihre Daten verlassen sie nie. Nach rechts kauft man Leistung und Ökosystem; nach links kauft man Herkunftstransparenz. Wo Ihre Organisation steht, ist eine Compliance- und Beschaffungsentscheidung — und innerhalb Ihrer gewählten Stufe entscheidet weiterhin die Evaluation, welches Modell gewinnt."
+      } %}
+      {{ modelSpectrum(spectrum) }}
+    </div>
+    <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
+      <h3 class="text-base font-bold text-ink-900 dark:text-white">Erlaubt der EU AI Act ein Modell wie Qwen?</h3>
+      <div class="mt-3 max-w-3xl space-y-3 text-sm prose-muted">
+        <p>Kurzfassung: Der Act reguliert nach <strong class="font-semibold text-ink-900 dark:text-white">Anwendungsrisiko</strong> und legt Transparenzpflichten dem <strong class="font-semibold text-ink-900 dark:text-white">Anbieter</strong> eines Allzweckmodells auf — er beschränkt ein Basismodell <em>nicht</em> nach seinem Herkunftsland. Ein Open-Weight-Modell auf Ihrer eigenen Infrastruktur zu betreiben hält Ihre Daten in Ihrer Jurisdiktion, unabhängig davon, wo die Gewichte trainiert wurden.</p>
+        <p>Was ein Modell ausschliessen kann, ist Ihre <strong class="font-semibold text-ink-900 dark:text-white">eigene</strong> Beschaffungs- oder Datenschutzrichtlinie: Mehrere Schweizer und EU-Behörden beschränken Technologie chinesischer Herkunft per interner Richtlinie, nicht durch den Act. Das ordnen wir im Scoping mit Ihnen ein — und genau dafür gibt es die vollständig schweizerische Option. <span class="text-ink-500">Keine Rechtsberatung; wir arbeiten mit Ihren Compliance- und Rechtsteams.</span></p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Economics -->
+<!-- Base-model catalogue -->
 <section class="container-x py-20 md:py-28">
+  {{ sectionHead("Der Katalog", "Die Basismodelle, auf denen wir bauen.", "Eine Arbeits-Shortlist, gruppiert nach Herkunft. Grössen und Hardware sind Fakten; Leistung und Tempo sind qualitativ — das echte Ranking liefert immer die Evaluation auf Ihrer Aufgabe.") }}
+  <div class="mt-12">
+    {% set catalogue = [
+      {
+        region: "Schweiz — maximale Souveränität", flag: "🇨🇭",
+        models: [
+          { name:"Apertus", origin:"EPFL · ETH Zürich · CSCS (Schweiz)", sizes:"8B · 70B", transparency:"Vollständig offen", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → Workstation · 70B → Knoten",
+            desc:"Das souveräne LLM der Schweiz — die einzige Basis hier, die ihre Trainingsdaten und ihr Rezept veröffentlicht, nicht nur die Gewichte. Mehrsprachig von Grund auf, inklusive Schweizerdeutsch und Romanisch.",
+            uses:"Öffentlicher Sektor, reguliertes Q&A, Übersetzung — überall dort, wo vollständige Prüfbarkeit die Anforderung ist",
+            perf:"Stark bei abgestimmten engen Aufgaben und den Schweizer Landessprachen; hinter den grössten internationalen Modellen bei offener allgemeiner Arbeit",
+            strength:"Vollständige, für Auditoren prüfbare Datenherkunft; Schweizer Herkunft und Jurisdiktion",
+            tradeoff:"Jüngeres Ökosystem und weniger Grössen als die Etablierten" }
+        ]
+      },
+      {
+        region: "Europa — EU-basiert, offene Gewichte", flag: "🇪🇺",
+        models: [
+          { name:"Mistral", origin:"Mistral AI (Frankreich)", sizes:"8B · ~24B · grösser", transparency:"Offene Gewichte", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → Workstation · 24B → einzelne 24–48-GB-GPU",
+            desc:"Effiziente französische Open-Weight-Familie mit permissiven (Apache-2.0) Releases und starker Abdeckung europäischer Sprachen.",
+            uses:"Mehrsprachige EU-Dokumentenarbeit, Verfassen und Zusammenfassen bei knappem Hardware-Budget",
+            perf:"Hervorragende Leistung pro Parameter; häufiger Evaluationssieger bei europäischen mehrsprachigen Aufgaben",
+            strength:"EU-basiert, permissive Lizenzen, sehr starke Leistung für die Grösse",
+            tradeoff:"Trainingsdaten nicht veröffentlicht; die grössten Stufen sind nicht alle offen" },
+          { name:"Teuken · EuroLLM", origin:"OpenGPT-X / EU-Konsortien (Europa)", sizes:"7B · 9B", transparency:"Offen · EU-finanziert", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"→ Workstation",
+            desc:"Öffentlich finanzierte europäische Modelle, trainiert für breite EU-Sprachabdeckung — alle 24 Amtssprachen — mit ungewöhnlich offener Dokumentation.",
+            uses:"EU-souveräne Deployments, die eine europäische Forschungsherkunft und breite Sprachabdeckung wollen",
+            perf:"Solide mehrsprachige Abdeckung bei geringer Grösse; kleineres Ökosystem und weniger abgestimmte Checkpoints als Mistral",
+            strength:"Herkunft aus europäischer öffentlicher Forschung; breite Amtssprachenabdeckung",
+            tradeoff:"Kleiner und weniger erprobt als die Marktführer" }
+        ]
+      },
+      {
+        region: "International — beste offene Leistung", flag: "🌐",
+        models: [
+          { name:"Llama", origin:"Meta (USA)", sizes:"8B · 70B · grösser", transparency:"Offene Gewichte · Community-Lizenz", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → Workstation · 70B → Knoten",
+            desc:"Metas Open-Weight-Familie — das reifste Tooling und Community-Ökosystem aller offenen Modelle.",
+            uses:"Allzweck-Baselines und agentisches Tooling, wo die Reife des Ökosystems zählt",
+            perf:"Starke allgemeine Leistung über alle Grössen; ein verlässlicher Evaluationskandidat",
+            strength:"Unerreichtes Ökosystem, Tooling und Fine-Tuning-Support",
+            tradeoff:"US-Herkunft; eine Community-Lizenz mit Nutzungsbeschränkungen; Trainingsdaten nicht öffentlich" },
+          { name:"Qwen", origin:"Alibaba (China)", sizes:"7B–72B dense · 235B MoE", transparency:"Offene Gewichte (Apache-2.0)", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → Workstation · 32B → einzelne GPU · 72B / MoE → Knoten",
+            desc:"Unter den stärksten offenen Modellen bei Reasoning, Coding und mehrsprachiger Arbeit, mit der breitesten Grössenpalette — inklusive speichereffizienter Mixture-of-Experts.",
+            uses:"Die anspruchsvollsten Open-Weight-Aufgaben, wo Leistung Priorität hat und die Richtlinie es erlaubt",
+            perf:"Frontier-offene Spitzenklasse bei Reasoning- und Mehrsprachen-Benchmarks; MoE-Varianten laufen schneller als ein dichtes Modell gleicher Gesamtgrösse",
+            strength:"Top-offene Leistung, permissive Lizenzen, eine Grösse für jedes Hardware-Budget",
+            tradeoff:"China-Herkunft — manche Schweizer und EU-Behörden schliessen sie per Beschaffungsrichtlinie aus; Trainingsdaten nicht öffentlich" },
+          { name:"Gemma", origin:"Google (USA)", sizes:"2B · 9B · 27B", transparency:"Offene Gewichte", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"→ Workstation (alle Grössen)",
+            desc:"Googles kompakte Open-Weight-Familie, abgestimmt auf starke Qualität bei kleinen und mittleren Grössen, die auf eine einzelne GPU passen.",
+            uses:"Latenzsensible Einzel-GPU- und Edge-Workloads",
+            perf:"Wettbewerbsfähige Qualität pro Parameter im kleinen und mittleren Bereich",
+            strength:"Klein, schnell, leicht auf bescheidener Hardware zu betreiben",
+            tradeoff:"US-Herkunft; bei 27B gedeckelt; Trainingsdaten nicht öffentlich" }
+        ]
+      }
+    ] %}
+    {% set catLabels = { sizes:"Grössen", hardware:"Hardware", uses:"Am besten für", perf:"Leistung & Tempo", strength:"Stärke", tradeoff:"Kompromiss" } %}
+    {{ modelCatalog(catalogue, catLabels) }}
+  </div>
+  <p class="mt-10 max-w-2xl text-base prose-muted">Die Hardware dahinter zu dimensionieren ist eine eigene Disziplin — siehe <a class="link-underline" href="/de/concepts/quantization/">Quantisierung</a> dazu, wie ein 70B in ~40 GB und ein 8B in unter 5 GB passt, und <a class="link-underline" href="/de/concepts/sovereign-architecture/">die souveräne Laufzeitumgebung</a> für die Deployment-Formen.</p>
+</section>
+
+<!-- Economics -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("Die Ökonomie", "Eine Grössenordnung günstiger im Betrieb — und schneller.", "Kleine Modelle passen nicht nur in Ihren Compliance-Rahmen. Sie passen in Ihr Budget — in Franken und in Millisekunden.") }}
@@ -82,11 +209,11 @@ faq:
       <p><strong class="font-semibold text-ink-900 dark:text-white">Der Souveränitäts-Multiplikator:</strong> Jeder Parameter, den Sie nicht brauchen, ist Compliance, die Sie nicht kaufen müssen. Ein aufgabenspezifisch abgestimmtes kleines Modell läuft auf einer Maschine — die Workstation-Form in <a class="link-underline" href="/de/concepts/sovereign-architecture/">der souveränen Laufzeitumgebung</a> — was die air-gapped und Edge-Deployments (Werkshalle, Klinik, Aussendienst) eröffnet, wohin gehostete Plattformen und US-APIs strukturell nicht folgen können.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- Honest limits -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("Die Grenzen", "Wann ein kleines Modell die falsche Wahl ist.", "Ein Experte, der Ihnen nicht sagt, wann sein Lieblingswerkzeug verliert, ist kein Experte. Kleine Modelle verlieren hier:") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {% set limits = [
@@ -103,14 +230,15 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">Die Trennlinie ist keine Meinung — es ist das Evaluationsset. Deshalb beginnt jedes Engagement mit einem: <a class="link-underline" href="/de/concepts/evaluation/">Evaluation-First-Lieferung</a>.</p>
-  </div>
 </section>
 
 <!-- FAQ -->
-<section class="container-x py-20 md:py-28">
+<section class="border-t border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zu kleinen Modellen.") }}</div>
     <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
   </div>
 </section>
 

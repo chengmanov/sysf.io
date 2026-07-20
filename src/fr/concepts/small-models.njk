@@ -1,20 +1,23 @@
 ---
 layout: layouts/base.njk
-title: Petits modèles, mesurés — pourquoi un 8B affiné bat une API que vous louez
-description: Pourquoi les petits modèles de langue spécialisés par tâche surpassent les API de pointe sur les workflows régulés étroits — l'effet de spécialisation, la répartition des rôles affinage vs. RAG, l'économie, et quand un petit modèle est le mauvais choix.
+title: Petits modèles, mesurés — tailles, la bonne base et ce que chacun sait faire
+description: Comment choisir un modèle local — capacité versus taille, quelles tâches chaque classe de taille exécute réellement, et le spectre des modèles de base, de l'Apertus entièrement suisse aux modèles ouverts européens et internationaux. Limites honnêtes et cadrage de conformité inclus.
 faq:
   - q: Un modèle 8B est-il vraiment assez bon pour du texte juridique ou clinique en allemand ?
     a: >-
       Pour une tâche cadrée, généralement oui — mais nous ne vous demandons jamais de le croire sur parole. Chaque engagement commence par construire un jeu d'évaluation à partir de vos propres documents et y mesurer le modèle de base, le RAG, l'affinage et la combinaison. Si le petit modèle ne franchit pas la barre convenue d'emblée, vous le voyez dans le rapport avant de dépenser en production. L'Apertus-8B affiné du Canton du Tessin fait tourner la traduction cantonale en production à 94 % de précision — le schéma est réel, mais l'évaluation décide pour votre tâche.
+  - q: Pouvez-vous utiliser une base non suisse comme Mistral ou Qwen — et l'EU AI Act l'autorise-t-il ?
+    a: >-
+      Oui. Apertus est notre choix par défaut parce qu'il est entièrement suisse et la seule base à publier ses données d'entraînement — mais si votre politique l'autorise, un modèle européen comme Mistral ou international comme Qwen peut entrer dans l'évaluation et être livré s'il gagne, tournant toujours sur votre propre infrastructure avec des poids qui vous appartiennent. Sur l'AI Act précisément : il classe les systèmes selon le <em>risque d'usage</em> et impose des devoirs de transparence au <em>fournisseur</em> du modèle — il ne restreint pas un modèle de base selon le pays d'origine. Le vrai verrou est généralement votre propre politique d'achat et de gouvernance des données, que nous cadrons avec vous. Pas un conseil juridique — nous travaillons aux côtés de vos équipes conformité et juridique.
   - q: Et le travail à forte charge de raisonnement ?
     a: >-
       Le raisonnement profond en plusieurs étapes sur des questions ouvertes est là où la taille du modèle paie encore. Notre réponse est architecturale, pas idéologique — un petit modèle gère le volume routinier, et les requêtes qu'il ne peut pas traiter avec confiance escaladent vers un modèle ouvert plus grand tournant sur la même infrastructure. Rien n'escalade vers une API cloud. La <a class="link-underline" href="/fr/concepts/sovereign-architecture/">page du runtime souverain</a> décrit le fonctionnement de ce routeur.
   - q: L'affinage ne devient-il pas obsolète à chaque nouveau modèle de base meilleur ?
     a: >-
-      Les actifs coûteux survivent aux changements de modèle. Votre jeu d'évaluation, vos données d'entraînement soignées et votre corpus de recherche se reportent tous inchangés ; ré-exécuter un affinage LoRA sur un modèle de base plus récent est une affaire de jours, pas une reconstruction. C'est aussi pourquoi nous restons agnostiques au modèle — Apertus, Llama ou Mistral, celui qui gagne sur votre jeu d'évaluation à ce moment-là.
+      Les actifs coûteux survivent aux changements de modèle. Votre jeu d'évaluation, vos données d'entraînement soignées et votre corpus de recherche se reportent tous inchangés ; ré-exécuter un affinage LoRA sur un modèle de base plus récent est une affaire de jours, pas une reconstruction. C'est aussi pourquoi nous restons agnostiques au modèle — Apertus, Mistral, Llama ou Qwen, celui qui gagne sur votre jeu d'évaluation au sein du niveau que votre conformité autorise.
 ---
 {% from "partials/components.njk" import sectionHead, faqList, cta %}
-{% from "partials/charts.njk" import deltaBars %}
+{% from "partials/charts.njk" import deltaBars, capabilityCurve, modelSpectrum, modelCatalog %}
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
@@ -23,13 +26,41 @@ faq:
       Petits modèles, mesurés.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Un modèle 4–8B affiné qui connaît vos documents bat un modèle de pointe qui ne les a jamais vus — sur les tâches étroites et à fort volume qui comptent réellement dans le travail régulé. Voici pourquoi, limites honnêtes incluses.
+      Deux questions décident d'un build souverain : <em>quelle taille de modèle la tâche exige-t-elle</em> et <em>de quelle base partez-vous</em>. Cette page répond aux deux — capacité versus taille, ce que chaque classe de taille sait réellement faire, et le spectre de l'Apertus entièrement suisse aux modèles ouverts européens et internationaux — limites honnêtes et cadrage de conformité inclus.
     </p>
   </div>
 </section>
 
-<!-- Specialization -->
+<!-- Capability vs size -->
 <section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Taille", "Quelle taille de modèle la tâche exige-t-elle ?", "La capacité augmente avec la taille — mais elle plafonne, et les rendements deviennent vite coûteux. La plupart du travail régulé ne vit pas à la frontière ; il vit dans les bandes qu'un petit modèle atteint.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>La taille d'un modèle se mesure en paramètres — de ~1B à plus de 200B. Plus de paramètres achètent des connaissances plus larges et un raisonnement plus profond, mais la courbe s'infléchit : le saut de 1B à 8B est transformateur, de 8B à 70B il est réel mais coûteux, et au-delà vous payez beaucoup pour peu sur la plupart des tâches.</p>
+      <p>L'astuce : la taille nécessaire est fixée par la <em>tâche</em>, pas par l'ambition. Extraction, classification, routage et rédaction structurée vivent dans les bandes basses — le terrain de prédilection d'un petit modèle. Et la flèche rouge ci-dessous est tout l'enjeu de cette page : <strong class="font-semibold text-ink-900 dark:text-white">affiner un petit modèle sur une tâche étroite hisse sa capacité effective dans la bande supérieure</strong>, de sorte qu'un 8B affiné bat un généraliste bien plus grand sur le travail que vous exécutez réellement.</p>
+    </div>
+  </div>
+  <div class="mt-12">
+    {% set cap = {
+      yLabel: "Capacité",
+      xLabel: "Taille du modèle",
+      bandHigh: { name: "Raisonnement de pointe", ex: "recherche ouverte · synthèse inédite" },
+      bandMid:  { name: "Travail de connaissance appliqué", ex: "Q&R métier avec citation · traduction" },
+      bandLow:  { name: "Travail routinier structuré", ex: "extraction · classification · routage" },
+      lift: "sur votre tâche étroite",
+      baseDot: "8B de base",
+      tunedDot: "8B affiné",
+      caption: "Illustratif, pas un benchmark. La capacité brute augmente avec le nombre de paramètres mais plafonne — et les rendements deviennent coûteux. Affiner un petit modèle sur une tâche étroite hisse sa capacité <em>effective</em> dans la bande supérieure ; c'est pourquoi un 8B affiné peut battre un modèle général bien plus grand sur votre travail cadré. Les vrais chiffres viennent de l'évaluation sur votre tâche."
+    } %}
+    {{ capabilityCurve(cap) }}
+  </div>
+</section>
+
+<!-- Specialization -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("L'effet", "La spécialisation bat l'échelle sur les tâches étroites.", "Les benchmarks généraux récompensent l'étendue. Votre workflow récompense la profondeur — vos modèles, votre terminologie, vos formats, vos cas limites.") }}
@@ -47,11 +78,11 @@ faq:
     ] %}
     {{ deltaBars(ticino, "Canton du Tessin — précision de traduction sur du texte cantonal, avant et après affinage d'Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Source : CSCS</a>.") }}
   </div>
+  </div>
 </section>
 
 <!-- Division of labour -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("La méthode", "L'affinage enseigne le comportement. La recherche fournit les faits.", "On confond régulièrement les deux — et cette confusion est là où les projets d'IA échouent.") }}
     <div class="mt-12 grid gap-5 md:grid-cols-3">
       {% set roles = [
@@ -67,11 +98,107 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">Mesurée, la répartition est nette : dans <a class="link-underline" href="/fr/reports/finma-ablation/">notre ablation FINMA</a>, l'affinage seul a porté la conformité de format de ~2 % à 100 % tout en laissant la précision réponse-plus-citation à 1,6 % — comportement appris, faits non. Recherche seule : 22,4 %. Combiné : 45,4 %.</p>
+</section>
+
+<!-- The base-model spectrum -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("La base", "Entièrement suisse, ou aussi flexible que votre conformité le permet.", "Apertus est notre choix par défaut — le LLM entièrement ouvert et entièrement transparent de la Suisse. Mais la souveraineté n'est pas seulement suisse. Là où votre politique le permet, une base ouverte européenne ou internationale peut gagner votre évaluation tout en tournant entièrement sur votre infrastructure.") }}
+    <div class="mt-12">
+      {% set spectrum = {
+        leftLabel: "Souveraineté & transparence maximales",
+        rightLabel: "Capacité & flexibilité maximales",
+        tiers: [
+          {tag:"Entièrement suisse", title:"Souverain & entièrement transparent", models:"Apertus", note:"Poids ouverts <em>et</em> données d'entraînement ouvertes, origine suisse. Le choix quand chaque couche doit être auditable — secteur public, ou les postures de conformité les plus strictes."},
+          {tag:"Européen", title:"Basé en UE, poids ouverts", models:"Mistral · Teuken · EuroLLM", note:"Fournisseurs européens, poids ouverts, forte couverture des langues de l'UE. La provenance reste en Europe ; les données d'entraînement ne sont généralement pas publiées."},
+          {tag:"International", title:"Meilleure performance ouverte", models:"Llama · Qwen · Gemma", note:"Les modèles ouverts les plus forts, quelle que soit l'origine. Capacité et écosystème maximaux — le compromis porte sur la transparence des données d'entraînement et, pour certains, le pays d'origine."}
+        ],
+        caption: "Chaque option tourne de la même façon : poids ouverts, sur votre infrastructure, vos données ne partent jamais. Vers la droite, on achète capacité et écosystème ; vers la gauche, transparence de la provenance. La position de votre organisation est une décision de conformité et d'achat — et au sein du niveau choisi, l'évaluation décide encore quel modèle gagne."
+      } %}
+      {{ modelSpectrum(spectrum) }}
+    </div>
+    <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
+      <h3 class="text-base font-bold text-ink-900 dark:text-white">L'EU AI Act autorise-t-il un modèle comme Qwen ?</h3>
+      <div class="mt-3 max-w-3xl space-y-3 text-sm prose-muted">
+        <p>Version courte : le règlement classe selon le <strong class="font-semibold text-ink-900 dark:text-white">risque d'usage</strong> et impose des obligations de transparence au <strong class="font-semibold text-ink-900 dark:text-white">fournisseur</strong> d'un modèle à usage général — il ne restreint <em>pas</em> un modèle de base selon son pays d'origine. Faire tourner un modèle ouvert sur votre propre infrastructure garde vos données dans votre juridiction, peu importe où les poids ont été entraînés.</p>
+        <p>Ce qui peut écarter un modèle, c'est votre <strong class="font-semibold text-ink-900 dark:text-white">propre</strong> politique d'achat ou de gouvernance des données : plusieurs organismes publics suisses et européens restreignent la technologie d'origine chinoise par politique interne, pas par le règlement. C'est une décision que nous cadrons avec vous — et c'est précisément pour cela que l'option entièrement suisse existe. <span class="text-ink-500">Pas un conseil juridique ; nous travaillons aux côtés de vos équipes conformité et juridique.</span></p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Economics -->
+<!-- Base-model catalogue -->
 <section class="container-x py-20 md:py-28">
+  {{ sectionHead("Le catalogue", "Les modèles de base sur lesquels nous construisons.", "Une liste de travail, groupée par origine. Tailles et matériel sont des faits ; performance et vitesse sont qualitatives — le vrai classement vient toujours de l'évaluation sur votre tâche.") }}
+  <div class="mt-12">
+    {% set catalogue = [
+      {
+        region: "Suisse — souveraineté maximale", flag: "🇨🇭",
+        models: [
+          { name:"Apertus", origin:"EPFL · ETH Zurich · CSCS (Suisse)", sizes:"8B · 70B", transparency:"Entièrement ouvert", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → workstation · 70B → nœud",
+            desc:"Le LLM souverain de la Suisse — la seule base ici à publier ses données d'entraînement et sa recette, pas seulement ses poids. Multilingue par construction, y compris le suisse allemand et le romanche.",
+            uses:"Secteur public, Q&R régulé, traduction — partout où l'auditabilité complète est l'exigence",
+            perf:"Fort sur les tâches étroites affinées et les langues nationales suisses ; en retrait des plus grands modèles internationaux sur le travail général ouvert",
+            strength:"Traçabilité complète des données, inspectable par un auditeur ; origine et juridiction suisses",
+            tradeoff:"Écosystème plus jeune et moins de tailles que les acteurs établis" }
+        ]
+      },
+      {
+        region: "Europe — basé en UE, poids ouverts", flag: "🇪🇺",
+        models: [
+          { name:"Mistral", origin:"Mistral AI (France)", sizes:"8B · ~24B · plus grand", transparency:"Poids ouverts", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"8B → workstation · 24B → un seul GPU 24–48 Go",
+            desc:"Famille française ouverte et efficace, avec des versions permissives (Apache-2.0) et une forte couverture des langues européennes.",
+            uses:"Travail documentaire multilingue UE, rédaction et résumé avec un budget matériel serré",
+            perf:"Excellente capacité par paramètre ; vainqueur fréquent d'évaluation sur les tâches multilingues européennes",
+            strength:"Basé en UE, licences permissives, très forte performance pour la taille",
+            tradeoff:"Données d'entraînement non publiées ; les plus grands niveaux ne sont pas tous ouverts" },
+          { name:"Teuken · EuroLLM", origin:"OpenGPT-X / consortiums UE (Europe)", sizes:"7B · 9B", transparency:"Ouvert · financé par l'UE", tClass:"text-teal-700 dark:text-teal-300",
+            hardware:"→ workstation",
+            desc:"Modèles européens financés sur fonds publics, entraînés pour une large couverture des langues de l'UE — les 24 langues officielles — avec une documentation exceptionnellement ouverte.",
+            uses:"Déploiements souverains UE voulant une provenance de recherche publique européenne et une large couverture linguistique",
+            perf:"Couverture multilingue solide à petite taille ; écosystème plus réduit et moins de points de contrôle affinés que Mistral",
+            strength:"Provenance de la recherche publique européenne ; large couverture des langues officielles",
+            tradeoff:"Plus petit et moins éprouvé que les leaders du marché" }
+        ]
+      },
+      {
+        region: "International — meilleure performance ouverte", flag: "🌐",
+        models: [
+          { name:"Llama", origin:"Meta (États-Unis)", sizes:"8B · 70B · plus grand", transparency:"Poids ouverts · licence communautaire", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → workstation · 70B → nœud",
+            desc:"La famille ouverte de Meta — l'outillage et l'écosystème communautaire les plus matures de tout modèle ouvert.",
+            uses:"Bases de référence généralistes et outillage agentique où la maturité de l'écosystème compte",
+            perf:"Forte capacité générale sur toutes les tailles ; un concurrent d'évaluation fiable",
+            strength:"Écosystème, outillage et support d'affinage inégalés",
+            tradeoff:"Origine américaine ; une licence communautaire avec restrictions d'usage ; données d'entraînement non publiques" },
+          { name:"Qwen", origin:"Alibaba (Chine)", sizes:"7B–72B dense · 235B MoE", transparency:"Poids ouverts (Apache-2.0)", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"8B → workstation · 32B → un seul GPU · 72B / MoE → nœud",
+            desc:"Parmi les modèles ouverts les plus forts en raisonnement, code et travail multilingue, avec la plus large gamme de tailles — dont des mixtures d'experts économes en mémoire.",
+            uses:"Les tâches ouvertes les plus exigeantes où la capacité prime et où la politique le permet",
+            perf:"Niveau de pointe ouvert sur les benchmarks de raisonnement et multilingues ; les variantes MoE tournent plus vite qu'un modèle dense de même taille totale",
+            strength:"Meilleure performance ouverte, licences permissives, une taille pour chaque budget matériel",
+            tradeoff:"Origine chinoise — certaines politiques d'achat publiques suisses et européennes l'excluent ; données d'entraînement non publiques" },
+          { name:"Gemma", origin:"Google (États-Unis)", sizes:"2B · 9B · 27B", transparency:"Poids ouverts", tClass:"text-ink-700 dark:text-ink-300",
+            hardware:"→ workstation (toutes tailles)",
+            desc:"La famille ouverte compacte de Google, réglée pour une forte qualité aux petites et moyennes tailles tenant sur un seul GPU.",
+            uses:"Charges mono-GPU et en périphérie sensibles à la latence",
+            perf:"Qualité par paramètre compétitive dans la gamme petite et moyenne",
+            strength:"Petit, rapide, facile à faire tourner sur du matériel modeste",
+            tradeoff:"Origine américaine ; plafonné à 27B ; données d'entraînement non publiques" }
+        ]
+      }
+    ] %}
+    {% set catLabels = { sizes:"Tailles", hardware:"Matériel", uses:"Idéal pour", perf:"Performance & vitesse", strength:"Atout", tradeoff:"Compromis" } %}
+    {{ modelCatalog(catalogue, catLabels) }}
+  </div>
+  <p class="mt-10 max-w-2xl text-base prose-muted">Dimensionner le matériel derrière tout cela est une discipline à part — voir <a class="link-underline" href="/fr/concepts/quantization/">la quantification</a> pour comment un 70B tient dans ~40 Go et un 8B en moins de 5 Go, et <a class="link-underline" href="/fr/concepts/sovereign-architecture/">le runtime souverain</a> pour les formes de déploiement.</p>
+</section>
+
+<!-- Economics -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-5">
       {{ sectionHead("L'économie", "Un ordre de grandeur moins cher à exploiter — et plus rapide.", "Les petits modèles ne rentrent pas seulement dans votre enveloppe de conformité. Ils rentrent dans votre budget — en francs et en millisecondes.") }}
@@ -82,11 +209,11 @@ faq:
       <p><strong class="font-semibold text-ink-900 dark:text-white">Le multiplicateur de souveraineté :</strong> chaque paramètre dont vous n'avez pas besoin est de la conformité que vous n'avez pas à acheter. Un petit modèle spécialisé par tâche tourne sur une seule machine — la forme workstation dans <a class="link-underline" href="/fr/concepts/sovereign-architecture/">le runtime souverain</a> — ce qui ouvre les déploiements air-gapped et en périphérie (atelier, clinique, service terrain) où les plateformes hébergées et les API américaines ne peuvent structurellement pas suivre.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- Honest limits -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
+<section class="container-x py-20 md:py-28">
     {{ sectionHead("Les limites", "Quand un petit modèle est le mauvais choix.", "Un expert qui ne vous dit pas quand son outil préféré perd n'est pas un expert. Les petits modèles perdent ici :") }}
     <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {% set limits = [
@@ -103,14 +230,15 @@ faq:
       {% endfor %}
     </div>
     <p class="mt-8 max-w-2xl text-base prose-muted">La ligne de partage n'est pas une opinion — c'est le jeu d'évaluation. C'est pourquoi chaque engagement commence par en construire un : <a class="link-underline" href="/fr/concepts/evaluation/">la livraison guidée par l'évaluation</a>.</p>
-  </div>
 </section>
 
 <!-- FAQ -->
-<section class="container-x py-20 md:py-28">
+<section class="border-t border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-20 md:py-28">
   <div class="grid gap-12 md:grid-cols-12">
     <div class="md:col-span-4">{{ sectionHead("FAQ", "Questions sur les petits modèles.") }}</div>
     <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
   </div>
 </section>
 

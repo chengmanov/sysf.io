@@ -116,15 +116,17 @@
     <text x="262" y="182" class="fill-red-700 dark:fill-red-400" font-size="12.5" font-weight="700">{{ t.tunedDot }}</text>
     <text x="262" y="197" class="fill-ink-500 dark:fill-ink-300" font-size="11">{{ t.lift }}</text>
     <text x="150" y="312" class="fill-ink-500 dark:fill-ink-300" font-size="11">{{ t.baseDot }}</text>
-    {# band labels + example tasks, placed in the empty corners the curve leaves #}
+    {# band labels + example tasks, placed in the empty pockets the curve leaves.
+       Mid-band labels sit lower-right (right-anchored) to clear the fixed 8B fine-tune
+       annotation at x=250 — a left-anchored label here would cross the red arrow. #}
     <g font-size="12.5" font-weight="700" class="fill-ink-900 dark:fill-white">
       <text x="104" y="58">{{ t.bandHigh.name }}</text>
-      <text x="104" y="170">{{ t.bandMid.name }}</text>
+      <text x="712" y="214" text-anchor="end">{{ t.bandMid.name }}</text>
       <text x="432" y="300">{{ t.bandLow.name }}</text>
     </g>
     <g font-size="11" class="fill-ink-500 dark:fill-ink-300">
       <text x="104" y="75">{{ t.bandHigh.ex }}</text>
-      <text x="104" y="187">{{ t.bandMid.ex }}</text>
+      <text x="712" y="231" text-anchor="end">{{ t.bandMid.ex }}</text>
       <text x="432" y="317">{{ t.bandLow.ex }}</text>
     </g>
     {# x-axis size ticks #}

@@ -196,6 +196,7 @@ function parseTriage(text) {
 }
 function renderTriage(el, raw, done) {
   const r = parseTriage(raw || "");
+  const pend = done ? "&mdash;" : '<span class="sd-pend"></span>';
   if (done && !r.category && !r.urgency && !r.summary) {
     renderChatText(el, raw, false);
     return;
@@ -206,15 +207,15 @@ function renderTriage(el, raw, done) {
     <div class="sd-tri">
       <div class="sd-tri-row">
         <span class="sd-tri-k">${escapeHtml(t("fieldCategory"))}</span>
-        ${r.category ? `<span class="sd-chip">${escapeHtml(r.category)}</span>` : '<span class="sd-pend"></span>'}
+        ${r.category ? `<span class="sd-chip">${escapeHtml(r.category)}</span>` : pend}
       </div>
       <div class="sd-tri-row">
         <span class="sd-tri-k">${escapeHtml(t("fieldUrgency"))}</span>
-        ${r.urgency ? `<span class="sd-chip" data-urg="${escapeHtml(r.urgency.toLowerCase())}">${escapeHtml(urgLabel)}</span>` : '<span class="sd-pend"></span>'}
+        ${r.urgency ? `<span class="sd-chip" data-urg="${escapeHtml(r.urgency.toLowerCase())}">${escapeHtml(urgLabel)}</span>` : pend}
       </div>
       <div class="sd-tri-row sd-tri-sum">
         <span class="sd-tri-k">${escapeHtml(t("fieldSummary"))}</span>
-        <span class="sd-tri-v">${r.summary ? escapeHtml(r.summary) : '<span class="sd-pend"></span>'}${!done ? '<span class="sd-caret"></span>' : ""}</span>
+        <span class="sd-tri-v">${r.summary ? escapeHtml(r.summary) : pend}${!done ? '<span class="sd-caret"></span>' : ""}</span>
       </div>
     </div>`;
 }
@@ -303,7 +304,6 @@ async function send() {
   const render = mode === "triage" ? renderTriage : renderChatText;
   setGenerating(true);
   abortController = new AbortController();
-  const closeId = chat.thinkCloseTokenId;
   let answer = "";
   let startedAt = performance.now(), firstTokenAt = 0, tokens = 0;
   try {
@@ -311,7 +311,6 @@ async function send() {
       const now = performance.now();
       if (!firstTokenAt) firstTokenAt = now;
       if (tok.token !== null) tokens++;
-      if (closeId != null && tok.token === closeId) { answer = ""; continue; }
       answer += answer === "" ? tok.delta.replace(/^\s+/, "") : tok.delta;
       scheduleStream(() => render(body, answer, mode === "chat"));
       updateLiveStat({ startedAt, firstTokenAt, now, tokens });

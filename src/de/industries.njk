@@ -1,0 +1,123 @@
+---
+layout: layouts/base.njk
+order: 2
+title: Branchen
+description: Anwendungsfälle für souveräne KI in den regulierten Sektoren der Schweiz — Banken & Finanzen, Gesundheit & Pharma, Recht, Verwaltung, Versicherung und Fertigung. Massgeschneiderte, auf Apertus feinabgestimmte Modelle, on-prem betrieben mit null Datenabfluss.
+faq:
+  - q: Welche Branchen bedienen Sie?
+    a: >-
+      Wir konzentrieren uns auf regulierte und datensensible Sektoren in der Schweiz und der EU — Banken und Finanzen, Gesundheit und Pharma, Recht und professionelle Dienstleistungen, Staat und öffentlicher Sektor, Versicherung und Fertigung.
+  - q: Können Sie mit unseren bestehenden Systemen arbeiten?
+    a: >-
+      Ja. Agenten greifen über Tools und Retrieval auf Ihre bestehenden Systeme und Datenquellen zu, sodass die KI mit Ihrem Kernbankensystem, KIS/EPD, DMS, ERP, Schaden- oder Fallmanagementsystem zusammenarbeitet, statt sie zu ersetzen.
+  - q: Wir arbeiten sprachübergreifend — wird das unterstützt?
+    a: >-
+      Apertus ist von Grund auf mehrsprachig — natives Deutsch, Französisch, Italienisch und Rätoromanisch, inklusive Schweizerdeutsch, plus über 1'000 weitere Sprachen.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Branchen</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Gebaut für die Sektoren, die keine Daten weggeben dürfen.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Bankgeheimnis nach Art. 47, Patientendaten nach Art. 9 DSGVO, Anwaltsgeheimnis, kantonales Datenschutzrecht — der Blocker unterscheidet sich je nach Sektor; die Antwort ist dieselbe: ein Modell, das auf Ihren Dokumenten feinabgestimmt ist und innerhalb Ihrer Mauern läuft.
+    </p>
+  </div>
+</section>
+
+<div class="container-x divide-y divide-ink-900/10 dark:divide-white/10">
+  {% set industries = [
+    {
+      k:"Banken & Finanzen",
+      p:"Kundenidentifizierende Daten (CID) und das Bankgeheimnis nach Art. 47 verbieten externe KI nicht — sie machen daraus ein monatelanges Rechtsprojekt. Wir deployen stattdessen feinabgestimmte Modelle in Ihrer Umgebung, mit der Datenresidenz, dem Audit-Trail und dem dokumentierten Exit-Plan, die Ihre zweite Verteidigungslinie und die FINMA-Outsourcing-Sorgfaltsprüfung tatsächlich prüfen werden.",
+      cases:[
+        "Kundenberatungs-Copiloten, verankert in Ihren Produkt- und Richtliniendokumenten",
+        "KYC-/AML-Dokumentenverarbeitung und Screening-Unterstützung",
+        "Regulatorische und interne Richtlinien-Q&A über DE/FR/IT/EN",
+        "Recherche- und Reporting-Assistenten über Ihren eigenen Marktdaten"
+      ],
+      note:"On-prem oder Confidential Computing · null Datenabfluss · Auditrechte & Exit-Plan dokumentiert"
+    },
+    {
+      k:"Gesundheit & Pharma",
+      p:"Spital-KI scheitert in der Prüfung, nicht in der Demo. Besonders schützenswerte Daten nach Art. 5 revDSG und Art. 9 DSGVO bleiben in Ihrem klinischen Netzwerk — integriert mit Ihrem KIS über HL7/FHIR und auf Ihr kantonales Datenschutzrecht ausgelegt, nicht nur auf das eidgenössische DSG. Wir bleiben bewusst ausserhalb des Geltungsbereichs von MDR/MepV: keine Diagnose- oder Triage-Funktionalität.",
+      cases:[
+        "Austrittsberichte und klinische Berichte, verfasst aus strukturierten Notizen (DE/FR/IT)",
+        "Unterstützung bei der klinischen Kodierung (CHOP / ICD-10)",
+        "Forschungs- und Literaturassistenten über internem Wissen",
+        "Automatisierung administrativer Workflows und Korrespondenz"
+      ],
+      note:"Patientendaten bleiben in der Schweiz · ausserhalb MDR/MepV-Geltungsbereich by design"
+    },
+    {
+      k:"Recht & Professionelle Dienstleistungen",
+      p:"Ihre Associates verlieren Stunden mit ersten Entwürfen, Klauselsuche und sprachübergreifenden Recherche-Memos — wir installieren Assistenten, die auf Ihren eigenen Vorlagen und Präzedenzfällen trainiert sind und innerhalb der Kanzlei laufen.",
+      cases:[
+        "Vertragsanalyse, -prüfung und Klauselextraktion",
+        "Mehrsprachige Rechtsrecherche (DE / FR / IT / EN)",
+        "Entwurfsassistenten, verankert in Ihren Vorlagen und Präzedenzfällen",
+        "Due-Diligence- und Datenraum-Zusammenfassung"
+      ],
+      note:"Anwaltsgeheimnis-sicher · in-jurisdiktional · Ihre Vorlagen und Präzedenzfälle"
+    },
+    {
+      k:"Staat & Öffentlicher Sektor",
+      p:"Das funktioniert bereits: Der Kanton Tessin betreibt ein feinabgestimmtes Apertus-8B-Übersetzungssystem auf eigener Infrastruktur — 94 % Genauigkeit nach dem Fine-Tuning auf kantonalen Daten. Dasselbe Vorgehen — auf Ihrem Korpus feinabstimmen, vor dem Go-live messen, auf von Ihnen kontrollierter Infrastruktur deployen — gilt für Ihren Kanton oder Ihre Gemeinde.",
+      cases:[
+        "Mehrsprachige Bürgerdienst-Assistenten (DE / FR / IT / RM)",
+        "Interne Wissens- und Verfahrensassistenten für Mitarbeitende",
+        "Unterstützung bei der Dokument- und Antragsbearbeitung",
+        "Barrierefreie Kommunikation in einfacher Sprache verfassen"
+      ],
+      note:"Läuft auf nationaler Infrastruktur · Daten verlassen nie das Land"
+    },
+    {
+      k:"Versicherung",
+      p:"Ihre Schadenteams tippen den ganzen Tag Daten aus gescannten Formularen, Arztberichten und Broker-Post ab — Dokumente, die zu sensibel für eine US-API sind. Wir deployen verankerte Modelle in Ihrer Umgebung, die gegen Ihre Kernsysteme (Guidewire, Syrius, SAP FS-CM) klassifizieren, extrahieren und entwerfen, von Tag eins an als FINMA-konformes Outsourcing strukturiert.",
+      cases:[
+        "Schadenannahme, -triage und Dokumentenautomatisierung",
+        "Policen- und Deckungs-Q&A-Copiloten für Agenten und Kunden",
+        "Underwriting-Recherche und Zusammenfassungsunterstützung",
+        "Korrespondenzentwürfe, verankert in Ihren Policen"
+      ],
+      note:"Nachvollziehbare Ausgaben · FINMA-Outsourcing-tauglich · On-prem-Option"
+    },
+    {
+      k:"Fertigung & Industrie",
+      p:"Prozessparameter, Fehlerhistorien und Lieferantenspezifikationen sind wettbewerbsrelevantes IP — und das meiste liegt in File-Shares und Ordnern, die niemand durchsucht. Wir deployen Assistenten über Ihren Handbüchern, SOPs, Wartungsprotokollen und Maschinendokumentationen auf Hardware im Werksnetzwerk — eine Maschine der Workstation-Klasse (24–48 GB VRAM) genügt am Edge — sodass nichts die Werksgrenze überschreitet oder eine Cloud-API erreicht.",
+      cases:[
+        "Wartungs- und Fehlerbehebungs-Copiloten in der Werkshalle",
+        "Wissensassistenten über Handbüchern, SOPs und Spezifikationen",
+        "Unterstützung bei Qualitäts- und Compliance-Dokumentation",
+        "Lieferanten- und Beschaffungsdokumentenverarbeitung"
+      ],
+      note:"On-prem / edge-freundlich · schützt operatives IP"
+    }
+  ] %}
+  {% for ind in industries %}
+  <section class="grid gap-8 py-14 md:grid-cols-12 md:py-16">
+    <div class="md:col-span-4">
+      <h2 class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ ind.k }}</h2>
+      <p class="mt-4 text-sm prose-muted">{{ ind.p }}</p>
+      <p class="mt-5 inline-flex items-center gap-2 text-xs font-medium text-swiss">
+        <span class="h-1.5 w-1.5 bg-swiss"></span>{{ ind.note }}
+      </p>
+    </div>
+    <div class="md:col-span-7 md:col-start-6">
+      <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Beispielhafte Use Cases</div>
+      <ul class="mt-4 grid gap-5 sm:grid-cols-2">
+        {% for c in ind.cases %}
+        <li class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white p-5 text-sm text-ink-700 shadow-sm dark:border-white/10 dark:bg-ink-950 dark:text-ink-300">
+          <span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{{ cta("Ihr Sektor ist nicht dabei?", "Wenn Sie vertrauliche Daten unter Schweizer oder EU-Regulierung verarbeiten, ist souveräne KI anwendbar. Erzählen Sie uns Ihren Use Case.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

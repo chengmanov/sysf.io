@@ -1,0 +1,159 @@
+---
+layout: layouts/base.njk
+title: Esempio pratico — ottimizzare un modello piccolo per il diritto contrattuale svizzero
+description: Un'ablazione riproducibile a quattro vie di Apertus-8B su Q&A relative agli articoli del Codice delle obbligazioni svizzero (CO) — e l'errore di addestramento, legato al retrieval, che rompe silenziosamente un'ottimizzazione, diagnosticato e corretto. Valutata in modo deterministico su dati pubblici.
+tags: writing
+date: 2026-07-20
+kicker: Rapporto
+listTitle: Ottimizzare un modello piccolo per il diritto contrattuale svizzero — e l'errore che lo rompe.
+blurb: Una seconda ablazione riproducibile, questa volta sul Codice delle obbligazioni svizzero. L'ottimizzazione + retrieval vince al 52,3 % — ma solo dopo aver individuato un errore di addestramento che rendeva l'ottimizzazione ingenua peggiore del solo retrieval. Il fallimento, diagnosticato e corretto.
+faq:
+  - q: È lo stesso metodo del rapporto FINMA?
+    a: >-
+      Sì — deliberatamente. Stessa ablazione a quattro vie, stessa valutazione deterministica, stesso modello di base, su un settore diverso (legale) e un tipo di documento diverso (una legge, non circolari). Riprodurre il risultato su un secondo corpo di diritto è il punto: il metodo si generalizza.
+  - q: Perché pubblicare un errore che avete commesso?
+    a: >-
+      Perché è la parte più utile. La nostra prima ottimizzazione è stata addestrata senza contesto di retrieval ed è crollata quando il retrieval è stato aggiunto — peggio del modello di base. È esattamente il tipo di fallimento che l'ablazione di un vero Pilot è progettata per intercettare prima che raggiunga la produzione. L'abbiamo corretto addestrando il modello nel modo in cui viene servito; il rapporto mostra entrambi.
+  - q: Come viene valutato — c'è un giudice LLM?
+    a: >-
+      Nessun giudice LLM da nessuna parte. Il Codice delle obbligazioni numera ogni disposizione, così una citazione corretta è esattamente verificabile. L'accuratezza della risposta è una corrispondenza di stringa/numero rispetto a una risposta di riferimento verificata; la citazione è una corrispondenza esatta del numero di articolo. Ogni numero è ricalcolato da registrazioni di esecuzione congelate.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart, deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Esempio pratico · Valutazione</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Ottimizzare un modello piccolo per il diritto contrattuale svizzero.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Un secondo esempio pratico — stesso metodo del <a class="link-underline" href="/it/reports/finma-ablation/">rapporto FINMA</a>, un dominio diverso: rispondere a domande sul Codice delle obbligazioni svizzero (CO) <em>con</em> una citazione all'articolo esatto. Incluso un errore reale in cui ci siamo imbattuti lungo il percorso, e come l'ablazione lo ha intercettato.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("L'impostazione", "Quattro sistemi, un modello aperto.", "Lo stesso Apertus-8B, quantizzato in modo identico a 4 bit, servito in modo identico. L'unica variabile sono i pesi. Valutato in modo deterministico — nessun giudice LLM.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"Il modello aperto, così com'è consegnato."},
+      {k:"B", t:"+ Retrieval", d:"Modello di base con retrieval BM25 sulla legge."},
+      {k:"C", t:"Ottimizzato", d:"Calibrato con LoRA sul compito, senza retrieval."},
+      {k:"D", t:"Ottimizzato + retrieval", d:"Il sistema completo."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">L'asticella di produzione è <strong class="text-ink-700 dark:text-ink-300">entrambe insieme</strong> — la risposta corretta <em>e</em> l'articolo corretto citato. Una risposta giusta con una citazione errata o mancante è un fallimento, perché nel lavoro legale lo è.</p>
+</section>
+
+<!-- Results -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Il risultato", "L'ottimizzazione più il retrieval è il sistema migliore.", "172 domande verificate da esseri umani (98 tedesco, 74 francese, 10 temi di diritto contrattuale). Le parentesi sono intervalli di confidenza al 95 %.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Risposta corretta", cls:"bg-teal-500"},
+        {name:"Risposta + citazione (asticella di produzione)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:39.0, cls:"bg-teal-500"}, {v:4.1, cls:"bg-red-600"}]},
+        {label:"B · + Retrieval", bars:[{v:54.7, cls:"bg-teal-500"}, {v:38.4, cls:"bg-red-600"}]},
+        {label:"C · Ottimizzato", bars:[{v:46.5, cls:"bg-teal-500"}, {v:2.9, cls:"bg-red-600"}]},
+        {label:"D · Ottimizzato + retrieval", note:"il sistema completo", bars:[{v:70.3, cls:"bg-teal-500"}, {v:52.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "L'asticella di produzione (rosso) è quasi zero senza retrieval (A, C), raggiunge il 38,4 % con il solo retrieval (B), e culmina al 52,3 % solo quando ottimizzazione <strong class='text-ink-700 dark:text-ink-300'>e</strong> retrieval si combinano (D) — la stessa forma del risultato FINMA, su un diverso corpo di diritto.") }}
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metrica</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · ottim.</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · ottim.+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Risposta + citazione (asticella di produzione)", a:"4.1%", b:"38.4%", c:"2.9%", d:"52.3%", hi:true},
+            {m:"Risposta corretta", a:"39.0%", b:"54.7%", c:"46.5%", d:"70.3%"},
+            {m:"Citazione corretta", a:"7.0%", b:"69.8%", c:"5.8%", d:"62.2%"},
+            {m:"Emette il formato richiesto", a:"1.2%", b:"0.0%", c:"89.5%", d:"70.9%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- The mistake -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("L'errore che valeva la pena pubblicare", "Non abbiamo raggiunto il 52 % al primo tentativo.", "La prima ottimizzazione è stata addestrata nel modo ovvio — su domande e la loro risposta + citazione, senza contesto recuperato. Da sola sembrava ottima. Con il retrieval aggiunto, è crollata.") }}
+  <div class="mt-10 max-w-3xl">
+    {{ deltaBars([
+      {label:"Ottimizzazione ingenua + RAG", v:8.1, cls:"bg-neutral-400 dark:bg-white/25", tag:"peggio di B"},
+      {label:"Consapevole del retrieval + RAG", v:52.3, cls:"bg-red-600"}
+    ], "Il braccio D sull'asticella di produzione. Il modello ingenuo — a cui venivano mostrati passaggi recuperati mai visti in addestramento — è tornato a risposte concise e ha <strong class='text-ink-700 dark:text-ink-300'>omesso la riga della citazione</strong>, ottenendo un punteggio sotto il modello di base con retrieval (38,4 %). La conformità di formato in addestramento sotto retrieval è scesa al 16 %.") }}
+  </div>
+  <div class="mt-10 max-w-3xl rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+    <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">D.</span> Un accordo preventivo che esclude la responsabilità per colpa grave è valido? <span class="text-ink-500">(riferimento: no, art. 100)</span></p>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Ottimizzazione ingenua + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein</pre>
+        <p class="mt-1 text-xs text-swiss">Risposta giusta, nessuna citazione → fallisce</p>
+      </div>
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Consapevole del retrieval + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein
+SOURCE: OR Art. 100</pre>
+        <p class="mt-1 text-xs text-swiss">Supera</p>
+      </div>
+    </div>
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">La causa è un <strong class="font-semibold text-ink-900 dark:text-white">disallineamento di distribuzione tra addestramento e inferenza</strong>: un modello che sarà servito <em>con</em> retrieval deve essere <em>addestrato</em> con retrieval. Abbiamo ricostruito il set di ottimizzazione così che ogni esempio compaia sia in forma semplice sia con contesto recuperato — con l'articolo di riferimento garantito presente — riaddestrato, e l'asticella di produzione è passata dall'8,1 % al 52,3 %. È esattamente il tipo di fallimento che l'<a class="link-underline" href="/it/concepts/evaluation/">ablazione</a> di un Pilot intercetta prima che raggiunga la produzione. Misuriamo per non consegnarlo.</p>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("I limiti onesti", "Cosa questo non pretende.", "Una valutazione di cui potete fidarvi è una che nomina i propri punti deboli.") }}
+    <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Le domande a risposta-elenco ottengono quasi zero, in ogni braccio.</strong> Estrarre un insieme completo di più elementi e citarlo è il sotto-compito più difficile qui e l'ovvio obiettivo successivo — lo stesso punto debole segnalato dal rapporto FINMA.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Il francese è dietro il tedesco</strong> (D: 42 % FR vs 60 % DE), seguendo il mix di addestramento (271 DE vs 123 FR elementi). Dati più bilanciati colmano il divario; il numero è onesto su dove il modello è debole oggi.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">La conformità di formato è del 71 %, non del 100 %.</strong> L'ottimizzazione consapevole del retrieval omette ancora la citazione su alcuni elementi — molto meglio del 16 % ingenuo, non perfetta. È un pavimento: un set di addestramento più ampio e più bilanciato lo alza ulteriormente.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/or" class="btn-ghost" target="_blank" rel="noopener">Riproducilo su GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Su questo rapporto.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Lo volete sul vostro compito?", "Portate un workflow e i documenti che lo sostengono. Costruiremo il set di valutazione ed eseguiremo questa ablazione — inclusi i modi di fallimento che intercetta — sui vostri dati, nella vostra giurisdizione.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

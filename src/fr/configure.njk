@@ -1,0 +1,846 @@
+---
+layout: layouts/base.njk
+order: 3.5
+title: Configurez votre solution d'IA souveraine
+description: Un configurateur interactif — choisissez votre modèle, sa taille, la quantification, les langues, le traitement des données, le déploiement et la conformité, et obtenez une spécification d'une page. Nous expliquons chaque choix. Rien ne quitte votre navigateur tant que vous n'envoyez pas.
+faq:
+  - q: Quelque chose quitte-t-il mon navigateur pendant que je configure ?
+    a: >-
+      Non. Chaque réponse reste dans votre navigateur au fil de la configuration — rien n'est envoyé où que ce soit tant que vous n'appuyez pas sur « Envoyer à sysf.io », ce qui ouvre votre propre client de messagerie avec la spécification pré-remplie. C'est le même principe que tout ce que nous construisons : le modèle vient à vos données — vos données ne viennent jamais à nous.
+  - q: Puis-je vraiment choisir le modèle ?
+    a: >-
+      Ce configurateur cadre le point de départ. Apertus est notre défaut — le LLM entièrement ouvert de la Suisse. Mais dans un vrai engagement, l'évaluation décide : nous testons les modèles ouverts sur un jeu construit à partir de vos documents et déployons celui qui l'emporte. Apertus, Llama ou Mistral — c'est l'évaluation qui décide, pas le logo.
+  - q: La spécification est-elle un devis ?
+    a: >-
+      Non — c'est un brief structuré, pas un devis. Il nous donne assez pour revenir avec une proposition à périmètre fixe après un court appel. Pourquoi nous ne publions pas de prix fixes est expliqué sur la <a class='link-underline' href='/fr/pricing/'>page des tarifs</a>.
+  - q: D'où viennent les chiffres des calculateurs ?
+    a: >-
+      Les chiffres de mémoire sont de l'arithmétique simple — paramètres × bits par poids — avec les mêmes nombres que notre explication de la quantification. Les planchers de précision sont des résultats mesurés issus de notre benchmark public FINMA, harnais en open source. Rien sur cette page n'est une projection.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<style>
+  /* Print shows only the generated spec — but only once one exists (html.spec-ready),
+     so printing the page before generating doesn't produce a blank sheet. */
+  @media print {
+    html.spec-ready body * { visibility: hidden !important; }
+    html.spec-ready #specPrint, html.spec-ready #specPrint * { visibility: visible !important; }
+    html.spec-ready #specPrint { position: absolute; left: 0; top: 0; width: 100%; }
+    html.spec-ready #specActions { display: none !important; }
+  }
+</style>
+
+<!-- Hero -->
+<section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
+  <div class="circuit pointer-events-none absolute inset-0 -z-10 opacity-70 dark:opacity-20"></div>
+  <div class="container-x py-16 md:py-20">
+    <p class="eyebrow">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+      Configurateur de build
+    </p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-bold leading-[1.06] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Spécifiez votre build souverain en trois minutes.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Huit étapes courtes, du cas d'usage à la conformité. Nous expliquons ce que chaque choix signifie au fil de l'eau, puis vous remettons une spécification d'une page à nous envoyer. C'est le moyen le plus rapide de transformer « on devrait regarder ça » en une proposition concrète.
+    </p>
+    <div class="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      {% for c in ["8 étapes · ~3 minutes", "Pas de compte, pas d'inscription", "Rien ne quitte votre navigateur avant l'envoi"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <div class="container-x py-10">
+    <div class="card">
+      <p class="text-sm text-ink-700 dark:text-ink-300">Le configurateur a besoin de JavaScript. Pas de problème — <a class="link-underline" href="/fr/contact/">dites-nous simplement ce que vous aimeriez construire</a> et nous le cadrerons avec vous.</p>
+    </div>
+  </div>
+</noscript>
+
+<!-- Builder -->
+<section id="builder" class="container-x py-14 md:py-20">
+  <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <!-- Wizard -->
+    <div class="lg:col-span-8">
+      <div class="mb-8">
+        <div class="mb-2 flex items-center justify-between">
+          <span id="progressLabel" class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Étape 1 / 8</span>
+          <span id="progressPct" class="font-mono text-xs tabular-nums text-ink-500">13%</span>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/10">
+          <div id="progressFill" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 13%"></div>
+        </div>
+      </div>
+
+      <div id="stepContainer" aria-live="polite"></div>
+
+      <div class="mt-10 flex items-center justify-between gap-4 border-t border-ink-900/10 pt-6 dark:border-white/10">
+        <button id="backBtn" type="button" class="btn-ghost">← Retour</button>
+        <button id="nextBtn" type="button" class="btn-primary">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- Live summary -->
+    <aside class="lg:col-span-4">
+      <div id="summaryCard" class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Votre build jusqu'ici</div>
+        <div class="mt-4">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Engagement suggéré</div>
+          <div id="tierChip" class="mt-1.5 inline-flex items-center gap-2 rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">Pilote</div>
+          <p class="mt-1.5 text-xs prose-muted">Défini après un court appel — pas un devis.</p>
+        </div>
+        <dl id="summaryList" class="mt-5 space-y-2.5 border-t border-neutral-200 pt-5 text-sm dark:border-white/10"></dl>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Generated spec (hidden until generated) -->
+<section id="specPrint" class="container-x hidden py-14 md:py-20">
+  <div id="specBody"></div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-16 dark:border-white/10 md:py-24">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Avant de commencer.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Vous préférez en parler directement ?", "Passez le formulaire — réservez un appel de cadrage de 30 minutes et nous cartographierons votre premier cas d'usage ensemble.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}
+
+<script>
+(function () {
+  "use strict";
+  var CONTACT_EMAIL = "{{ site.email }}";
+  var L = "/fr";
+
+  // ---- Selected-state class tokens (must appear literally so Tailwind emits them) ----
+  // Important variants so they beat the card's base dark:bg-ink-950 / dark:border-white/10.
+  var SEL = ["ring-2", "ring-teal-500", "!border-teal-500", "!bg-teal-50", "dark:!bg-teal-500/10", "dark:!border-teal-500"];
+
+  // ---- Question bank -------------------------------------------------------
+  var Q = {
+    sector: { title: "Dans quel secteur êtes-vous ?", type: "single", cols: 2, hint: "Choisissez le plus proche — il façonne les tâches, les systèmes et la conformité pour lesquels nous concevons.", opts: [
+      { id: "banking", label: "Banque & Finance", imp: "Données identifiant le client et secret de l'art. 47 — on-prem ou confidential computing, zéro fuite, droits d'audit et un plan de sortie documenté." },
+      { id: "healthcare", label: "Santé & Pharma", imp: "Données sensibles au titre de la nLPD / RGPD, intégration SIH via HL7-FHIR. Hors champ MDR par conception — aucune fonction de diagnostic ou de triage." },
+      { id: "legal", label: "Juridique & Services professionnels", imp: "Respectueux du secret professionnel et en juridiction — analyse de contrats, recherche multilingue et rédaction sur vos propres modèles et jurisprudence." },
+      { id: "government", label: "État & Secteur public", imp: "S'exécute sur une infrastructure nationale, les données ne quittent jamais le pays — le schéma que le Canton du Tessin exploite en production à 94 % de précision." },
+      { id: "insurance", label: "Assurance", imp: "Externalisation conforme à la FINMA dès le premier jour — sinistres, Q&R sur les polices et correspondance face aux systèmes cœur comme Guidewire ou SAP FS-CM." },
+      { id: "manufacturing", label: "Industrie manufacturière", imp: "On-prem / adapté à l'edge et protège la PI opérationnelle — copilotes sur vos manuels, SOP et spécifications." },
+      { id: "other", label: "Autre chose", imp: "Nommez-le dans le champ — la méthode est la même : mesurer sur vos données, livrer le plus petit modèle qui franchit la barre." }
+    ]},
+    task: { title: "Quelle est la tâche principale ?", type: "single", cols: 2, hint: "C'est ce que nous affinerions et mesurerions en premier.", opts: [
+      { id: "qa", label: "Q&R documentaire & réglementaire", imp: "Recherche d'abord : réponses ancrées dans vos documents, avec citations. Le jeu d'évaluation est construit à partir de vraies questions que vos équipes posent." },
+      { id: "extract", label: "Extraction & classification", imp: "L'affinage verrouille le format de sortie pour que chaque résultat soit exploitable par machine et atterrisse proprement dans vos systèmes." },
+      { id: "draft", label: "Rédaction & correspondance", imp: "Affiné sur vos modèles et votre style maison — des brouillons dans votre voix, dans la bonne langue, prêts à éditer." },
+      { id: "intake", label: "Réception & triage", imp: "Route et structure les cas entrants en associant un petit modèle affiné à vos règles métier — pas une boîte noire." },
+      { id: "coding", label: "Codage métier (ICD/CHOP, tags de clauses…)", imp: "Une tâche étroite et mesurable où un 4–8B affiné bat une API généraliste — et reste dans vos murs." },
+      { id: "other", label: "Autre chose", imp: "Décrivez-la en une ligne — si c'est mesurable, nous pouvons construire pour ça. Si ce n'est pas encore mesurable, c'est la première chose que nous corrigerions ensemble." }
+    ]},
+    audience: { title: "Qui l'utilisera, en gros ?", type: "single", cols: 2, hint: "L'échelle change le durcissement, pas le principe.", opts: [
+      { id: "team", label: "Une petite équipe (< 25)", imp: "Commencez focalisé — un pilote sur un workflow avec les gens qui ressentent la douleur au quotidien est le test honnête le moins cher." },
+      { id: "dept", label: "Un département (25–200)", imp: "Vaut la peine d'être connecté aux systèmes où le département vit déjà — contrôle d'accès et pistes d'audit dès le premier jour." },
+      { id: "org", label: "À l'échelle de l'organisation (200+)", imp: "L'échelle plaide pour un durcissement Production : monitoring, une cadence d'évaluation et un contrat de support." },
+      { id: "external", label: "Orienté clients ou citoyens", imp: "Les utilisateurs externes relèvent la barre : garde-fous testés, discipline PII et solutions de repli font partie du périmètre, pas d'une option." }
+    ]},
+    languages: { title: "Quelles langues doit-il gérer ?", type: "multi", cols: 3, note: "Les quatre langues nationales nativement — y compris le suisse allemand — plus l'anglais. Aucune couche de traduction dans la boucle.", opts: [
+      { id: "de", label: "Allemand" }, { id: "fr", label: "Français" }, { id: "it", label: "Italien" },
+      { id: "rm", label: "Romanche" }, { id: "gsw", label: "Suisse allemand" }, { id: "en", label: "Anglais" },
+      { id: "other", label: "Autre" }
+    ]},
+    dataVolume: { title: "Sur quel volume de matériel travaillera-t-il à peu près ?", type: "single", cols: 2, hint: "Une catégorie approximative suffit — cela affecte surtout l'ingénierie de recherche, pas la taille du modèle.", opts: [
+      { id: "small", label: "Moins de 1 000 documents", imp: "Amplement suffisant pour la recherche et un jeu d'évaluation ciblé (50–300 tâches). Les données d'affinage sont soignées, pas en masse." },
+      { id: "med", label: "1 000 – 100k documents", imp: "Confortable pour un index de recherche en production ; nous en échantillonnons un jeu d'évaluation représentatif." },
+      { id: "large", label: "100k – millions", imp: "Nous partitionnons l'index et ajoutons du re-ranking. Le volume est un problème d'ingénierie de recherche, pas une raison pour un modèle plus grand." },
+      { id: "unsure", label: "Pas encore sûr", imp: "Pas de souci — nous dimensionnons l'index et le jeu d'évaluation ensemble lors du cadrage." }
+    ]},
+    dataFormats: { title: "Quelle est la forme du matériel source ?", type: "multi", cols: 2, note: "Le format guide le pipeline : le texte natif est simple ; les scans ajoutent une étape OCR que nous testons comme tout le reste ; les données structurées veulent souvent des outils et des requêtes, pas des embeddings.", opts: [
+      { id: "digital", label: "Documents numériques (PDF, Office)" },
+      { id: "scans", label: "Papier scanné / images (nécessite OCR)" },
+      { id: "structured", label: "Données structurées (exports DB, tableaux)" },
+      { id: "comms", label: "E-mails, tickets, journaux de chat" },
+      { id: "other", label: "Autre chose" }
+    ]},
+    dataLocation: { title: "Où vivent ces données aujourd'hui ?", type: "single", cols: 3, note: "Là où vivent vos données décide où le modèle s'exécute — il vient aux données, jamais l'inverse.", opts: [
+      { id: "onprem", label: "Notre centre de données / serveurs" },
+      { id: "swisscloud", label: "Cloud suisse" },
+      { id: "mixed", label: "Mixte / à décider" }
+    ]},
+    pii: { title: "Contient-il des PII à traiter avant que le modèle ne les voie ?", type: "single", cols: 2, note: "Le traitement des PII est un garde-fou testé, pas une réflexion après coup — caviardage / minimisation s'exécute dans le pipeline et nous mesurons qu'il tient. Ceci n'est pas un conseil juridique ; nous travaillons avec votre équipe conformité.", opts: [
+      { id: "none", label: "Pas de PII sensibles" },
+      { id: "redact", label: "Oui — caviarder avant traitement" },
+      { id: "pseudo", label: "Oui — pseudonymiser / tokeniser" },
+      { id: "unsure", label: "Pas sûr" }
+    ]},
+    model: { title: "De quelle famille de modèles partir ?", type: "single", cols: 2, opts: [
+      { id: "apertus", label: "Apertus", sub: "Recommandé · Suisse", imp: "Le LLM entièrement ouvert de la Suisse issu de l'EPFL, l'ETH Zurich et le CSCS — poids ouverts et données d'entraînement documentées, exactement ce que les auditeurs veulent voir. Notre défaut, et la référence de production du Canton du Tessin." },
+      { id: "llama", label: "Llama", sub: "Meta · poids ouverts", imp: "La famille ouverte de Meta — un fort candidat généraliste que nous testons régulièrement, avec des tailles dans nos deux classes. S'il gagne sur votre jeu d'évaluation, il est livré ; les poids vivent toujours dans votre infrastructure." },
+      { id: "mistral", label: "Mistral", sub: "Européen · poids ouverts", imp: "Modèles ouverts européens et fréquent candidat sur les tâches multilingues. Même règle : il n'est livré que s'il gagne votre évaluation." },
+      { id: "eval", label: "Laisser l'évaluation décider", sub: "Comment nous ferions", imp: "Nous benchmarkons Apertus, Llama et Mistral sur un jeu construit à partir de vos documents et livrons le gagnant — vous voyez les chiffres avant toute livraison." },
+      { id: "other", label: "Un autre modèle ouvert", imp: "Nommez-le dans le champ — si les poids sont ouverts et qu'il s'exécute dans votre juridiction, il peut entrer dans l'évaluation." }
+    ]},
+    size: { title: "Classe de taille du modèle", type: "single", cols: 2, opts: [
+      { id: "s8", label: "4–8B · classe workstation", sub: "~24–48 Go VRAM", imp: "S'exécute à vitesse interactive sur un seul serveur GPU de classe workstation (environ 24–48 Go de VRAM). Le point idéal de production pour une tâche étroite et bien définie — et la classe dans laquelle tourne le système du Tessin." },
+      { id: "s70", label: "70B · classe nœud", sub: "multi-GPU", imp: "Pour un raisonnement plus large ou comme cible d'escalade locale — nécessite un nœud multi-GPU ou une instance de confidential computing. L'escalade reste locale, jamais vers une API cloud." },
+      { id: "unsure", label: "Pas sûr", imp: "Nous choisissons le plus petit modèle qui franchit votre barre d'évaluation. Plus petit est moins cher, plus rapide et plus facile à exploiter — le calculateur ci-dessous suppose du 4–8B jusqu'à ce que nous le cadrions." }
+    ]},
+    quant: { title: "Quantification", type: "single", cols: 3, opts: [
+      { id: "fp16", label: "16 bits", sub: "pleine précision", imp: "Qualité de référence et la plus grande empreinte — 2 octets par poids. Utile comme base de référence d'évaluation ; rarement ce que nous livrons." },
+      { id: "q4", label: "4 bits", sub: "recommandé", imp: "Le point idéal de production — K-quants GGUF à environ 4,5 bits par poids. Réévalué après quantification ; si la qualité baisse, nous ne le livrons pas." },
+      { id: "q12", label: "1–2 bits", sub: "frontière", imp: "La frontière ternaire / binaire — nécessite un entraînement conscient de la quantification et n'est livrée que si elle franchit votre barre d'évaluation. Les poids 8B tombent à ~2 Go — moins de la moitié du 4 bits." }
+    ]},
+    approach: { title: "Comment devrait-il devenir bon sur votre tâche ?", type: "single", cols: 2, opts: [
+      { id: "base", label: "Modèle de base seul", imp: "Le modèle ouvert tel que livré — une base de référence à mesurer, rarement la réponse à lui seul." },
+      { id: "rag", label: "+ Recherche (RAG)", imp: "Ancre les réponses dans vos documents. La connaissance se met à jour dès qu'un document change — sans réentraînement." },
+      { id: "ft", label: "+ Affinage (LoRA)", imp: "Enseigne votre terminologie, vos formats et le comportement de tâche. Il ne mémorise PAS les faits de façon fiable — nous ne l'utilisons jamais comme réservoir de connaissances." },
+      { id: "both", label: "Affinage + Recherche", sub: "Recommandé", imp: "Le système complet : la recherche fournit les faits, l'affinage verrouille le format et la voix. Sur notre benchmark FINMA, cela double la barre de production par rapport à la recherche seule." }
+    ]},
+    deployment: { title: "Où devrait-il s'exécuter ?", type: "single", cols: 2, opts: [
+      { id: "swisscloud", label: "Cloud suisse dédié", imp: "À locataire unique, en juridiction, sous un accord de traitement des données. Une voie propre pour un pilote." },
+      { id: "onprem_ws", label: "Workstation on-prem", imp: "Un seul serveur GPU de classe workstation dans votre centre de données — un 4–8B affiné sur une machine à CHF 5–15k." },
+      { id: "onprem_node", label: "Nœud on-prem", imp: "Un nœud multi-GPU pour des modèles plus grands ou un débit plus élevé, entièrement dans vos murs." },
+      { id: "airgapped", label: "Air-gapped / confidential computing", imp: "Entièrement isolé — les mises à jour arrivent en lots hors ligne signés et à somme de contrôle. Débranchez le câble réseau, continuez à travailler." }
+    ]},
+    integration: { title: "Comment devrait-il se brancher à votre runtime ?", type: "multi", cols: 2, note: "Le modèle est le moteur ; l'orchestration le relie à vos systèmes avec contrôle d'accès, pistes d'audit et discipline PII. Le framework, c'est la plomberie — le durcissement est le produit.", opts: [
+      { id: "chat", label: "Interface de conversation autonome" },
+      { id: "api", label: "Une API vers nos applications existantes" },
+      { id: "systems", label: "Dans un système cœur (HL7-FHIR, Guidewire, SAP…)" },
+      { id: "agents", label: "Agents & outils (MCP)" },
+      { id: "other", label: "Autre chose" }
+    ]},
+    ongoing: { title: "Combien voulez-vous que nous exploitions ensuite ?", type: "single", cols: 1, opts: [
+      { id: "pilot", label: "Pilote ponctuel, puis remise", imp: "Vous possédez le modèle et l'exploitez en toute indépendance. Une reprise documentée est le livrable — votre stratégie de sortie est dans le périmètre." },
+      { id: "production", label: "Production avec monitoring & support", imp: "Nous surveillons la dérive, évaluons à une cadence et maintenons le système sous contrat de support." },
+      { id: "managed", label: "Réentraînement continu managé", imp: "Nous ré-exécutons l'affinage à mesure que vos données grandissent ou qu'une base ouverte plus forte sort. Les faits se mettent toujours à jour instantanément via la recherche — le réentraînement est pour le comportement, pas la connaissance." }
+    ]},
+    timeline: { title: "Quand cela doit-il être réel ?", type: "single", cols: 2, hint: "Un calendrier honnête reçoit une réponse honnête.", opts: [
+      { id: "exploring", label: "Juste en exploration", imp: "Bien — ce configurateur plus un court appel est exactement le moyen bon marché d'explorer." },
+      { id: "quarter", label: "Pilote dans les 3 prochains mois", imp: "Réaliste — un pilote se cadre en semaines, pas en trimestres." },
+      { id: "year", label: "Production cette année", imp: "Nous séquencerions Pilote → Production et impliquerions vos équipes infrastructure et conformité tôt." },
+      { id: "urgent", label: "Urgent — nous avons une échéance", imp: "Mettez la date dans les notes. Nous vous dirons honnêtement ce qui rentre avant — et ce qui ne rentre pas." }
+    ]},
+    frameworks: { title: "Quels régimes s'appliquent ?", type: "multi", cols: 2, note: "Le déploiement en juridiction répond à la LPD / nLPD suisse et au RGPD européen ; une traçabilité documentée des données et des garde-fous testés soutiennent vos obligations AI Act. Pas un conseil juridique — nous travaillons aux côtés de vos équipes conformité et juridique.", opts: [
+      { id: "fadp", label: "LPD / nLPD suisse" },
+      { id: "gdpr", label: "RGPD européen" },
+      { id: "aiact", label: "AI Act européen" },
+      { id: "unsure", label: "Pas encore sûr" }
+    ]},
+    compliancePack: { title: "Inclure le dossier de conformité & d'audit ?", type: "single", cols: 2, note: "Le dossier : fiche de modèle, enregistrement de traçabilité des données d'entraînement, modèle d'accord de traitement des données, mesures techniques & organisationnelles (MTO), fiche de classification des risques AI Act, et le rapport d'évaluation.", opts: [
+      { id: "yes", label: "Oui, l'inclure" },
+      { id: "no", label: "Pas nécessaire" },
+      { id: "unsure", label: "Indécis" }
+    ]},
+    nextStep: { title: "Que devrait-il se passer après votre envoi ?", type: "single", cols: 2, opts: [
+      { id: "call", label: "Un appel de cadrage de 30 minutes", imp: "Nous venons préparés avec votre spécification ; vous repartez avec la forme d'une proposition à périmètre fixe." },
+      { id: "written", label: "D'abord une brève réaction écrite", imp: "Nous répondons à votre spécification par e-mail avec un avis honnête — y compris un non clair si ce n'est pas le bon choix — avant tout appel." }
+    ]}
+  };
+
+  // Placeholders for the free-text "Other" inputs.
+  var OTHER_PLACEHOLDER = {
+    sector: "Votre secteur — p. ex. énergie, logistique, éducation…",
+    task: "Décrivez la tâche en une ligne",
+    languages: "Quelle(s) langue(s) ?",
+    dataFormats: "Dans quel format est-ce ?",
+    model: "Quel modèle ? (poids ouverts)",
+    integration: "À quoi doit-il se brancher ?"
+  };
+
+  // ---- Steps ---------------------------------------------------------------
+  var STEPS = [
+    { eyebrow: "01 · Cas d'usage", title: "Que construisez-vous, et pour qui ?", intro: "Commencez par la forme du travail. Il n'y a pas de mauvaises réponses — cela cadre où nous commençons.", questions: ["sector", "task", "audience"] },
+    { eyebrow: "02 · Langues", title: "Les langues dans lesquelles votre travail se fait réellement.", intro: "Le multilingue n'est pas une fonctionnalité ici — c'est le défaut. Choisissez tout ce que vos documents et vos utilisateurs emploient réellement.", questions: ["languages"] },
+    { eyebrow: "03 · Vos données", title: "Les données que vous ne pouvez pas confier.", intro: "C'est tout l'enjeu — nous posons donc la question avec soin, en commençant par leur forme et leur emplacement.", questions: ["dataVolume", "dataFormats", "dataLocation", "pii"] },
+    { eyebrow: "04 · Modèle & approche", title: "Choisissez le moteur — et regardez-le rentrer.", intro: "C'est la partie amusante. Changez la taille et la quantification et regardez le modèle se réduire sur votre matériel ; changez l'approche et regardez le plancher de précision mesuré bouger.", questions: ["model", "size", "quant", "approach"], widgets: true },
+    { eyebrow: "05 · Déploiement", title: "Où il s'exécute, et comment il se branche.", intro: "Le modèle vient aux données — jamais l'inverse. Cette étape décide de ce que cela signifie physiquement.", questions: ["deployment", "integration"] },
+    { eyebrow: "06 · Continuité", title: "Ponctuel, maintenu ou managé.", intro: "Tout ce que nous construisons est le vôtre de toute façon — la question est de savoir pour combien de l'exploitation vous voulez nous garder.", questions: ["ongoing", "timeline"] },
+    { eyebrow: "07 · Conformité", title: "Les documents que vos auditeurs demanderont.", intro: "La conformité est intégrée à l'architecture, puis documentée — les auditeurs lisent le dossier, les régulateurs le reconnaissent.", questions: ["frameworks", "compliancePack"] },
+    { eyebrow: "08 · Vous", title: "Où devons-nous envoyer la proposition ?", intro: "Vos réponses sont restées dans votre navigateur pendant tout ce temps. Elles ne le quittent que lorsque vous appuyez sur envoyer.", questions: ["nextStep"], contact: true }
+  ];
+
+  // ---- Static reference data ----------------------------------------------
+  // Weights-only memory, GB — same numbers as /concepts/quantization/:
+  // 8B: 16 GB (16-bit) → ~4.5 GB (4-bit K-quants) → ~2 GB (1–2 bit)
+  // 70B: 140 GB → ~40 GB → ~18 GB (70e9 × 2 bits ≈ 17.5)
+  var GB = { s8: { fp16: 16, q4: 4.5, q12: 2 }, s70: { fp16: 140, q4: 40, q12: 18 }, unsure: { fp16: 16, q4: 4.5, q12: 2 } };
+  var GB_MAX = 140;
+  var PARAM_LABEL = { s8: "8B", s70: "70B", unsure: "8B" };
+  var BITS_LABEL = { fp16: "16 bits", q4: "~4,5 bits", q12: "~2 bits" };
+  var QUANT_SHORT = { fp16: "16 bits", q4: "4 bits", q12: "1–2 bits" };
+
+  // Measured on the public FINMA benchmark (183 items, deterministic scoring).
+  var ABLATION = [
+    { id: "base", label: "Modèle de base" },
+    { id: "rag", label: "+ Recherche" },
+    { id: "ft", label: "+ Affinage" },
+    { id: "both", label: "Affinage + Recherche" }
+  ];
+  var ABL_VALUES = {
+    prod: { base: 0, rag: 22.4, ft: 1.6, both: 45.4 },
+    ans:  { base: 37.2, rag: 63.4, ft: 44.8, both: 80.9 }
+  };
+
+  // ---- State ---------------------------------------------------------------
+  var state = { model: "apertus", size: "s8", quant: "q4", approach: "both", languages: [], dataFormats: [], integration: [], frameworks: [], other: {}, contact: {} };
+  var metric = "prod"; // ablation widget view toggle — not part of the brief
+  var cur = 0;
+
+  // ---- DOM refs ------------------------------------------------------------
+  var stepContainer = document.getElementById("stepContainer");
+  var progressFill = document.getElementById("progressFill");
+  var progressLabel = document.getElementById("progressLabel");
+  var progressPct = document.getElementById("progressPct");
+  var backBtn = document.getElementById("backBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var summaryList = document.getElementById("summaryList");
+  var tierChip = document.getElementById("tierChip");
+  var builder = document.getElementById("builder");
+  var specPrint = document.getElementById("specPrint");
+  var specBody = document.getElementById("specBody");
+
+  // ---- Helpers -------------------------------------------------------------
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function optOf(qk, oid) { return Q[qk].opts.filter(function (x) { return x.id === oid; })[0]; }
+  function labelOf(qk, oid) { var o = oid && optOf(qk, oid); return o ? o.label : ""; }
+  function isSel(qk, oid) {
+    var v = state[qk];
+    return Q[qk].type === "multi" ? (v || []).indexOf(oid) > -1 : v === oid;
+  }
+  function anySel(qk) { return (state[qk] || []).length > 0; }
+  function hasOther(qk) { return Q[qk].opts.some(function (o) { return o.id === "other"; }); }
+  // Single-select label, with the free-text detail folded in when "Other" is picked.
+  function labelWithOther(qk) {
+    var l = labelOf(qk, state[qk]);
+    if (state[qk] === "other" && state.other[qk]) l += " — " + state.other[qk];
+    return l;
+  }
+  // Multi-select labels joined, with "Other" expanded to its free text.
+  function multiWithOther(qk) {
+    return (state[qk] || []).map(function (id) {
+      if (id === "other" && state.other[qk]) return "Autre — " + state.other[qk];
+      return labelOf(qk, id);
+    }).join(", ");
+  }
+  function familyLabel() {
+    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", eval: "Décidé par l'éval" }[state.model];
+    if (m) return m;
+    return state.other.model ? "Autre — " + state.other.model : "Autre";
+  }
+
+  var CHECK = '<svg data-check class="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function optionHtml(qk, o) {
+    var sel = isSel(qk, o.id);
+    var selCls = sel ? " " + SEL.join(" ") : "";
+    var sub = o.sub ? '<span class="mt-0.5 block text-xs font-semibold uppercase tracking-[0.1em] text-teal-600 dark:text-teal-300">' + esc(o.sub) + '</span>' : "";
+    return '<button type="button" data-qk="' + qk + '" data-oid="' + o.id + '" role="' + (Q[qk].type === "multi" ? "checkbox" : "radio") + '" aria-checked="' + (sel ? "true" : "false") +
+      '" class="option-card group flex items-start justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-4 text-left shadow-xs transition hover:border-teal-400 dark:border-white/10 dark:bg-ink-950' + selCls + '">' +
+      '<span class="min-w-0"><span class="block text-sm font-semibold text-ink-900 dark:text-white">' + esc(o.label) + '</span>' + sub + '</span>' +
+      '<span class="mt-0.5">' + CHECK + '</span>' +
+      '</button>';
+  }
+
+  function questionHtml(qk) {
+    var q = Q[qk];
+    var gridCols = q.cols === 1 ? "grid-cols-1" : q.cols === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2";
+    var opts = q.opts.map(function (o) { return optionHtml(qk, o); }).join("");
+    var impText = "";
+    if (q.type === "multi") { impText = anySel(qk) ? (q.note || "") : (q.hint || ""); }
+    else { impText = state[qk] ? (optOf(qk, state[qk]).imp || q.note || "") : (q.hint || q.note || ""); }
+    var otherField = "";
+    if (hasOther(qk)) {
+      otherField = '<div data-otherwrap="' + qk + '" class="mt-3' + (isSel(qk, "other") ? "" : " hidden") + '">' +
+        '<input data-otherfor="' + qk + '" type="text" value="' + esc(state.other[qk] || "") + '" placeholder="' + esc(OTHER_PLACEHOLDER[qk] || "Dites-nous en plus") + '"' +
+        ' class="w-full max-w-md rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />' +
+        '</div>';
+    }
+    return '<fieldset class="mt-8" data-qfield="' + qk + '">' +
+      '<legend class="text-base font-bold tracking-tight text-ink-900 dark:text-white">' + esc(q.title) + '</legend>' +
+      (q.type === "multi" ? '<p class="mt-1 text-xs text-ink-500">Choisissez tout ce qui s\'applique.</p>' : "") +
+      '<div class="mt-3 grid gap-3 ' + gridCols + '">' + opts + '</div>' +
+      otherField +
+      '<p data-imp="' + qk + '" class="mt-3 min-h-[1.25rem] text-sm prose-muted">' + esc(impText) + '</p>' +
+      '</fieldset>';
+  }
+
+  // ---- Interactive widgets (step 04) --------------------------------------
+  function widgetsHtml() {
+    var barRows = ABLATION.map(function (a) {
+      var v = ABL_VALUES[metric][a.id];
+      return '<div class="flex items-center gap-3">' +
+        '<span class="w-40 shrink-0 text-sm font-medium text-ink-900 dark:text-white">' + a.label + '</span>' +
+        '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]">' +
+        '<div data-arm="' + a.id + '" class="h-full rounded bg-teal-500 transition-[width,background-color] duration-300" style="width: ' + v + '%"></div>' +
+        '</div>' +
+        '<span data-armval="' + a.id + '" class="w-12 shrink-0 text-right font-mono text-xs font-semibold tabular-nums text-ink-900 dark:text-white">' + v + '%</span>' +
+        '</div>';
+    }).join("");
+    return '<div class="mt-10 grid gap-5 md:grid-cols-2">' +
+      // memory-fit
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Tient en mémoire</figcaption>' +
+        '<div class="mt-4 flex items-baseline gap-2">' +
+          '<span id="memGb" class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">4.5</span>' +
+          '<span class="text-lg font-semibold text-ink-500">Go</span>' +
+        '</div>' +
+        '<p id="memFormula" class="mt-1 font-mono text-xs tabular-nums text-ink-500">8B poids × ~4,5 bits ≈ 4.5 Go</p>' +
+        '<div class="relative mt-4 h-2.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-white/[0.06]">' +
+          '<div id="memBar" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 3%"></div>' +
+          '<div class="pointer-events-none absolute inset-y-0 w-px bg-ink-900/25 dark:bg-white/30" style="left: 17.1%"></div>' +
+          '<div class="pointer-events-none absolute inset-y-0 w-px bg-ink-900/25 dark:bg-white/30" style="left: 34.3%"></div>' +
+        '</div>' +
+        '<div class="relative mt-1 h-4 font-mono text-[10px] text-ink-500">' +
+          '<span class="absolute left-0">0</span>' +
+          '<span class="absolute" style="left: 17.1%; transform: translateX(-50%)">24</span>' +
+          '<span class="absolute" style="left: 34.3%; transform: translateX(-50%)">48</span>' +
+          '<span class="absolute right-0">140 Go</span>' +
+        '</div>' +
+        '<div id="memVerdict" class="mt-3 inline-flex items-center gap-2 rounded-md bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-700 dark:bg-teal-500/10 dark:text-teal-200">Tient en classe workstation (24–48 Go VRAM, CHF 5–15k)</div>' +
+        '<p id="memAssume" class="mt-2 min-h-[1rem] text-xs prose-muted"></p>' +
+        '<p class="mt-2 text-xs prose-muted">Poids uniquement — les repères 24 &amp; 48 Go marquent la bande workstation. Le cache KV est un second budget qui croît avec le contexte ; nous le quantifions aussi en 4 bits.</p>' +
+      '</figure>' +
+      // ablation
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Plancher de précision mesuré</figcaption>' +
+        '<div class="mt-3 inline-flex overflow-hidden rounded-md border border-neutral-300 dark:border-white/15" role="group" aria-label="Métrique">' +
+          '<button type="button" data-metric="prod" aria-pressed="true" class="px-3 py-1.5 text-xs font-semibold transition bg-teal-600 text-white">Réponse + citation</button>' +
+          '<button type="button" data-metric="ans" aria-pressed="false" class="px-3 py-1.5 text-xs font-semibold transition bg-white text-ink-700 dark:bg-ink-950 dark:text-ink-300">Réponse seule</button>' +
+        '</div>' +
+        '<div class="mt-4 space-y-2.5">' + barRows + '</div>' +
+        '<p id="ablationCap" class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10"></p>' +
+      '</figure>' +
+    '</div>' +
+    '<p class="mt-4 text-xs prose-muted">Le calcul : <a class="link-underline" href="' + L + '/concepts/quantization/">la quantification, expliquée</a> · L\'expérience : <a class="link-underline" href="' + L + '/reports/finma-ablation/">l\'ablation FINMA</a> — 183 questions vérifiées, notation déterministe, harnais en open source.</p>';
+  }
+
+  function updateMemory() {
+    var sizeKey = state.size || "s8";
+    var q = state.quant || "q4";
+    var gb = (GB[sizeKey] || GB.s8)[q];
+    var memGb = document.getElementById("memGb");
+    if (!memGb) return;
+    memGb.textContent = gb;
+    document.getElementById("memFormula").textContent = PARAM_LABEL[sizeKey] + " poids × " + BITS_LABEL[q] + " ≈ " + gb + " Go";
+    document.getElementById("memBar").style.width = Math.max(2, Math.round(gb / GB_MAX * 100)) + "%";
+    // The verdict respects the size CLASS, not just raw GB — 70B is node-class
+    // positioning even when frontier quants shrink the weights (24–48 GB VRAM and
+    // the CHF 5–15k figure belong to the 4–8B workstation class only).
+    var verdict, fits = true;
+    if (sizeKey === "s70") {
+      fits = false;
+      verdict = q === "q12"
+        ? gb + " Go de poids à la frontière — pourrait amener le 70B vers la gamme mono-GPU, mais il n'est livré que s'il franchit votre barre d'éval"
+        : "Classe nœud — nécessite un serveur multi-GPU ou une instance de confidential computing";
+    } else if (gb <= 24) verdict = "Tient sur un seul GPU de 24 Go — classe workstation (CHF 5–15k)";
+    else if (gb <= 48) verdict = "Tient en classe workstation (24–48 Go VRAM, CHF 5–15k)";
+    else { verdict = "Nécessite un nœud multi-GPU ou une instance de confidential computing"; fits = false; }
+    if (sizeKey !== "s70" && q === "q12") verdict += " · frontière — livrée seulement si elle franchit votre barre d'éval";
+    var memVerdict = document.getElementById("memVerdict");
+    memVerdict.textContent = verdict;
+    // one-red rule: the heavier case goes neutral, not red
+    memVerdict.className = "mt-3 inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold " +
+      (fits ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-200" : "bg-neutral-100 text-ink-700 dark:bg-white/10 dark:text-ink-300");
+    document.getElementById("memAssume").textContent = sizeKey === "unsure" ? "En supposant 4–8B jusqu'à ce que nous le cadrions ensemble." : "";
+  }
+
+  function updateAblation() {
+    var pick = state.approach;
+    ABLATION.forEach(function (a) {
+      var bar = document.querySelector('[data-arm="' + a.id + '"]');
+      if (!bar) return;
+      var v = ABL_VALUES[metric][a.id];
+      bar.style.width = v + "%";
+      bar.className = "h-full rounded transition-[width,background-color] duration-300 " + (a.id === pick ? "bg-red-600" : "bg-teal-500");
+      var val = document.querySelector('[data-armval="' + a.id + '"]');
+      if (val) val.textContent = v + "%";
+    });
+    // toggle buttons
+    stepContainer.querySelectorAll("[data-metric]").forEach(function (b) {
+      var on = b.getAttribute("data-metric") === metric;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.className = "px-3 py-1.5 text-xs font-semibold transition " + (on ? "bg-teal-600 text-white" : "bg-white text-ink-700 dark:bg-ink-950 dark:text-ink-300");
+    });
+    var cap = document.getElementById("ablationCap");
+    if (!cap) return;
+    var metricLine = metric === "prod"
+      ? "Barre de production : réponse correcte ET la citation exacte, sur notre benchmark public FINMA. Un plancher, pas un plafond."
+      : "Réponse seule : réponse correcte, citation non requise — la barre plus souple. Même benchmark, mêmes exécutions.";
+    var lead = "";
+    if (pick === "ft") lead = "L'affinage seul bouge à peine la barre de citation — il enseigne le format et la terminologie, pas les faits. Associez-le à la recherche et il double. ";
+    else if (pick === "both") lead = "Le système complet : la recherche fournit les faits, l'affinage verrouille le format. ";
+    else if (pick === "rag") lead = "La recherche seule atteint 22,4 % sur la barre de production — une vraie valeur, et souvent le bon premier pas. ";
+    else if (pick === "base") lead = "Le modèle ouvert tel que livré — voilà pourquoi personne ne devrait déployer un modèle de base sur une tâche régulée. ";
+    cap.textContent = lead + metricLine;
+  }
+
+  // ---- Contact step --------------------------------------------------------
+  function inputHtml(field, label, type, req) {
+    var c = state.contact[field] || "";
+    return '<label class="block">' +
+      '<span class="text-sm font-medium text-ink-900 dark:text-white">' + label + (req ? ' <span class="text-red-600">*</span>' : "") + '</span>' +
+      '<input data-field="' + field + '" type="' + type + '" value="' + esc(c) + '"' + (req ? ' required' : "") +
+      ' class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />' +
+      '</label>';
+  }
+  function contactHtml() {
+    var c = state.contact;
+    return '<div class="mt-8 grid gap-5">' +
+      '<div class="grid gap-5 sm:grid-cols-2">' + inputHtml("name", "Nom", "text", true) + inputHtml("email", "E-mail professionnel", "email", true) + '</div>' +
+      inputHtml("org", "Organisation", "text", false) +
+      '<label class="block"><span class="text-sm font-medium text-ink-900 dark:text-white">Quelque chose à ajouter ?</span>' +
+      '<textarea data-field="notes" rows="3" maxlength="600" placeholder="Échéances, systèmes, contraintes, ce qui vous inquiète vraiment…" class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white">' + esc(c.notes || "") + '</textarea></label>' +
+      '<p id="contactMsg" role="alert" class="min-h-[1rem] text-sm font-semibold text-red-700 dark:text-red-400"></p>' +
+      '<p class="text-xs text-ink-500">L\'envoi ouvre votre propre client de messagerie avec la spécification pré-remplie — rien n\'est stocké sur un serveur.</p>' +
+      '</div>';
+  }
+
+  // ---- Render --------------------------------------------------------------
+  function renderStep(skipFocus) {
+    var step = STEPS[cur];
+    var pct = Math.round((cur + 1) / STEPS.length * 100);
+    progressFill.style.width = pct + "%";
+    progressLabel.textContent = "Étape " + (cur + 1) + " / " + STEPS.length;
+    progressPct.textContent = pct + "%";
+
+    var html = '<p class="eyebrow">' + step.eyebrow + '</p>';
+    html += '<h2 id="stepHeading" tabindex="-1" class="mt-3 text-2xl font-bold tracking-tightest text-ink-900 outline-none md:text-3xl dark:text-white">' + esc(step.title) + '</h2>';
+    if (step.intro) html += '<p class="mt-3 max-w-2xl text-base prose-muted">' + esc(step.intro) + '</p>';
+    if (step.questions) step.questions.forEach(function (qk) { html += questionHtml(qk); });
+    if (step.widgets) html += widgetsHtml();
+    if (step.contact) html += contactHtml();
+    stepContainer.innerHTML = html;
+
+    if (step.widgets) { updateMemory(); updateAblation(); }
+    // check-icon visibility for pre-rendered selections
+    stepContainer.querySelectorAll("[data-check]").forEach(function (ck) {
+      var btn = ck.closest(".option-card");
+      var sel = btn && btn.getAttribute("aria-checked") === "true";
+      ck.classList.toggle("hidden", !sel);
+    });
+
+    backBtn.classList.toggle("invisible", cur === 0);
+    nextBtn.textContent = cur === STEPS.length - 1 ? "Générer ma spécification →" : "Suivant →";
+    // Move focus on navigation only — focusing on initial page load would scroll
+    // the visitor straight past the hero.
+    if (!skipFocus) {
+      var h = document.getElementById("stepHeading");
+      if (h) h.focus({ preventScroll: true });
+    }
+    updateSummary();
+  }
+
+  // ---- Selection handling (event delegation) ------------------------------
+  stepContainer.addEventListener("click", function (e) {
+    var mBtn = e.target.closest("[data-metric]");
+    if (mBtn) { metric = mBtn.getAttribute("data-metric"); updateAblation(); return; }
+    var btn = e.target.closest(".option-card");
+    if (!btn) return;
+    var qk = btn.getAttribute("data-qk");
+    var oid = btn.getAttribute("data-oid");
+    var q = Q[qk];
+    if (q.type === "multi") {
+      state[qk] = state[qk] || [];
+      var i = state[qk].indexOf(oid);
+      if (i > -1) state[qk].splice(i, 1); else state[qk].push(oid);
+      paint(btn, i === -1);
+      setImp(qk, anySel(qk) ? (q.note || "") : (q.hint || ""));
+    } else {
+      state[qk] = oid;
+      btn.closest("[data-qfield]").querySelectorAll(".option-card").forEach(function (b) { paint(b, b === btn); });
+      setImp(qk, optOf(qk, oid).imp || q.note || "");
+      // The MDR exemption depends on intake staying administrative — say so the
+      // moment the healthcare + intake combination exists, whichever came second.
+      if (isHealthTriage() && (qk === "task" || qk === "sector")) setImp("task", HEALTH_TRIAGE_NOTE);
+    }
+    // free-text "Other" input visibility + focus
+    if (hasOther(qk)) {
+      var wrap = stepContainer.querySelector('[data-otherwrap="' + qk + '"]');
+      if (wrap) {
+        var show = isSel(qk, "other");
+        wrap.classList.toggle("hidden", !show);
+        if (show && oid === "other") { var inp = wrap.querySelector("input"); if (inp) inp.focus(); }
+      }
+    }
+    if (qk === "size" || qk === "quant") updateMemory();
+    if (qk === "approach") updateAblation();
+    updateSummary();
+  });
+
+  stepContainer.addEventListener("input", function (e) {
+    var f = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (f) { state.contact[f] = e.target.value; return; }
+    var o = e.target.getAttribute && e.target.getAttribute("data-otherfor");
+    if (o) { state.other[o] = e.target.value; updateSummary(); }
+  });
+
+  function paint(btn, on) {
+    SEL.forEach(function (c) { btn.classList.toggle(c, on); });
+    btn.setAttribute("aria-checked", on ? "true" : "false");
+    var ck = btn.querySelector("[data-check]");
+    if (ck) ck.classList.toggle("hidden", !on);
+  }
+  function setImp(qk, text) {
+    var el = stepContainer.querySelector('[data-imp="' + qk + '"]');
+    if (el) el.textContent = text;
+  }
+
+  // ---- Suggested tier ------------------------------------------------------
+  function suggestTier() {
+    if (state.deployment === "airgapped") return "Air-gapped";
+    // A workstation deployment is exactly the Pilot entry offer — only node-class
+    // hardware, ongoing commitments or scale promote the suggestion to Production.
+    if (state.deployment === "onprem_node" ||
+        state.ongoing === "managed" || state.ongoing === "production" ||
+        state.audience === "org" || state.audience === "external") return "Production";
+    return "Pilote";
+  }
+
+  // ---- Live summary --------------------------------------------------------
+  function summaryRow(label, value) {
+    return '<div class="flex items-baseline justify-between gap-3"><dt class="shrink-0 text-xs font-semibold uppercase tracking-[0.1em] text-ink-500">' + label + '</dt>' +
+      '<dd class="min-w-0 text-right text-sm font-medium text-ink-900 dark:text-white">' + esc(value) + '</dd></div>';
+  }
+
+  function updateSummary() {
+    tierChip.textContent = suggestTier();
+    // Every answered question, in step order — the sidebar is the one-glance mirror of the whole build.
+    var fields = [
+      ["Secteur", state.sector && labelWithOther("sector")],
+      ["Tâche", state.task && labelWithOther("task")],
+      ["Audience", state.audience && labelOf("audience", state.audience)],
+      ["Langues", multiWithOther("languages")],
+      ["Volume de données", state.dataVolume && labelOf("dataVolume", state.dataVolume)],
+      ["Formats", multiWithOther("dataFormats")],
+      ["Emplacement des données", state.dataLocation && labelOf("dataLocation", state.dataLocation)],
+      ["Traitement PII", state.pii && labelOf("pii", state.pii)],
+      ["Modèle", familyLabel()],
+      ["Taille", labelOf("size", state.size).split(" · ")[0]],
+      ["Quantification", QUANT_SHORT[state.quant]],
+      ["Approche", labelOf("approach", state.approach)],
+      ["Déploiement", state.deployment && labelOf("deployment", state.deployment)],
+      ["Intégration", multiWithOther("integration")],
+      ["Continuité", state.ongoing && labelOf("ongoing", state.ongoing).split(",")[0]],
+      ["Calendrier", state.timeline && labelOf("timeline", state.timeline)],
+      ["Conformité", multiWithOther("frameworks")],
+      ["Dossier d'audit", state.compliancePack && labelOf("compliancePack", state.compliancePack)],
+      ["Prochaine étape", state.nextStep && labelOf("nextStep", state.nextStep)]
+    ];
+    var rows = "";
+    fields.forEach(function (p) { if (p[1]) rows += summaryRow(p[0], p[1]); });
+    summaryList.innerHTML = rows || '<p class="text-xs prose-muted">Vos choix apparaîtront ici au fur et à mesure.</p>';
+  }
+
+  // ---- Navigation ----------------------------------------------------------
+  nextBtn.addEventListener("click", function () {
+    if (cur === STEPS.length - 1) { generateSpec(); return; }
+    cur++;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  backBtn.addEventListener("click", function () {
+    if (cur === 0) return;
+    cur--;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // ---- Build spec ----------------------------------------------------------
+  function line(label, val) { return val ? (label + ": " + val + "\n") : ""; }
+  function buildBrief() {
+    var b = "";
+    b += line("Secteur", labelWithOther("sector"));
+    b += line("Tâche principale", labelWithOther("task"));
+    b += line("Audience", labelOf("audience", state.audience));
+    b += line("Langues", multiWithOther("languages"));
+    b += line("Volume de données", labelOf("dataVolume", state.dataVolume));
+    b += line("Formats de données", multiWithOther("dataFormats"));
+    b += line("Emplacement des données", labelOf("dataLocation", state.dataLocation));
+    b += line("Traitement PII", labelOf("pii", state.pii));
+    b += line("Modèle", state.model === "eval" ? "Décidé par l'évaluation (Apertus / Llama / Mistral)" : labelWithOther("model"));
+    b += line("Classe de taille", labelOf("size", state.size));
+    b += line("Quantification", labelOf("quant", state.quant));
+    b += line("Approche", labelOf("approach", state.approach));
+    b += line("Déploiement", labelOf("deployment", state.deployment));
+    b += line("Intégration", multiWithOther("integration"));
+    b += line("Continuité", labelOf("ongoing", state.ongoing));
+    b += line("Calendrier", labelOf("timeline", state.timeline));
+    b += line("Conformité", multiWithOther("frameworks"));
+    b += line("Dossier de conformité & d'audit", labelOf("compliancePack", state.compliancePack));
+    b += line("Prochaine étape préférée", labelOf("nextStep", state.nextStep));
+    b += line("Note de périmètre", isHealthTriage() ? "Routage administratif de réception uniquement — pas de triage clinique (hors champ MDR)" : "");
+    b += line("Engagement suggéré", suggestTier());
+    var c = state.contact;
+    b += "\nContact : " + (c.name || "") + (c.email ? " <" + c.email + ">" : "") + (c.org ? ", " + c.org : "") + "\n";
+    if (c.notes) b += "Notes : " + c.notes + "\n";
+    return b;
+  }
+
+  function specStat(label, value) {
+    return '<div class="bg-white p-5 dark:bg-ink-950"><dd class="font-mono text-2xl font-bold tabular-nums text-ink-900 dark:text-white md:text-3xl">' + esc(value) + '</dd>' +
+      '<dt class="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-700 dark:text-ink-300">' + label + '</dt></div>';
+  }
+  function specSection(label, value) {
+    if (!value) return "";
+    return '<div class="flex flex-col gap-1 border-b border-neutral-200 py-3 last:border-0 dark:border-white/10 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">' +
+      '<dt class="text-xs font-semibold uppercase tracking-[0.1em] text-ink-500 sm:w-48 sm:shrink-0">' + label + '</dt>' +
+      '<dd class="text-sm text-ink-800 dark:text-ink-200 sm:flex-1 sm:text-right">' + esc(value) + '</dd></div>';
+  }
+
+  function modelStatValue() {
+    if (state.model === "eval") return "Décidé par l'éval";
+    if (state.model === "apertus") {
+      if (state.size === "s8") return "Apertus 8B";
+      if (state.size === "s70") return "Apertus 70B";
+      return "Apertus";
+    }
+    if (state.model === "other") {
+      var t = state.other.model || "Personnalisé";
+      return t.length > 16 ? t.slice(0, 15) + "…" : t; // full name lives in the recap + brief
+    }
+    return { llama: "Llama", mistral: "Mistral" }[state.model] || "—";
+  }
+  // Healthcare + intake needs an explicit scope note — the site's MDR exemption
+  // rests on having no clinical triage function.
+  function isHealthTriage() { return state.sector === "healthcare" && state.task === "intake"; }
+  var HEALTH_TRIAGE_NOTE = "La réception dans la santé est cadrée au routage et à la structuration administratifs uniquement — pas de triage ni de priorisation cliniques, ce qui maintient le système hors du champ MDR par conception.";
+
+  function generateSpec() {
+    var floor = ABL_VALUES.prod[state.approach] != null ? ABL_VALUES.prod[state.approach] : ABL_VALUES.prod.both;
+    var approachLabel = labelOf("approach", state.approach);
+    var quantShort = QUANT_SHORT[state.quant] || labelOf("quant", state.quant);
+    var deployShort = labelOf("deployment", state.deployment) || "À cadrer";
+    var headTask = (state.task === "other" && state.other.task) ? state.other.task : (labelOf("task", state.task) || "Build IA souverain");
+    var headSector = (state.sector === "other" && state.other.sector) ? state.other.sector : labelOf("sector", state.sector);
+
+    var html = "";
+    html += '<p class="eyebrow"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></svg> Votre spécification</p>';
+    html += '<h2 class="mt-3 text-3xl font-bold tracking-tightest text-ink-900 md:text-4xl dark:text-white">' + esc(headTask) + (headSector ? ' pour ' + esc(headSector) : "") + '</h2>';
+    html += '<p class="mt-3 max-w-2xl text-base prose-muted">Un point de départ structuré — pas un devis. Envoyez-le et nous reviendrons avec une proposition à périmètre fixe après un court appel.</p>';
+    if (isHealthTriage()) html += '<p class="mt-3 max-w-2xl border-l-2 border-teal-500 pl-3 text-sm prose-muted">' + esc(HEALTH_TRIAGE_NOTE) + '</p>';
+
+    // headline stats
+    html += '<dl class="mt-8 grid gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 dark:border-white/10 dark:bg-white/10 grid-cols-2 lg:grid-cols-4">' +
+      specStat("Modèle", modelStatValue()) +
+      specStat("Quantification", quantShort) +
+      specStat("Approche", approachLabel) +
+      specStat("Déploiement", deployShort) +
+      '</dl>';
+
+    // ablation floor
+    html += '<figure class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Plancher de production mesuré · ' + esc(approachLabel) + '</figcaption>' +
+      '<div class="mt-4 flex items-center gap-4">' +
+      '<span class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">' + floor + '%</span>' +
+      '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]"><div class="h-full rounded bg-red-600" style="width: ' + floor + '%"></div></div>' +
+      '</div>' +
+      '<figcaption class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10">Réponse correcte + citation exacte sur notre benchmark public FINMA (réponse seule : ' + ABL_VALUES.ans[state.approach] + '%). Un plancher, pas un plafond — vos données et métriques fixent la vraie cible.</figcaption>' +
+      '</figure>';
+
+    // recap
+    html += '<dl class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      specSection("Audience", labelOf("audience", state.audience)) +
+      specSection("Langues", multiWithOther("languages")) +
+      specSection("Volume de données", labelOf("dataVolume", state.dataVolume)) +
+      specSection("Formats source", multiWithOther("dataFormats")) +
+      specSection("Emplacement des données", labelOf("dataLocation", state.dataLocation)) +
+      specSection("Traitement PII", labelOf("pii", state.pii)) +
+      specSection("Modèle", state.model === "other" ? (state.other.model || "Modèle ouvert personnalisé") : "") +
+      specSection("Classe de taille", labelOf("size", state.size)) +
+      specSection("Intégration runtime", multiWithOther("integration")) +
+      specSection("Continuité", labelOf("ongoing", state.ongoing)) +
+      specSection("Calendrier", labelOf("timeline", state.timeline)) +
+      specSection("Régimes de conformité", multiWithOther("frameworks")) +
+      specSection("Dossier de conformité & d'audit", labelOf("compliancePack", state.compliancePack)) +
+      specSection("Prochaine étape préférée", labelOf("nextStep", state.nextStep)) +
+      '</dl>';
+
+    // tier + next
+    html += '<div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<div class="flex flex-wrap items-center gap-3"><span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Engagement suggéré</span>' +
+      '<span class="inline-flex items-center rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">' + suggestTier() + '</span></div>' +
+      '<ul class="mt-4 space-y-2 text-sm prose-muted">' +
+      // What-happens-next honours the visitor's own choice of next step.
+      (state.nextStep === "written"
+        ? ['Une réaction écrite à cette spécification par e-mail — un avis honnête avant tout appel', 'Une proposition à périmètre fixe sur vos données — sous une semaine', 'Un non clair dans ce premier e-mail si un modèle ouvert affiné n\'est pas le bon choix']
+        : ['Un appel de 30 minutes avec l\'ingénieur qui construira votre système', 'Une proposition à périmètre fixe sur vos données — sous une semaine', 'Un non clair avant la 20e minute si un modèle ouvert affiné n\'est pas le bon choix']
+      ).map(function (x) {
+        return '<li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>' + x + '</li>';
+      }).join("") + '</ul>' +
+      '</div>';
+
+    // actions
+    html += '<div id="specActions" class="mt-8 flex flex-wrap items-center gap-3">' +
+      '<button id="sendBtn" type="button" class="btn-primary">Envoyer à sysf.io →</button>' +
+      '<button id="copyBtn" type="button" class="btn-ghost">Copier le brief</button>' +
+      '<button id="printBtn" type="button" class="btn-ghost">Imprimer / enregistrer en PDF</button>' +
+      '<button id="editBtn" type="button" class="btn-secondary">← Modifier les réponses</button>' +
+      '<span id="actionMsg" class="text-sm text-ink-500" role="status" aria-live="polite"></span>' +
+      '</div>';
+
+    specBody.innerHTML = html;
+    builder.classList.add("hidden");
+    specPrint.classList.remove("hidden");
+    document.documentElement.classList.add("spec-ready");
+    specPrint.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    document.getElementById("sendBtn").addEventListener("click", sendBrief);
+    document.getElementById("copyBtn").addEventListener("click", copyBrief);
+    document.getElementById("printBtn").addEventListener("click", function () { window.print(); });
+    document.getElementById("editBtn").addEventListener("click", function () {
+      specPrint.classList.add("hidden");
+      document.documentElement.classList.remove("spec-ready");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function msg(t) { var m = document.getElementById("actionMsg"); if (m) m.textContent = t; }
+
+  function sendBrief() {
+    var c = state.contact;
+    if (!c.name || !c.email) {
+      // Bounce back to the contact step with a VISIBLE explanation there —
+      // #actionMsg lives inside the spec section we're about to hide.
+      specPrint.classList.add("hidden");
+      document.documentElement.classList.remove("spec-ready");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      var cm = document.getElementById("contactMsg");
+      if (cm) cm.textContent = "Ajoutez votre nom et votre e-mail professionnel, puis générez à nouveau la spécification — elle s'envoie de là.";
+      var email = stepContainer.querySelector('[data-field="' + (c.name ? "email" : "name") + '"]');
+      if (email) email.focus();
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    var subject = "Spécification de build — " + (c.org || c.name);
+    var body = "Voici la spécification de build que j'ai configurée sur sysf.io :\n\n" + buildBrief();
+    var url = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    // Some mail clients silently truncate very long mailto URLs (~2k chars).
+    // If we're over budget, trim the free-text notes from the email and point at Copy brief.
+    if (url.length > 1900 && c.notes) {
+      var shortBrief = buildBrief().replace(/\nNotes : [\s\S]*$/, "\nNotes : (tronquées pour la longueur de l'e-mail — demandez-moi, ou je les colle)\n");
+      url = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("Voici la spécification de build que j'ai configurée sur sysf.io :\n\n" + shortBrief);
+      msg("Les notes longues ont été tronquées de l'e-mail — utilisez « Copier le brief » pour la version complète.");
+    }
+    window.location.href = url;
+  }
+
+  function copyBrief() {
+    var text = "Spécification de build sysf.io\n\n" + buildBrief();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { msg("Copié dans le presse-papiers."); }, function () { msg("Impossible de copier — sélectionnez et copiez manuellement."); });
+    } else { msg("Presse-papiers indisponible — utilisez plutôt Imprimer."); }
+  }
+
+  // ---- Go ------------------------------------------------------------------
+  renderStep(true);
+})();
+</script>

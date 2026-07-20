@@ -33,11 +33,36 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => new Date(b.data.date) - new Date(a.data.date))
   );
 
-  // Readable date for post listings, e.g. "19 July 2026".
-  eleventyConfig.addFilter("readableDate", (value) => {
+  // Readable date for post listings, e.g. "19 July 2026" — locale-aware.
+  const DATE_LOCALES = { en: "en-GB", de: "de-CH", fr: "fr-CH", it: "it-CH" };
+  eleventyConfig.addFilter("readableDate", (value, loc) => {
     const d = value ? new Date(value) : new Date();
-    return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    return d.toLocaleDateString(DATE_LOCALES[loc] || "en-GB", { day: "numeric", month: "long", year: "numeric" });
   });
+
+  // --- i18n helpers -----------------------------------------------------
+  // The four site locales. English lives at the root; de/fr/it under a prefix.
+  const LOCALES = ["en", "de", "fr", "it"];
+  eleventyConfig.addGlobalData("locales", LOCALES);
+
+  // Strip a leading /de|/fr|/it locale segment → the shared "translation key"
+  // path. "/de/platform/" → "/platform/", "/de/" → "/", "/platform/" → "/platform/".
+  eleventyConfig.addFilter("localeBase", (url) => {
+    const m = /^\/(de|fr|it)(\/.*)?$/.exec(url || "/");
+    return m ? m[2] || "/" : url;
+  });
+
+  // Build the URL for a translation-key path in a given locale.
+  // ("/platform/", "de") → "/de/platform/"; ("/", "de") → "/de/"; loc "en" → unchanged.
+  eleventyConfig.addFilter("localeUrl", (base, loc) => {
+    if (!loc || loc === "en") return base;
+    return base === "/" ? `/${loc}/` : `/${loc}${base}`;
+  });
+
+  // Keep only the collection items belonging to a given locale (default "en").
+  eleventyConfig.addFilter("byLocale", (arr, loc) =>
+    (arr || []).filter((p) => (p.data.locale || "en") === (loc || "en"))
+  );
 
   return {
     dir: {

@@ -1,0 +1,87 @@
+---
+layout: layouts/base.njk
+order: 4
+title: À propos
+description: sysf.io est un studio d'ingénierie suisse indépendant dédié à l'IA souveraine. Nous construisons des modèles sur mesure affinés sur Apertus et les livrons de bout en bout — pour que les organisations régulées adoptent l'IA sans renoncer au contrôle de leurs données.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">À propos</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      IA souveraine ne devrait pas rimer avec IA au rabais.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      sysf.io existe pour le rendre vrai en pratique : un modèle ouvert suisse, affiné sur vos documents et mesuré sur votre tâche avant d'être livré — pas une boîte noire verrouillée dans le centre de données d'un tiers.
+    </p>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">{{ sectionHead("Pourquoi nous existons", "L'écart de souveraineté.") }}</div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-lg prose-muted">
+      <p>L'IA la plus performante a, jusqu'à récemment, vécu derrière des API américaines fermées. Pour une banque suisse, un hôpital ou une autorité cantonale, c'est une impasse : les données ne peuvent pas sortir, donc le pilote meurt.</p>
+      <p>La Suisse a répondu avec <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — un modèle entièrement ouvert, souverain et multilingue de l'EPFL, l'ETH Zurich et le CSCS, aux poids ouverts et aux données d'entraînement documentées. Il comble l'écart de capacité tout en gardant tout inspectable et possédable — la preuve mesurée (<a class="link-underline" href="/fr/concepts/small-models/">le service de traduction du Tessin, 90→94 %</a>, notre <a class="link-underline" href="/fr/reports/finma-ablation/">ablation FINMA</a>) se trouve sous Actualités.</p>
+      <p>sysf.io est un studio d'ingénierie suisse indépendant qui transforme cette fondation ouverte en systèmes fonctionnels. Nous faisons le plus dur — affinage, recherche, évaluation, documentation de conformité et exploitation — pour que vous obteniez un système que vous possédez, mesuré sur votre tâche — avec le rapport d'évaluation à présenter à votre comité des risques.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The name -->
+<section class="border-t border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-20 md:py-28">
+    <div class="grid gap-12 md:grid-cols-12">
+      <div class="md:col-span-5">{{ sectionHead("Le nom", "systèmes, affinés.") }}</div>
+      <div class="md:col-span-6 md:col-start-7">
+        <p class="text-lg prose-muted">Le nom dit ce que nous faisons. Pas de cloud, pas de boîte noire — juste vos systèmes, affinés.</p>
+        <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">
+          <div class="flex items-baseline gap-3">
+            <span class="font-display text-3xl font-extrabold tracking-tightest text-ink-900 dark:text-white">sys<span class="text-red-600">f</span></span>
+            <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">le nom, décodé</span>
+          </div>
+          <dl class="mt-6 space-y-4">
+            <div class="flex items-baseline gap-4">
+              <dt class="w-12 shrink-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-swiss">sys</dt>
+              <dd class="text-base prose-muted">vos <strong class="font-semibold text-ink-900 dark:text-white">systèmes</strong> — données, documents et workflows, à l'intérieur de vos murs.</dd>
+            </div>
+            <div class="flex items-baseline gap-4">
+              <dt class="w-12 shrink-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-swiss">f</dt>
+              <dd class="text-base prose-muted"><strong class="font-semibold text-ink-900 dark:text-white">affinés</strong> (fine-tuned) — un modèle ouvert suisse ajusté à eux, mesuré avant d'être livré.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Principles -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Principes", "Notre façon de travailler.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set vals = [
+        {t:"La souveraineté d'abord", d:"L'entraînement et l'inférence s'exécutent dans votre cloud ou votre centre de données ; les engagements Production et Air-gapped ont zéro fuite de données."},
+        {t:"L'ouvert plutôt que le fermé", d:"Poids ouverts uniquement — Apertus, Llama ou Mistral, celui qui gagne votre évaluation — pour que les auditeurs inspectent ce qu'ils approuvent."},
+        {t:"Des produits, pas des démos", d:"La mise en service est conditionnée à un score d'évaluation convenu au cadrage, pas à une démo pour les parties prenantes."},
+        {t:"Conformité par conception", d:"La cartographie LPD/RGPD et la documentation AI Act sont des livrables nommés dans le cahier des charges."}
+      ] %}
+      {% for v in vals %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ v.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ v.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Differentiation pointer -->
+<section class="container-x py-20 md:py-28">
+  <p class="max-w-2xl text-lg prose-muted">Comment cela se compare aux plateformes hébergées et aux API cloud américaines — voir <a class="link-underline" href="/fr/platform/">la comparaison sur la page plateforme</a>.</p>
+</section>
+
+{{ cta("Travaillez avec nous.", "Apportez un workflow et la contrainte de données qui le bloque. Vous aurez un appel de 30 minutes avec l'ingénieur qui le construirait — et un non clair avant la 20e minute si nous ne sommes pas le bon choix.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

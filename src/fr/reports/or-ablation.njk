@@ -1,0 +1,159 @@
+---
+layout: layouts/base.njk
+title: Exemple concret — affiner un petit modèle pour le droit suisse des contrats
+description: Une ablation reproductible en quatre volets d'Apertus-8B sur des Q&R relatives aux articles du Code des obligations suisse (CO) — et l'erreur d'entraînement, liée à la recherche, qui casse discrètement un affinage, diagnostiquée et corrigée. Notée de façon déterministe sur des données publiques.
+tags: writing
+date: 2026-07-20
+kicker: Rapport
+listTitle: Affiner un petit modèle pour le droit suisse des contrats — et l'erreur qui le casse.
+blurb: Une deuxième ablation reproductible, cette fois sur le Code des obligations suisse. L'affinage + recherche l'emporte à 52,3 % — mais seulement après avoir détecté une erreur d'entraînement qui rendait l'affinage naïf pire que la recherche seule. L'échec, diagnostiqué et corrigé.
+faq:
+  - q: Est-ce la même méthode que le rapport FINMA ?
+    a: >-
+      Oui — délibérément. Même ablation en quatre volets, même notation déterministe, même modèle de base, sur un secteur différent (juridique) et un type de document différent (une loi, pas des circulaires). Reproduire le résultat sur un second corpus de droit est le but : la méthode se généralise.
+  - q: Pourquoi publier une erreur que vous avez commise ?
+    a: >-
+      Parce que c'est la partie la plus utile. Notre premier affinage a été entraîné sans contexte de recherche et s'est effondré lorsque la recherche a été ajoutée — pire que le modèle de base. C'est exactement le type d'échec que l'ablation d'un vrai pilote est conçue pour attraper avant qu'il n'atteigne la production. Nous l'avons corrigé en entraînant le modèle tel qu'il est servi ; le rapport montre les deux.
+  - q: Comment est-ce noté — y a-t-il un juge LLM ?
+    a: >-
+      Aucun juge LLM nulle part. Le Code des obligations numérote chaque disposition, de sorte qu'une citation correcte est exactement vérifiable. La précision de la réponse est une correspondance de chaîne/nombre face à une réponse de référence vérifiée ; la citation est une correspondance exacte du numéro d'article. Chaque chiffre est recalculé à partir d'enregistrements d'exécution figés.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart, deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Exemple concret · Évaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Affiner un petit modèle pour le droit suisse des contrats.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Un deuxième exemple concret — même méthode que le <a class="link-underline" href="/fr/reports/finma-ablation/">rapport FINMA</a>, un domaine différent : répondre à des questions sur le Code des obligations suisse (CO) <em>avec</em> une citation de l'article exact. Y compris une vraie erreur rencontrée en chemin, et comment l'ablation l'a attrapée.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Le dispositif", "Quatre systèmes, un modèle ouvert.", "Le même Apertus-8B, quantifié à l'identique en 4 bits, servi à l'identique. La seule variable, ce sont les poids. Noté de façon déterministe — sans juge LLM.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"Le modèle ouvert, tel que livré."},
+      {k:"B", t:"+ Recherche", d:"Modèle de base avec recherche BM25 sur la loi."},
+      {k:"C", t:"Affiné", d:"Ajusté par LoRA sur la tâche, sans recherche."},
+      {k:"D", t:"Affiné + recherche", d:"Le système complet."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">La barre de production, c'est <strong class="text-ink-700 dark:text-ink-300">les deux à la fois</strong> — la réponse correcte <em>et</em> le bon article cité. Une bonne réponse avec une citation fausse ou manquante est un échec, parce que dans le travail juridique c'en est un.</p>
+</section>
+
+<!-- Results -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Le résultat", "L'affinage plus la recherche est le meilleur système.", "172 questions vérifiées par des humains (98 allemand, 74 français, 10 thèmes de droit des contrats). Les crochets sont des intervalles de confiance à 95 %.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Réponse correcte", cls:"bg-teal-500"},
+        {name:"Réponse + citation (barre de production)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:39.0, cls:"bg-teal-500"}, {v:4.1, cls:"bg-red-600"}]},
+        {label:"B · + Recherche", bars:[{v:54.7, cls:"bg-teal-500"}, {v:38.4, cls:"bg-red-600"}]},
+        {label:"C · Affiné", bars:[{v:46.5, cls:"bg-teal-500"}, {v:2.9, cls:"bg-red-600"}]},
+        {label:"D · Affiné + recherche", note:"le système complet", bars:[{v:70.3, cls:"bg-teal-500"}, {v:52.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "La barre de production (rouge) est quasi nulle sans recherche (A, C), atteint 38,4 % avec la recherche seule (B), et culmine à 52,3 % seulement quand l'affinage <strong class='text-ink-700 dark:text-ink-300'>et</strong> la recherche se combinent (D) — la même forme que le résultat FINMA, sur un autre corpus de droit.") }}
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Métrique</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · affiné</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · affiné+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Réponse + citation (barre de production)", a:"4.1%", b:"38.4%", c:"2.9%", d:"52.3%", hi:true},
+            {m:"Réponse correcte", a:"39.0%", b:"54.7%", c:"46.5%", d:"70.3%"},
+            {m:"Citation correcte", a:"7.0%", b:"69.8%", c:"5.8%", d:"62.2%"},
+            {m:"Émet le format requis", a:"1.2%", b:"0.0%", c:"89.5%", d:"70.9%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- The mistake -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("L'erreur qui méritait d'être publiée", "Nous n'avons pas atteint 52 % du premier coup.", "Le premier affinage a été entraîné de la manière évidente — sur des questions et leur réponse + citation, sans contexte récupéré. Seul, il paraissait excellent. Avec la recherche ajoutée, il s'est effondré.") }}
+  <div class="mt-10 max-w-3xl">
+    {{ deltaBars([
+      {label:"Affinage naïf + RAG", v:8.1, cls:"bg-neutral-400 dark:bg-white/25", tag:"pire que B"},
+      {label:"Conscient de la recherche + RAG", v:52.3, cls:"bg-red-600"}
+    ], "Le volet D sur la barre de production. Le modèle naïf — à qui l'on montrait des passages récupérés jamais vus à l'entraînement — est revenu à des réponses laconiques et a <strong class='text-ink-700 dark:text-ink-300'>laissé tomber la ligne de citation</strong>, notant en dessous du modèle de base avec recherche (38,4 %). La conformité de format à l'entraînement sous recherche est tombée à 16 %.") }}
+  </div>
+  <div class="mt-10 max-w-3xl rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+    <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">Q.</span> Une convention préalable excluant la responsabilité pour faute grave est-elle valable ? <span class="text-ink-500">(référence : non, art. 100)</span></p>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Affinage naïf + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein</pre>
+        <p class="mt-1 text-xs text-swiss">Bonne réponse, aucune citation → échoue</p>
+      </div>
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Conscient de la recherche + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein
+SOURCE: OR Art. 100</pre>
+        <p class="mt-1 text-xs text-swiss">Passe</p>
+      </div>
+    </div>
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">La cause est un <strong class="font-semibold text-ink-900 dark:text-white">décalage de distribution entre entraînement et inférence</strong> : un modèle qui sera servi <em>avec</em> recherche doit être <em>entraîné</em> avec recherche. Nous avons reconstruit le jeu d'affinage pour que chaque exemple apparaisse à la fois brut et avec contexte récupéré — l'article de référence garanti présent — réentraîné, et la barre de production est passée de 8,1 % à 52,3 %. C'est exactement le type d'échec que l'<a class="link-underline" href="/fr/concepts/evaluation/">ablation</a> d'un pilote attrape avant qu'il n'atteigne la production. Nous mesurons pour ne pas le livrer.</p>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Les limites honnêtes", "Ce que cela ne prétend pas.", "Une évaluation à laquelle vous pouvez vous fier est une évaluation qui nomme ses points faibles.") }}
+    <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Les questions à réponse-liste notent près de zéro, dans chaque volet.</strong> Extraire un ensemble complet de plusieurs éléments et le citer est la sous-tâche la plus difficile ici et la cible évidente suivante — le même point faible que le rapport FINMA a signalé.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Le français est derrière l'allemand</strong> (D : 42 % FR vs 60 % DE), suivant le mélange d'entraînement (271 DE vs 123 FR éléments). Des données plus équilibrées comblent l'écart ; le chiffre est honnête sur les faiblesses actuelles du modèle.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">La conformité de format est de 71 %, pas 100 %.</strong> L'affinage conscient de la recherche laisse encore tomber la citation sur certains éléments — bien mieux que les 16 % naïfs, pas parfait. C'est un plancher : un jeu d'entraînement plus grand et plus équilibré le fait monter davantage.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/or" class="btn-ghost" target="_blank" rel="noopener">Le reproduire sur GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "À propos de ce rapport.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Vous voulez cela sur votre tâche ?", "Apportez un workflow et les documents qui le sous-tendent. Nous construirons le jeu d'évaluation et exécuterons cette ablation — y compris les modes d'échec qu'elle attrape — sur vos données, dans votre juridiction.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

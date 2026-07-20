@@ -1,0 +1,93 @@
+---
+layout: layouts/base.njk
+order: 5
+title: Contatto
+description: Prenotate una call di definizione del perimetro con sysf.io per delineare il vostro primo caso d'uso di IA sovrana — modelli su misura ottimizzati su Apertus, distribuiti nella vostra giurisdizione svizzera o UE, o on-prem.
+ogType: website
+---
+<section class="container-x py-16 md:py-24">
+  <div class="grid gap-14 md:grid-cols-12">
+    <!-- Left -->
+    <div class="md:col-span-5">
+      <p class="eyebrow">Contatto</p>
+      <h1 class="mt-4 text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+        Definiamo il vostro primo caso d'uso sovrano.
+      </h1>
+      <p class="mt-6 text-lg prose-muted">
+        Raccontateci il workflow e i dati che non potete cedere. Torneremo con una proposta a perimetro fisso — senza impegno.
+      </p>
+
+      <div class="mt-10 space-y-6">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">E-mail</div>
+          <a class="mt-1 block text-lg font-semibold text-ink-900 link-underline dark:text-white" href="mailto:{{ site.email }}?subject=Richiesta%20IA%20sovrana">{{ site.email }}</a>
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Cosa aspettarsi</div>
+          <ul class="mt-2 space-y-2 text-sm prose-muted">
+            {% for x in ["Una call di 30 minuti con l'ingegnere che costruirà il vostro sistema", "Una proposta di Pilot a perimetro fisso sui vostri dati — entro una settimana", "Un no chiaro entro il minuto 20 se un modello aperto ottimizzato non è la scelta giusta"] %}
+            <li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ x }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <p class="text-sm text-ink-500">Con sede in Svizzera. Al servizio di organizzazioni svizzere e UE.</p>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="border border-ink-900/10 p-6 md:p-8 dark:border-white/10">
+        <!--
+          TODO: this static site has no backend yet. The form below composes an email via
+          the visitor's mail client (works everywhere, no data leaves the page). To switch to
+          hosted submissions instead: create a free endpoint at https://formspree.io, set
+          action="https://formspree.io/f/YOUR-ID" method="POST" on the form, and delete the
+          enquiryForm <script> block at the bottom of this file.
+        -->
+        <form id="enquiryForm" action="#" class="space-y-5">
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Nome</span>
+            <input type="text" name="name" required autocomplete="name"
+                   class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Organizzazione</span>
+            <input type="text" name="organization" autocomplete="organization"
+                   class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Settore</span>
+            <select name="sector"
+                    class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white dark:[&>option]:bg-ink-900">
+              {% for s in ["Banche & Finanza", "Sanità & Farma", "Legale", "Stato & Settore pubblico", "Assicurazioni", "Manifattura", "Altro"] %}
+              <option>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-ink-900 dark:text-white">Cosa vorreste costruire?</span>
+            <textarea name="message" rows="4" required
+                      class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white"></textarea>
+          </label>
+          <button type="submit" class="btn-primary w-full">Invia la richiesta</button>
+          <p class="text-xs text-ink-500">L'invio apre il vostro client di posta — la vostra richiesta va direttamente a {{ site.email }}, da nessun'altra parte. Non condividiamo i vostri dati.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Compose the enquiry as an email — no backend, no third-party form handler.
+  (function () {
+    var form = document.getElementById("enquiryForm");
+    if (!form) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = function (n) { var el = form.elements[n]; return el && el.value ? el.value.trim() : ""; };
+      var subject = "Richiesta IA sovrana — " + (v("organization") || v("name"));
+      var body = "Nome: " + v("name") + "\nOrganizzazione: " + v("organization") + "\nSettore: " + v("sector") + "\n\nCosa vorremmo costruire:\n" + v("message");
+      window.location.href = "mailto:{{ site.email }}?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    });
+  })();
+</script>

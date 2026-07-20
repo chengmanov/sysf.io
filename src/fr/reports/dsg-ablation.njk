@@ -1,0 +1,144 @@
+---
+layout: layouts/base.njk
+title: "Rapport — nLPD : affiner un petit modèle aide-t-il sur la protection des données suisse ?"
+description: "Une ablation reproductible en quatre volets (base / +RAG / affiné / les deux) d'Apertus-8B sur des Q&R relatives à la loi fédérale suisse sur la protection des données révisée (nLPD) (RS 235.1), notée de façon déterministe sur la précision de la réponse et la citation exacte de l'article. Sans juge LLM."
+tags: writing
+date: 2026-07-20
+kicker: Rapport
+listTitle: "Protection des données suisse : affiner un petit modèle aide-t-il ?"
+blurb: "Une ablation reproductible en quatre volets d'Apertus-8B sur des Q&R relatives à la protection des données suisse, sur la loi fédérale sur la protection des données révisée (nLPD) (RS 235.1). L'affinage plus la recherche porte la barre de production (réponse + citation exacte) de 37,0 % à 54,3 % — notation déterministe, données Fedlex publiques, harnais en open source. Secteur : État & secteur public."
+faq:
+  - q: Est-ce sur nos données ?
+    a: >-
+      Non — délibérément. Cela tourne entièrement sur le texte Fedlex public et figé de la LPD pour que quiconque puisse le reproduire. Dans un pilote, la méthode identique tourne sur vos documents, dans votre environnement, et le rapport reste le vôtre.
+  - q: Pourquoi l'affinage seul (volet C) échoue-t-il ?
+    a: >-
+      Parce qu'un petit modèle ne peut pas rappeler de façon fiable les numéros d'articles exacts depuis ses paramètres. L'affinage enseigne le format réponse/citation et quel article régit quel sujet, mais la citation exacte a toujours besoin d'avoir le texte récupéré sous les yeux. C'est pourquoi le système gagnant est l'affinage plus la recherche, pas l'un ou l'autre seul.
+  - q: Y a-t-il un juge LLM ?
+    a: >-
+      Aucun juge LLM nulle part. La LPD numérote ses articles ; une citation correcte est exactement vérifiable. La précision de la réponse est une correspondance de chaîne/nombre face à une réponse de référence vérifiée ; la citation est une correspondance exacte d'article. Chaque chiffre est recalculé à partir d'enregistrements d'exécution figés avec des intervalles de Wilson à 95 %.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Exemple concret · État & secteur public</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      L'affinage aide-t-il sur la protection des données suisse ?
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Pas une opinion — une mesure. Nous avons pris Apertus-8B et exécuté la même ablation en quatre volets que nous menons au début de chaque <a class="link-underline" href="/fr/concepts/evaluation/">pilote</a>, sur une tâche dont la réponse peut être notée exactement : répondre à des questions sur la loi suisse révisée sur la protection des données <em>avec</em> une citation de l'article exact sur lequel elle repose. Le résultat : l'affinage plus la recherche porte la barre de production de 37,0 % à 54,3 %.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Le dispositif", "Quatre systèmes, un modèle ouvert.", "Le même Apertus-8B, quantifié à l'identique en 4 bits, servi à l'identique. La seule variable est ce que nous avons ajouté.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"Le modèle ouvert, tel que livré."},
+      {k:"B", t:"+ Recherche", d:"Modèle de base avec recherche BM25 sur la loi."},
+      {k:"C", t:"Affiné", d:"Ajusté par LoRA sur la tâche, sans recherche."},
+      {k:"D", t:"Affiné + recherche", d:"Le système complet."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Deux choses sont notées, toutes deux de façon déterministe — sans juge LLM : la réponse est-elle correcte, et a-t-elle cité le bon article. La barre de production, c'est <strong class="text-ink-700 dark:text-ink-300">les deux à la fois</strong> — une bonne réponse avec une citation fausse ou manquante est un échec, parce que dans le travail régulé c'en est un.</p>
+</section>
+
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Le résultat", "L'affinage plus la recherche est le système gagnant.", "46 questions vérifiées (32 allemand, 14 français). Les crochets dans le rapport sont des intervalles de confiance à 95 %.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Réponse correcte", cls:"bg-teal-300"},
+        {name:"Réponse + citation (barre de production)", cls:"bg-teal-600"},
+        {name:"Système complet (D)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:50.0, cls:"bg-teal-300"}, {v:4.3, cls:"bg-teal-600"}]},
+        {label:"B · + Recherche", bars:[{v:82.6, cls:"bg-teal-300"}, {v:37.0, cls:"bg-teal-600"}]},
+        {label:"C · Affiné", bars:[{v:32.6, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"D · Affiné + recherche", note:"le système complet", bars:[{v:60.9, cls:"bg-teal-300"}, {v:54.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "Lisez la ligne de la barre de production : quasi nulle sans recherche (A, C), 37,0 % avec la recherche seule (B), et seuls l'affinage <strong class='text-ink-700 dark:text-ink-300'>et</strong> la recherche ensemble atteignent 54,3 % (D, en rouge).") }}
+    </div>
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Métrique</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · affiné</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · affiné+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Réponse + citation (barre de production)", a:"4.3%", b:"37.0%", c:"0.0%", d:"54.3%", hi:true},
+            {m:"Réponse correcte", a:"50.0%", b:"82.6%", c:"32.6%", d:"60.9%"},
+            {m:"Citation correcte", a:"4.3%", b:"45.7%", c:"2.2%", d:"82.6%"},
+            {m:"Émet le format requis", a:"2%", b:"0%", c:"100%", d:"93%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Ce qu'apporte chaque couche", "L'ablation empêche quiconque — nous compris — de faire du vent.", "Chaque carte rattache un mécanisme à un chiffre du tableau ci-dessus.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-3">
+    {% set parts = [
+      {t:"La recherche rend la citation possible", d:"La citation correcte grimpe de 4,3 % à 45,7 % uniquement quand la recherche est activée. Un petit modèle ne peut pas citer un numéro d'article qu'il n'a jamais vu — d'où les deux volets sans recherche proches de zéro sur la barre de production, aussi bien entraînés soient-ils."},
+      {t:"L'affinage rend la sortie utilisable", d:"Le modèle de base connaît souvent la réponse (82,6 % avec RAG) mais n'émet le format à deux lignes requis, exploitable par machine, que 2 % du temps. L'affinage le rend fiable (93 %) et porte la citation sous recherche à 82,6 %."},
+      {t:"L'affinage seul ne suffit pas", d:"Le volet C — affiné, sans recherche — atteint 100 % de format mais seulement 2,2 % de citation et 32,6 % de réponse : le modèle apprend à répondre, pas les faits exacts. Le système gagnant est la combinaison, le volet D à 54,3 %."}
+    ] %}
+    {% for p in parts %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Les limites honnêtes", "Ce que cela ne prétend pas.", "Une évaluation à laquelle vous pouvez vous fier nomme ses points faibles.") }}
+    <div class="mt-8 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">54,3 %, c'est un plancher, pas un plafond.</strong> Un petit modèle, 4 bits, une seule exécution LoRA modeste, une recherche BM25 délibérément simple, un jeu d'évaluation vérifié compact (n=46). Chacun de ces éléments est un levier qu'un vrai pilote actionne.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">L'affinage seul peut régresser.</strong> La précision de réponse du volet C est en dessous du modèle de base — preuve que l'affinage sans recherche est le mauvais outil pour les tâches à citation exacte. Nous le publions plutôt que de le cacher.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">La méthode est le produit, pas le chiffre.</strong> Votre tâche, vos documents, cette ablation exacte — exécutée avant que vous vous engagiez en production, afin que le go/no-go repose sur la mesure, pas sur une promesse.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/dsg" class="btn-ghost" target="_blank" rel="noopener">Le reproduire sur GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "À propos de ce rapport.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Vous voulez cela sur votre tâche ?", "Apportez un workflow et les documents qui le sous-tendent. Nous construirons le jeu d'évaluation et exécuterons cette ablation — sur vos données, dans votre juridiction.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

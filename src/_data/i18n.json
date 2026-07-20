@@ -1,0 +1,186 @@
+{
+  "en": {
+    "label": "English",
+    "htmlLang": "en",
+    "hreflang": "en",
+    "ogLocale": "en_GB",
+    "dir": "ltr",
+    "skip": "Skip to content",
+    "cta": "Book a call",
+    "menu": "Menu",
+    "themeToggle": "Toggle dark mode",
+    "langMenu": "Language",
+    "slogan": "systems, fine-tuned.",
+    "nav": [
+      { "label": "Platform", "url": "/platform/" },
+      { "label": "Industries", "url": "/industries/" },
+      { "label": "Pricing", "url": "/pricing/" },
+      { "label": "Configure", "url": "/configure/" },
+      { "label": "Concepts", "url": "/concepts/" },
+      { "label": "News", "url": "/news/" },
+      { "label": "About", "url": "/about/" },
+      { "label": "Contact", "url": "/contact/" }
+    ],
+    "footer": {
+      "explore": "Explore",
+      "contact": "Contact",
+      "descriptorBold": "Fine-tuned Apertus, running where your data lives.",
+      "descriptorRest": "On-prem, Swiss cloud, or air-gapped — built and operated from Switzerland, and yours to run.",
+      "builtOnPre": "Built on",
+      "builtOnPost": ", Switzerland's open LLM.",
+      "madeIn": "Made in Switzerland.",
+      "strap": "Sovereign · Data-private · Yours to run"
+    },
+    "ctaBlock": { "primary": "Book a call", "secondary": "See how it works" },
+    "diagram": {
+      "caption": "Architecture: your data stays inside your jurisdiction. sysf.io fine-tunes Apertus and orchestrates agents, retrieval and tools, with no data sent to third-party US LLM APIs.",
+      "excluded": "Third-party US LLM API",
+      "jurisdiction": "Your jurisdiction",
+      "nodes": [
+        { "t": "Your data", "d": "Documents, records, systems — never leaves" },
+        { "t": "Fine-tuned Apertus", "d": "Swiss open model, trained on your corpus" },
+        { "t": "Agent orchestration", "d": "Agents · RAG · tools · guardrails" },
+        { "t": "Your product", "d": "Copilots & workflows — yours to run" }
+      ],
+      "foot": "On-prem · Swiss cloud · Confidential compute — zero data egress"
+    }
+  },
+  "de": {
+    "label": "Deutsch",
+    "htmlLang": "de-CH",
+    "hreflang": "de-CH",
+    "ogLocale": "de_CH",
+    "dir": "ltr",
+    "skip": "Zum Inhalt springen",
+    "cta": "Termin buchen",
+    "menu": "Menü",
+    "themeToggle": "Dark Mode umschalten",
+    "langMenu": "Sprache",
+    "slogan": "Systeme, feinabgestimmt.",
+    "nav": [
+      { "label": "Plattform", "url": "/platform/" },
+      { "label": "Branchen", "url": "/industries/" },
+      { "label": "Preise", "url": "/pricing/" },
+      { "label": "Konfigurieren", "url": "/configure/" },
+      { "label": "Konzepte", "url": "/concepts/" },
+      { "label": "News", "url": "/news/" },
+      { "label": "Über uns", "url": "/about/" },
+      { "label": "Kontakt", "url": "/contact/" }
+    ],
+    "footer": {
+      "explore": "Entdecken",
+      "contact": "Kontakt",
+      "descriptorBold": "Feinabgestimmtes Apertus, dort ausgeführt, wo Ihre Daten liegen.",
+      "descriptorRest": "On-Premise, Swiss Cloud oder vollständig air-gapped — in der Schweiz entwickelt und betrieben, und Ihres zum Ausführen.",
+      "builtOnPre": "Basiert auf",
+      "builtOnPost": ", dem offenen LLM der Schweiz.",
+      "madeIn": "Hergestellt in der Schweiz.",
+      "strap": "Souverän · Datenschutzkonform · Ihres zum Ausführen"
+    },
+    "ctaBlock": { "primary": "Termin buchen", "secondary": "So funktioniert's" },
+    "diagram": {
+      "caption": "Architektur: Ihre Daten bleiben in Ihrer Jurisdiktion. sysf.io stimmt Apertus fein ab und orchestriert Agenten, Retrieval und Tools — ohne Daten an US-LLM-APIs von Drittanbietern zu senden.",
+      "excluded": "US-LLM-API von Drittanbietern",
+      "jurisdiction": "Ihre Jurisdiktion",
+      "nodes": [
+        { "t": "Ihre Daten", "d": "Dokumente, Datensätze, Systeme — verlassen nie das Haus" },
+        { "t": "Feinabgestimmtes Apertus", "d": "Offenes Schweizer Modell, auf Ihrem Korpus trainiert" },
+        { "t": "Agenten-Orchestrierung", "d": "Agenten · RAG · Tools · Guardrails" },
+        { "t": "Ihr Produkt", "d": "Copiloten & Workflows — Ihres zum Ausführen" }
+      ],
+      "foot": "On-Premise · Swiss Cloud · Confidential Computing — kein Datenabfluss"
+    }
+  },
+  "fr": {
+    "label": "Français",
+    "htmlLang": "fr-CH",
+    "hreflang": "fr-CH",
+    "ogLocale": "fr_CH",
+    "dir": "ltr",
+    "skip": "Aller au contenu",
+    "cta": "Réserver un appel",
+    "menu": "Menu",
+    "themeToggle": "Basculer le mode sombre",
+    "langMenu": "Langue",
+    "slogan": "systèmes, affinés.",
+    "nav": [
+      { "label": "Plateforme", "url": "/platform/" },
+      { "label": "Secteurs", "url": "/industries/" },
+      { "label": "Tarifs", "url": "/pricing/" },
+      { "label": "Configurer", "url": "/configure/" },
+      { "label": "Concepts", "url": "/concepts/" },
+      { "label": "Actualités", "url": "/news/" },
+      { "label": "À propos", "url": "/about/" },
+      { "label": "Contact", "url": "/contact/" }
+    ],
+    "footer": {
+      "explore": "Explorer",
+      "contact": "Contact",
+      "descriptorBold": "Apertus affiné, exécuté là où vivent vos données.",
+      "descriptorRest": "On-premise, cloud suisse ou entièrement air-gapped — conçu et exploité depuis la Suisse, et à vous de l'exécuter.",
+      "builtOnPre": "Basé sur",
+      "builtOnPost": ", le LLM ouvert de la Suisse.",
+      "madeIn": "Fait en Suisse.",
+      "strap": "Souverain · Données privées · À vous de l'exécuter"
+    },
+    "ctaBlock": { "primary": "Réserver un appel", "secondary": "Voir comment ça marche" },
+    "diagram": {
+      "caption": "Architecture : vos données restent dans votre juridiction. sysf.io affine Apertus et orchestre agents, recherche et outils, sans envoyer de données à des API LLM américaines tierces.",
+      "excluded": "API LLM américaine tierce",
+      "jurisdiction": "Votre juridiction",
+      "nodes": [
+        { "t": "Vos données", "d": "Documents, dossiers, systèmes — ne sortent jamais" },
+        { "t": "Apertus affiné", "d": "Modèle ouvert suisse, entraîné sur votre corpus" },
+        { "t": "Orchestration d'agents", "d": "Agents · RAG · outils · garde-fous" },
+        { "t": "Votre produit", "d": "Copilotes & workflows — à vous de l'exécuter" }
+      ],
+      "foot": "On-premise · Cloud suisse · Confidential computing — aucune fuite de données"
+    }
+  },
+  "it": {
+    "label": "Italiano",
+    "htmlLang": "it-CH",
+    "hreflang": "it-CH",
+    "ogLocale": "it_CH",
+    "dir": "ltr",
+    "skip": "Vai al contenuto",
+    "cta": "Prenota una call",
+    "menu": "Menu",
+    "themeToggle": "Attiva/disattiva modalità scura",
+    "langMenu": "Lingua",
+    "slogan": "sistemi, ottimizzati.",
+    "nav": [
+      { "label": "Piattaforma", "url": "/platform/" },
+      { "label": "Settori", "url": "/industries/" },
+      { "label": "Prezzi", "url": "/pricing/" },
+      { "label": "Configura", "url": "/configure/" },
+      { "label": "Concetti", "url": "/concepts/" },
+      { "label": "News", "url": "/news/" },
+      { "label": "Chi siamo", "url": "/about/" },
+      { "label": "Contatto", "url": "/contact/" }
+    ],
+    "footer": {
+      "explore": "Esplora",
+      "contact": "Contatto",
+      "descriptorBold": "Apertus ottimizzato, eseguito dove risiedono i vostri dati.",
+      "descriptorRest": "On-premise, cloud svizzero o completamente air-gapped — sviluppato e gestito dalla Svizzera, e vostro da eseguire.",
+      "builtOnPre": "Basato su",
+      "builtOnPost": ", l'LLM aperto della Svizzera.",
+      "madeIn": "Fatto in Svizzera.",
+      "strap": "Sovrano · Dati privati · Vostro da eseguire"
+    },
+    "ctaBlock": { "primary": "Prenota una call", "secondary": "Scopri come funziona" },
+    "diagram": {
+      "caption": "Architettura: i vostri dati restano nella vostra giurisdizione. sysf.io ottimizza Apertus e orchestra agenti, retrieval e strumenti, senza inviare dati ad API LLM statunitensi di terze parti.",
+      "excluded": "API LLM statunitense di terze parti",
+      "jurisdiction": "La vostra giurisdizione",
+      "nodes": [
+        { "t": "I vostri dati", "d": "Documenti, archivi, sistemi — non escono mai" },
+        { "t": "Apertus ottimizzato", "d": "Modello aperto svizzero, addestrato sul vostro corpus" },
+        { "t": "Orchestrazione di agenti", "d": "Agenti · RAG · strumenti · guardrail" },
+        { "t": "Il vostro prodotto", "d": "Copiloti & workflow — vostro da eseguire" }
+      ],
+      "foot": "On-premise · Cloud svizzero · Confidential computing — nessuna fuoriuscita di dati"
+    }
+  }
+}

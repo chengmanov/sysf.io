@@ -1,0 +1,121 @@
+---
+layout: layouts/base.njk
+title: Quantisierung, erklärt — wie ein Rechenzentrumsmodell in Ihr Büro passt
+description: Was Quantisierung tatsächlich tut — Bytes pro Gewicht, der 4-Bit-Sweetspot, die 1–2-Bit-Grenze, KV-Cache-Speicher — und warum sie die Technologie ist, die souveräne, On-Premise- und air-gapped KI bezahlbar macht.
+faq:
+  - q: Macht Quantisierung das Modell schlechter?
+    a: >-
+      Geringfügig und messbar — das ist der Punkt. „Bei einer engen Aufgabe oft unsichtbar“ ist kein Lieferergebnis, deshalb führen wir Ihr Evaluationsset auf dem quantisierten Build erneut aus und liefern die Differenz neben der Baseline in voller Präzision. Ein quantisiertes Modell ohne Evaluationsbericht ist eine Vermutung.
+  - q: Warum braucht langer Kontext so viel Speicher?
+    a: >-
+      Das Modell hält einen Key-Value-Cache (KV-Cache) für jedes Token im Gespräch, und bei langen Kontexten wird der Cache — nicht die Gewichte — zum grössten Speicherverbraucher und wächst linear mit der Kontextlänge in die Gigabyte. Der Cache lässt sich ebenfalls quantisieren, was seinen Fussabdruck um ein Mehrfaches senkt. Es ist ein zweites Budget, das wir beim Scoping explizit dimensionieren, denn „unterstützt 100K Kontext“ auf einem Datenblatt bedeutet nichts ohne den Speicher, ihn zu halten.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Konzepte · Quantisierung</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Wie ein Rechenzentrumsmodell in Ihr Büro passt.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Quantisierung ist die unglamouröse Technologie, die entscheidet, ob souveräne KI einen Server oder ein Rechenzentrum kostet. So funktioniert sie tatsächlich, in genug Detail, damit Ihre Ingenieure es prüfen können.
+    </p>
+  </div>
+</section>
+
+<!-- What it is -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Der Mechanismus", "Die Grösse eines Modells ist Bytes pro Gewicht × Gewichte.", "Training nutzt 16-Bit-Zahlen. Inferenz muss das nicht — der grösste Teil dieser Präzision ist Redundanz, die Sie aufwenden können.") }}
+      <p class="mt-6 text-base prose-muted">Quantisierung speichert jedes Gewicht in weniger Bits — gruppiert und neu skaliert, sodass das Verhalten des Modells erhalten bleibt. Halbe Bits, halber Speicher und meist auch schneller: Bei den Low-Batch-, Single-Tenant-Lasten, unter denen On-Premise-Systeme tatsächlich laufen, ist die Generierungsgeschwindigkeit dadurch begrenzt, wie schnell Gewichte aus dem Speicher strömen — ein kleineres Modell ist also ein schnelleres.</p>
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[480px] border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Präzision</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">8B-Modell</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">70B-Modell</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Läuft auf</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+            {% set rows = [
+              {p:"16-Bit (Training)", a:"~16 GB", b:"~140 GB", c:"Multi-GPU-Knoten"},
+              {p:"8-Bit", a:"~8 GB", b:"~70 GB", c:"Rechenzentrums-GPU(s)"},
+              {p:"4-Bit (der Sweetspot)", a:"~4,5 GB", b:"~40 GB", c:"Eine Workstation-GPU / eine 48-GB-Karte (knapp — oder 2×24 GB)"},
+              {p:"1–2 Bit (die Grenze)", a:"~1,5–2,5 GB", b:"~12–20 GB", c:"Laptop oder Edge-Box (ein Smartphone, für 27B-Klasse und darunter)"}
+            ] %}
+            {% for r in rows %}
+            <tr>
+              <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.p }}</td>
+              <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
+              <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+              <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-3 text-xs text-ink-500">Nur Gewichte — der Arbeitsspeicher fügt den KV-Cache (unten) und Laufzeit-Overhead hinzu. Der 70B-auf-einer-48-GB-Karte-Fit setzt eine kompakte 4-Bit-Variante und einen quantisierten Cache voraus; die genauen Zahlen hängen von Format und Gruppierung ab, und wir dimensionieren das volle Budget beim Scoping.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Quality & practice -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Der Handel", "Was es kostet und wie wir es ehrlich halten.", "Quantisierung tauscht ein messbares Stück Qualität gegen eine 3–4×-Reduktion des Speichers und die Hardwarestufe darunter. Das operative Wort ist messbar.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set cards = [
+        {t:"4-Bit: der Produktions-Standard", d:"Moderne 4-Bit-Formate — GGUF-K-Quants für llama.cpp-artiges Serving, AWQ oder GPTQ anderswo — kosten typischerweise einen Punkt oder zwei auf breiten Benchmarks; bei einer engen, feinabgestimmten Aufgabe oft nichts Feststellbares. Hier sollten die meisten souveränen Deployments liegen: ein 70B in ~40 GB Gewichten, ein 8B in unter 5 GB."},
+        {t:"Unter 4 Bit: technisch, nicht naiv", d:"Einfach härter zu runden zerstört die Qualität. Zweckgebaute ternäre und binäre Formate — zunehmend kombiniert mit quantisierungsbewusstem Training — halten Modelle bei 1–2 Bit pro Gewicht nutzbar und schrumpfen ein Modell der 27B-Klasse auf Smartphone-Grösse. Diese Grenze bewegt sich schnell, und es ist die, die wir am genauesten beobachten."},
+        {t:"Unsere Regel: neu evaluieren, dann ausliefern", d:"Jeder quantisierte Build wird erneut gegen Ihr Evaluationsset ausgeführt und mit der dokumentierten Qualitätsdifferenz neben der Baseline in voller Präzision geliefert. Kostet Quantisierung mehr, als der Deployment-Gewinn für Ihre Aufgabe wert ist, sagt das der Bericht, und wir skalieren hoch."}
+      ] %}
+      {% for c in cards %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ c.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ c.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- KV cache -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Das zweite Budget", "Kontext hat auch eine Speicherrechnung.", "Gewichte sind nur die halbe Dimensionierung. Die andere Hälfte ist der KV-Cache — der Arbeitsspeicher des Modells für Ihr Gespräch oder Dokument.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Für jedes Token im Kontext speichert das Modell Key-Value-Aktivierungen. Bei kurzen Kontexten ist das Rauschen; bei 100K-Token-Kontexten — einem langen Vertrag, einer vollständigen Fallakte — wächst der Cache in die <strong class="font-semibold text-ink-900 dark:text-white">Gigabyte</strong> und kann es mit den Gewichten selbst aufnehmen.</p>
+      <p>Der Cache quantisiert ebenfalls: 4-Bit-KV-Speicherung senkt seinen Fussabdruck um ein Mehrfaches, was oft der Unterschied zwischen „lange Dokumente passen“ und „sie passen nicht“ auf einer gegebenen Maschine ist. Auch die Architektur zählt — neuere Modelle mit hybrider Attention halten den Cache im Verhältnis zu ihrer Grösse überproportional klein.</p>
+      <p>Praktische Konsequenz: Wenn wir uns auf „bewältigt Ihre 200-seitigen Verträge auf einer Maschine“ verpflichten, wurde diese Aussage dimensioniert — Gewichte, Cache, Overhead — nicht gehofft.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Why it matters for sovereignty -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Warum es hier zählt", "Quantisierung ist die Kostenkurve der Souveränität.", "Jedes Bit, das man einem Gewicht abschält, bewegt „läuft dort, wo Ihre Daten liegen“ eine Stufe die Hardware-Leiter hinunter.") }}
+    <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
+      <p>Bei 16-Bit ist ein eigenes Modell ein Investitionsantrag mit angehängtem Grundriss. Bei 4-Bit ist es ein Server. An der 1–2-Bit-Grenze beginnt es Laptops, Edge-Boxen und Maschinen zu bedeuten, die nie ein Netzwerkkabel gesehen haben — die Umgebungen, in denen regulierte Daten tatsächlich leben.</p>
+      <p>Deshalb behandeln wir Quantisierung als erstklassige Disziplin, nicht als Häkchen. Sehen Sie, worauf die resultierenden Systeme laufen, in <a class="link-underline" href="/de/concepts/sovereign-architecture/">der souveränen Laufzeitumgebung</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zur Quantisierung.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Wollen Sie die Dimensionierung für Ihren Use Case?", "Nennen Sie uns die Dokumente und die Hardware, die Sie haben — wir melden uns mit dem Speicherbudget und der Maschine, auf der es läuft.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

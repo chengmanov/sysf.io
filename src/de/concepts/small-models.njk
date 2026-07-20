@@ -1,0 +1,117 @@
+---
+layout: layouts/base.njk
+title: Kleine Modelle, gemessen — warum ein feinabgestimmtes 8B eine gemietete API schlägt
+description: Warum aufgabenspezifisch abgestimmte kleine Sprachmodelle Frontier-APIs bei engen regulierten Workflows übertreffen — der Spezialisierungseffekt, die Arbeitsteilung Fine-Tuning vs. RAG, die Ökonomie, und wann ein kleines Modell die falsche Wahl ist.
+faq:
+  - q: Ist ein 8B-Modell wirklich gut genug für deutsche Rechts- oder klinische Texte?
+    a: >-
+      Für eine umrissene Aufgabe meist ja — aber wir verlangen nie, dass Sie das glauben. Jedes Engagement beginnt damit, ein Evaluationsset aus Ihren eigenen Dokumenten zu erstellen und Basismodell, RAG, Fine-Tune und die Kombination dagegen zu messen. Erreicht das kleine Modell die vorab vereinbarte Messlatte nicht, sehen Sie das im Bericht, bevor Sie für die Produktion ausgeben. Das feinabgestimmte Apertus-8B des Kantons Tessin betreibt kantonale Übersetzung in Produktion mit 94 % Genauigkeit — das Muster ist real, aber die Evaluation entscheidet für Ihre Aufgabe.
+  - q: Was ist mit reasoning-lastiger Arbeit?
+    a: >-
+      Tiefes Multi-Hop-Reasoning über offene Fragen ist der Bereich, in dem Modellgrösse noch zählt. Unsere Antwort ist architektonisch, nicht ideologisch — ein kleines Modell bewältigt das Routinevolumen, und Anfragen, die es nicht sicher bewältigen kann, eskalieren zu einem grösseren offenen Modell auf derselben Infrastruktur. Nichts eskaliert zu einer Cloud-API. Die <a class="link-underline" href="/de/concepts/sovereign-architecture/">Seite zur souveränen Laufzeitumgebung</a> beschreibt, wie dieser Router funktioniert.
+  - q: Wird Fine-Tuning nicht obsolet, sobald ein besseres Basismodell erscheint?
+    a: >-
+      Die teuren Assets überleben Modellwechsel. Ihr Evaluationsset, Ihre kuratierten Trainingsdaten und Ihr Retrieval-Korpus werden unverändert übernommen; ein LoRA-Fine-Tune auf einem neueren Basismodell erneut auszuführen ist eine Sache von Tagen, kein Neubau. Genau deshalb bleiben wir modellagnostisch — Apertus, Llama oder Mistral, was auch immer zum jeweiligen Zeitpunkt auf Ihrem Evaluationsset gewinnt.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Konzepte · Kleine Modelle</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Kleine Modelle, gemessen.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Ein feinabgestimmtes 4–8B-Modell, das Ihre Dokumente kennt, schlägt ein Frontier-Modell, das sie nie gesehen hat — bei den engen, hochvolumigen Aufgaben, auf die es in regulierter Arbeit wirklich ankommt. Hier ist der Grund, samt der ehrlichen Grenzen.
+    </p>
+  </div>
+</section>
+
+<!-- Specialization -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Der Effekt", "Spezialisierung schlägt Grösse bei engen Aufgaben.", "Allgemeine Benchmarks belohnen Breite. Ihr Workflow belohnt Tiefe — Ihre Vorlagen, Ihre Terminologie, Ihre Formate, Ihre Randfälle.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Von Haus aus ist ein universelles kleines Modell ein Generalist, der zufällig Ihre Sprache spricht. Feinabgestimmt auf einige Tausend Beispiele <em>Ihrer Aufgabe</em>, wird es zum Spezialisten, der Ihren Korpus gelesen hat. Wie viel das bringt, hängt davon ab, wo das Basismodell startet — genau das misst die Ablation in jedem Pilot, auf Ihren Dokumenten, bevor Sie sich festlegen.</p>
+      <p>Der öffentliche Referenzpunkt in der Schweiz: Der <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">Übersetzungsdienst des Kantons Tessin</a> stieg von 90 % auf <strong class="font-semibold text-ink-900 dark:text-white">94 % Genauigkeit nach dem Fine-Tuning von Apertus-8B</strong> auf kantonalen Daten, vollständig auf kantonaler Infrastruktur betrieben. Vier Punkte am oberen Ende der Skala — in einem Produktivdienst der Unterschied zwischen Stichprobenkontrolle der Ausgabe und deren Neuanfertigung.</p>
+      <p>Eine Frontier-API hat auf diesem Terrain zwei strukturelle Nachteile: Sie hat Ihre Dokumente nie gesehen, und sie kann es nie — denn es sind die Dokumente, die Sie nicht weggeben dürfen. Der Vorteil des kleinen Modells ist nicht Intelligenz. Es ist Zugang.</p>
+    </div>
+  </div>
+  <div class="mt-12">
+    {% set ticino = [
+      {label:"Basis Apertus-8B", v:90, cls:"bg-teal-300"},
+      {label:"Auf kantonalen Daten feinabgestimmt", v:94, cls:"bg-red-600", tag:"+4 Pkt."}
+    ] %}
+    {{ deltaBars(ticino, "Kanton Tessin — Übersetzungsgenauigkeit auf kantonalem Text, vor und nach dem Fine-Tuning von Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Quelle: CSCS</a>.") }}
+  </div>
+</section>
+
+<!-- Division of labour -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die Methode", "Fine-Tuning vermittelt Verhalten. Retrieval liefert Fakten.", "Die beiden werden regelmässig verwechselt — und die Verwechslung ist der Punkt, an dem KI-Projekte scheitern.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set roles = [
+        {t:"Fine-Tuning", d:"Vermittelt die Aufgabe: Ihre Terminologie, Dokumentformate, Ton, Ausgabestruktur, Verweigerungsverhalten. Es memoriert Fakten nicht zuverlässig — es als Wissensspeicher zu nutzen ist ein Designfehler, den wir nicht ausliefern."},
+        {t:"Retrieval (RAG)", d:"Liefert die Fakten: die aktuelle Version Ihrer Richtlinien, Verträge und Datensätze, zurückverwiesen auf die Quellseite. Wissen aktualisiert sich in dem Moment, in dem es das Dokument tut — kein Neutraining."},
+        {t:"Die Ablation", d:"Jeder Pilot bewertet alle vier Arme — Basis, Retrieval, Fine-Tune, kombiniert — auf Ihrem Evaluationsset. Die Tabelle sagt, welches System sich zu kaufen lohnt."}
+      ] %}
+      {% for r in roles %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ r.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ r.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">Gemessen ist die Aufteilung deutlich: In <a class="link-underline" href="/de/reports/finma-ablation/">unserer FINMA-Ablation</a> brachte Fine-Tuning allein die Format-Compliance von ~2 % auf 100 %, liess aber die Genauigkeit von Antwort-plus-Fundstelle bei 1,6 % — Verhalten gelernt, Fakten nicht. Retrieval allein: 22,4 %. Kombiniert: 45,4 %.</p>
+  </div>
+</section>
+
+<!-- Economics -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Die Ökonomie", "Eine Grössenordnung günstiger im Betrieb — und schneller.", "Kleine Modelle passen nicht nur in Ihren Compliance-Rahmen. Sie passen in Ihr Budget — in Franken und in Millisekunden.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Betriebskosten:</strong> Ein 7–8B-Modell zu betreiben kostet grob eine Grössenordnung weniger als ein Modell der 70B-Klasse — der Unterschied zwischen einer GPU der Workstation-Klasse und einem Multi-GPU-Knoten, zwischen einer Bestellung und einer Beschaffungsrunde.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Latenz:</strong> Jeder Cloud-API-Aufruf zahlt eine Round-Trip-Steuer — Netzwerksprünge, TLS, Warten hinter anderen Tenants — bevor Ihre Tokens überhaupt eine GPU erreichen; erste Tokens treffen routinemässig erst nach mehreren Hundert Millisekunden ein. Ein kleines Modell im eigenen Rack umgeht diese Steuer vollständig, und sein schnelleres Prefill und Decode kommen obendrauf — genau das lässt hochvolumige Dokumentenpipelines und interaktive Assistenten sofort wirken.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Der Souveränitäts-Multiplikator:</strong> Jeder Parameter, den Sie nicht brauchen, ist Compliance, die Sie nicht kaufen müssen. Ein aufgabenspezifisch abgestimmtes kleines Modell läuft auf einer Maschine — die Workstation-Form in <a class="link-underline" href="/de/concepts/sovereign-architecture/">der souveränen Laufzeitumgebung</a> — was die air-gapped und Edge-Deployments (Werkshalle, Klinik, Aussendienst) eröffnet, wohin gehostete Plattformen und US-APIs strukturell nicht folgen können.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die Grenzen", "Wann ein kleines Modell die falsche Wahl ist.", "Ein Experte, der Ihnen nicht sagt, wann sein Lieblingswerkzeug verliert, ist kein Experte. Kleine Modelle verlieren hier:") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set limits = [
+        {t:"Offene Assistenz", d:"„Beantworte alles über alles“ belohnt Grösse. Wenn Sie einen allgemeinen Chat-Assistenten über öffentliches Wissen brauchen, ist ein Frontier-Modell darin besser."},
+        {t:"Breites Weltwissen", d:"Kleine Modelle wissen weniger. Retrieval schliesst die Lücke nur dort, wo Ihr Korpus die Antwort hat — es kann nicht abrufen, was niemand aufgeschrieben hat."},
+        {t:"Tiefes Multi-Hop-Reasoning", d:"Lange Ketten neuartigen Reasonings begünstigen weiterhin grössere Modelle. Routinevolumen geht klein; der schwierige Rest eskaliert zu einem grösseren lokalen Modell."},
+        {t:"Nicht sensible, geringvolumige Arbeit", d:"Dürfen die Daten weg und ist das Volumen trivial, ist ein API-Abo einfacher. Das sagen wir im Scoping-Gespräch."}
+      ] %}
+      {% for l in limits %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ l.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ l.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">Die Trennlinie ist keine Meinung — es ist das Evaluationsset. Deshalb beginnt jedes Engagement mit einem: <a class="link-underline" href="/de/concepts/evaluation/">Evaluation-First-Lieferung</a>.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zu kleinen Modellen.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Würde ein kleines Modell Ihre Messlatte erreichen?", "Ein Workflow, Ihre Dokumente, unser Harness. Wir bauen das Evaluationsset und zeigen Ihnen die Ablation — in Ihrer Jurisdiktion.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

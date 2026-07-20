@@ -1,0 +1,102 @@
+---
+layout: layouts/base.njk
+title: Le runtime souverain — d'une seule workstation à un air gap complet
+description: Les formes de déploiement derrière « tourne là où vivent vos données » — serveurs mono-GPU de classe workstation, nœuds multi-GPU, confidential computing avec attestation, le routeur d'escalade « petit modèle d'abord », et comment les systèmes air-gapped restent à jour.
+faq:
+  - q: Combien coûte réellement le matériel ?
+    a: >-
+      La forme workstation — un serveur mono-GPU qui fait tourner un 4–8B spécialisé par tâche — est typiquement une machine de CHF 5 000–15 000 installée dans votre rack existant ou une armoire de bureau verrouillée. La forme nœud pour les modèles de classe 70B est un investissement de milieu de cinq chiffres ou une location dans votre cloud suisse. Le dimensionnement exact (et les chiffres de débit engagés) fait partie de chaque proposition — et le matériel du pilote peut être le nôtre, de sorte que la dépense d'infrastructure ne commence qu'après le franchissement de l'évaluation.
+  - q: Qu'est-ce que le confidential computing, concrètement ?
+    a: >-
+      Des machines virtuelles chiffrées par le matériel — AMD SEV-SNP ou Intel TDX — où la mémoire est chiffrée avec des clés que l'opérateur cloud ne détient jamais, et l'attestation à distance vous permet de vérifier cryptographiquement l'état de lancement (firmware, image, configuration) avant qu'aucune donnée n'entre. Sens pratique — vous pouvez louer de l'infrastructure suisse tout en sortant le fournisseur de la frontière de confiance de la confidentialité des données. Une réserve que nous soulevons avant votre équipe de sécurité — une enclave CPU seule ne couvre pas le GPU où l'inférence tourne réellement ; étendre la frontière à l'accélérateur exige des GPU compatibles confidential computing (classe NVIDIA H100, avec transferts chiffrés et attestation GPU), et nous dimensionnons exactement pour cela quand le modèle de menace l'exige.
+  - q: Comment les systèmes air-gapped reçoivent-ils des mises à jour ?
+    a: >-
+      Délibérément et de façon vérifiable — jamais par un fil. Les mises à jour de modèle, les reconstructions d'index de recherche et les correctifs logiciels arrivent sous forme de lots hors ligne signés et à somme de contrôle, lors de fenêtres de maintenance planifiées, installés à partir de runbooks documentés que votre propre personnel peut exécuter. Chaque mise à jour est revalidée face à votre jeu d'évaluation avant de remplacer la version en cours. Plus lent qu'une mise à jour cloud automatique — c'est exactement ce que veut votre équipe de sécurité.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts · Runtime souverain</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      D'une seule workstation à un air gap complet.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      « Tourne là où vivent vos données » est une affirmation sur le matériel, les réseaux et les frontières de confiance. Voici les formes de déploiement réelles — et le schéma de routage qui garde les petits modèles rapides sans jamais appeler un cloud.
+    </p>
+  </div>
+</section>
+
+<!-- Deployment shapes -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Les formes", "Trois enveloppes de déploiement, un principe.", "Chaque forme garde données, modèle et orchestration à l'intérieur d'une unique frontière de confiance que vous contrôlez. Elles diffèrent par l'endroit où se situe cette frontière.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {% set shapes = [
+      {t:"Classe workstation", w:"4–8B spécialisé par tâche, quantifié", d:"Un serveur GPU dans votre rack — ou une armoire verrouillée dans votre bureau. Fait tourner un petit modèle affiné avec recherche à vitesse interactive pour une équipe ou un pipeline documentaire. C'est la forme qui fait de l'IA souveraine une ligne budgétaire plutôt qu'un projet."},
+      {t:"Classe nœud", w:"Classe 70B, ou plusieurs modèles", d:"Un serveur multi-GPU dans votre centre de données ou votre cloud suisse. Fait tourner des modèles plus grands, plusieurs charges concurrentes, et le palier d'escalade du routeur ci-dessous. La forme pour les déploiements à l'échelle de l'organisation."},
+      {t:"Air-gapped / confidentiel", w:"Toute taille, isolation maximale", d:"Soit une infrastructure physiquement déconnectée avec des runbooks de mise à jour hors ligne, soit des VM de confidential computing avec attestation à distance — mémoire chiffrée avec des clés que l'opérateur ne détient jamais. Détail au niveau de la puce dans la FAQ ci-dessous."}
+    ] %}
+    {% for s in shapes %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
+      <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">Ce qui rend la forme workstation possible tout court, c'est une <a class="link-underline" href="/fr/concepts/quantization/">quantification</a> agressive et vérifiée par l'évaluation.</p>
+</section>
+
+<!-- Router -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    <div class="grid gap-12 md:grid-cols-12">
+      <div class="md:col-span-5">
+        {{ sectionHead("Le schéma", "Petit d'abord, escalade locale.", "L'architecture de routage qui capte l'économie des petits modèles sans renoncer à la queue difficile — ni à la souveraineté.") }}
+      </div>
+      <div class="md:col-span-6 md:col-start-7">
+        <ol class="space-y-4">
+          {% set steps = [
+            {n:"01", t:"Le petit modèle voit chaque requête en premier", d:"Le 4–8B spécialisé par tâche répond en premier — rapide, économique, sur la forme classe workstation. Pour un workflow bien cadré, c'est l'écrasante majorité du volume."},
+            {n:"02", t:"Un routeur guette les problèmes", d:"Les violations de schéma et les appels d'outils en échec sont des déclencheurs sans ambiguïté. Les signaux de confiance et hors distribution sont plus difficiles — nous les calibrons par tâche face à votre jeu d'évaluation, et le seuil d'escalade est un compromis mesuré, pas un défaut auquel nous faisons aveuglément confiance."},
+            {n:"03", t:"L'escalade va vers un modèle local plus grand", d:"Les requêtes signalées sont ré-exécutées sur le palier classe nœud : un modèle ouvert plus grand sur votre propre infrastructure. La version cloud de ce schéma escalade vers une API américaine — la nôtre jamais. Sur les déploiements workstation uniquement, les requêtes signalées sont routées vers une file de revue humaine à la place : un petit système qui sait quand passer la main bat un grand qui ne le fait jamais."},
+            {n:"04", t:"Tout est journalisé et re-noté", d:"Les taux d'escalade et les résultats alimentent la boucle d'évaluation : un taux en hausse signifie que la tâche a dérivé ou que le petit modèle a besoin d'un rafraîchissement — visible dans les métriques des semaines avant que les utilisateurs ne le remarquent."}
+          ] %}
+          {% for s in steps %}
+          <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
+            <span class="font-mono text-sm text-swiss">{{ s.n }}</span>
+            <div>
+              <div class="font-semibold text-ink-900 dark:text-white">{{ s.t }}</div>
+              <p class="mt-1 text-sm prose-muted">{{ s.d }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Zero egress -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("La frontière", "La fuite nulle est une propriété de conception, pas une promesse.", "Vous ne devriez pas avoir à croire un fournisseur sur parole pour « rien ne sort ». Vous devriez pouvoir le vérifier au pare-feu.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Le runtime est conteneurisé et autonome : poids du modèle, index de recherche, orchestration et monitoring tournent tous à l'intérieur de votre segment réseau. Aucun composant n'appelle vers l'extérieur — pas de télémétrie, pas de pings de licence, pas de « statistiques d'usage anonymes ». Vos règles de pare-feu peuvent dire <em>deny all egress</em>, et le système continue de fonctionner. C'est le test, et vous pouvez le mener vous-même.</p>
+      <p>Le monitoring reste dedans aussi : tableaux de bord, journaux et scores d'évaluation sont servis localement, et la rétention des journaux suit votre politique — les journaux d'inférence contiennent vos données. La pile de traçage auto-hébergée derrière cela est sur <a class="link-underline" href="/fr/concepts/orchestration/">la page orchestration</a>.</p>
+      <p>Sur les formes workstation et air-gapped, c'est aussi une démo que nous aimons faire : débranchez le câble réseau, continuez à travailler.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Questions sur le runtime.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Quelle forme correspond à vos contraintes ?", "Décrivez vos contraintes de gouvernance des données lors de l'appel de cadrage — nous les mapperons à une forme de déploiement et mettrons le dimensionnement et le débit dans la proposition.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

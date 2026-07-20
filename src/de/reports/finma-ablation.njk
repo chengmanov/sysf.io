@@ -1,0 +1,174 @@
+---
+layout: layouts/base.njk
+title: Durchgerechnetes Beispiel — hilft das Fine-Tuning eines kleinen Modells wirklich?
+description: Eine reproduzierbare Vier-Wege-Ablation (Basis / +RAG / feinabgestimmt / beides) von Apertus-8B auf Q&A zu Schweizer FINMA-Rundschreiben, deterministisch nach Antwortgenauigkeit und exakter Rz-Fundstelle bewertet. Die Art von Evaluation, die sysf.io zu Beginn jedes Piloten durchführt.
+tags: writing
+date: 2026-07-19
+kicker: Bericht
+listTitle: Hilft das Fine-Tuning eines kleinen Modells wirklich? Eine gemessene Antwort.
+blurb: Eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Q&A zu Schweizer FINMA-Rundschreiben. Fine-Tuning plus Retrieval verdoppelt die produktive Messlatte (Antwort + exakte Fundstelle) von 22,4 % auf 45,4 % — deterministisch bewertet, auf öffentlichen Daten, mit quelloffenem Harness.
+faq:
+  - q: Läuft das auf den Daten Ihrer Kunden?
+    a: >-
+      Nein — bewusst. Es läuft vollständig auf öffentlichen FINMA-Rundschreiben, damit es jeder reproduzieren kann und wir es veröffentlichen dürfen. In einem Pilot läuft die identische Methode auf Ihren Dokumenten, in Ihrer Umgebung, und der Bericht bleibt Ihrer.
+  - q: Warum sind 45 % die Schlagzeile und nicht etwas Höheres?
+    a: >-
+      Weil es ehrlich ist. Kurzantwort plus exakte Fundstelle ist eine harte Messlatte, und der Aufbau ist bewusst bescheiden — ein 8B-Modell bei 4-Bit, ein LoRA-Lauf, schlichtes Retrieval. Der Wert des Berichts ist die Methode und die Differenzen zwischen den Armen, keine Ranglistenzahl.
+  - q: Wie wird das bewertet — gibt es einen LLM-Richter?
+    a: >-
+      Nirgends ein LLM-Richter. FINMA-Rundschreiben nummerieren jeden normativen Absatz (Randziffer, Rz), sodass eine korrekte Fundstelle exakt prüfbar ist. Die Antwortgenauigkeit ist String-/Zahlenabgleich gegen eine verifizierte Gold-Antwort; die Fundstelle ist ein exakter Rz-Abgleich. Jede Zahl wird aus eingefrorenen Laufprotokollen neu berechnet.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Durchgerechnetes Beispiel · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Hilft das Fine-Tuning eines kleinen Modells wirklich?
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Keine Meinung — eine Messung. Wir nahmen Apertus-8B und führten dieselbe Vier-Wege-Ablation durch, die wir zu Beginn jedes <a class="link-underline" href="/de/concepts/evaluation/">Piloten</a> durchführen, auf einer Aufgabe, deren Antwort sich exakt bewerten lässt: Fragen zu Schweizer FINMA-Rundschreiben beantworten <em>mit</em> einer Fundstelle auf die exakte Randziffer, auf der sie beruht. Das Ergebnis: Fine-Tuning plus Retrieval verdoppelt die produktive Messlatte — 22,4 % auf 45,4 %.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Der Aufbau", "Vier Systeme, ein offenes Modell.", "Dasselbe Apertus-8B, identisch auf 4-Bit quantisiert, identisch ausgeliefert. Die einzige Variable ist, was wir hinzugefügt haben.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Basis", d:"Das offene Modell, wie ausgeliefert."},
+      {k:"B", t:"+ Retrieval", d:"Basismodell mit BM25-Retrieval über die Rundschreiben."},
+      {k:"C", t:"Feinabgestimmt", d:"LoRA-abgestimmt auf die Aufgabe, kein Retrieval."},
+      {k:"D", t:"Feinabgestimmt + Retrieval", d:"Das vollständige System."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Zwei Dinge werden bewertet, beide deterministisch — kein LLM-Richter: Ist die Antwort korrekt, und hat sie die korrekte Rz im korrekten Rundschreiben zitiert. Die produktive Messlatte ist <strong class="text-ink-700 dark:text-ink-300">beides zugleich</strong> — eine richtige Antwort mit falscher oder fehlender Fundstelle ist ein Fehler, denn in regulierter Arbeit ist sie einer.</p>
+</section>
+
+<!-- Results table -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Das Ergebnis", "Fine-Tuning plus Retrieval verdoppelt die produktive Messlatte.", "183 menschlich verifizierte Fragen (101 Deutsch, 82 Englisch, 10 Rundschreiben). Klammern sind 95-%-Konfidenzintervalle.") }}
+
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Antwort korrekt", cls:"bg-teal-300"},
+        {name:"Antwort + Fundstelle (produktive Messlatte)", cls:"bg-teal-600"},
+        {name:"Vollständiges System (D)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Basis", bars:[{v:37.2, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"B · + Retrieval", bars:[{v:63.4, cls:"bg-teal-300"}, {v:22.4, cls:"bg-teal-600"}]},
+        {label:"C · Feinabgestimmt", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
+        {label:"D · Feinabgestimmt + Retrieval", note:"das vollständige System", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "Lesen Sie die Zeile der produktiven Messlatte von oben nach unten: Sie ist ohne Retrieval nahezu null (A, C), erreicht mit Retrieval allein 22,4 % (B), und erst Fine-Tuning <strong class='text-ink-700 dark:text-ink-300'>und</strong> Retrieval zusammen erreichen 45,4 % (D, in Rot). Vollständige Aufschlüsselung unten.") }}
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metrik</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · Basis</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · abgestimmt</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · abgestimmt+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Antwort + Fundstelle (produktive Messlatte)", a:"0.0%", b:"22.4%", c:"1.6%", d:"45.4%", hi:true},
+            {m:"Antwort korrekt", a:"37.2%", b:"63.4%", c:"44.8%", d:"80.9%"},
+            {m:"Fundstelle korrekt", a:"1.1%", b:"39.9%", c:"2.2%", d:"50.3%"},
+            {m:"Gibt das geforderte Format aus", a:"2.2%", b:"0.0%", c:"100%", d:"100%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Decomposition -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Was jede Schicht bringt", "Die Ablation hindert jeden — uns eingeschlossen — am Herumreden.", "Jede Karte unten heftet einen Mechanismus an eine Zahl in der Tabelle oben.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-3">
+    {% set parts = [
+      {t:"Retrieval ermöglicht die Fundstelle", d:"Die korrekte Fundstelle steigt von ~1 % auf ~40–50 % nur, wenn Retrieval an ist. Ein Modell kann keine Randziffer zitieren, die es nie gesehen hat — deshalb liegen beide Arme ohne Retrieval nahe null auf der produktiven Messlatte, wie gut trainiert auch immer."},
+      {t:"Fine-Tuning ermöglicht brauchbare Ausgabe", d:"Das Basismodell kennt die Antwort oft (63 % mit RAG), gibt das geforderte, maschinenlesbare Format aber nur 2 % der Zeit aus — 0 %, sobald Retrieval den Kontext füllt und es ablenkt. Das feinabgestimmte Modell trifft das Format 100 % der Zeit. Diese Lücke ist der grösste Teil von B → D."},
+      {t:"Die beiden verstärken sich", d:"Retrieval allein fügt 22,4 Punkte hinzu; Fine-Tuning allein 1,6. Zusammen fügen sie 45,4 hinzu — fast doppelt so viel wie die Summe der Teile. Diese Interaktion ist der Befund, und deshalb messen wir, bevor wir bauen."}
+    ] %}
+    {% for p in parts %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Concrete example -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("So sieht es aus", "Dieselbe Frage, derselbe abgerufene Text.", "Das Basismodell ist nicht dumm — es ist in der Form unzuverlässig. Zuverlässigkeit der Form ist, was eine Demo von einem System trennt.") }}
+    <div class="mt-10 max-w-3xl space-y-6">
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">F.</span> Ab welchem Mindesterfordernis an Eigenmitteln gelten für Banken, Wertpapierhäuser und Finanzgruppen die vollständig qualitativen und quantitativen Anforderungen? <span class="text-ink-500">(Gold: CHF 10 Milliarden, Rz 6, FINMA-RS 2010/01)</span></p>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Basis + RAG</div>
+            <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">CHF 10 Milliarden</pre>
+            <p class="mt-1 text-xs text-swiss">Richtige Antwort, keine Fundstelle → durchgefallen</p>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Feinabgestimmt + RAG</div>
+            <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: CHF 10 Milliarden
+SOURCE: FINMA-RS 2010/01 Rz 6</pre>
+            <p class="mt-1 text-xs text-swiss">Bestanden</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Honest limits -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Die ehrlichen Grenzen", "Was das nicht behauptet.", "Eine Evaluation, der Sie vertrauen können, ist eine, die benennt, wo sie schwach ist.") }}
+  <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+    <p><strong class="font-semibold text-ink-900 dark:text-white">45 % ist ein Boden, keine Decke.</strong> Ein kleines Modell, 4-Bit, ein einzelner bescheidener LoRA-Lauf auf ~500 Beispielen, bewusst schlichtes BM25-Retrieval. Jedes davon ist ein Hebel, den ein echter Pilot zieht.</p>
+    <p><strong class="font-semibold text-ink-900 dark:text-white">Strukturierte Antworten sind die Schwachstelle.</strong> Feinabgestimmt+RAG erreicht ~47–50 % bei Zahlen, Fristen und Ja/Nein, aber 27 % bei Fragen mit mehreren Listenelementen. Vollständige Mengenextraktion ist das offensichtliche nächste Ziel.</p>
+    <p><strong class="font-semibold text-ink-900 dark:text-white">Die Methode ist das Produkt, nicht die Zahl.</strong> Ihre Aufgabe, Ihre Dokumente, genau diese Ablation — durchgeführt, bevor Sie sich zur Produktion verpflichten, sodass die Go/No-Go-Entscheidung auf Messung beruht, nicht auf einem Versprechen.</p>
+  </div>
+  <div class="mt-8">
+    <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/finma" class="btn-ghost" target="_blank" rel="noopener">Auf GitHub reproduzieren →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Über diesen Bericht.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Wollen Sie das auf Ihrer Aufgabe?", "Bringen Sie einen Workflow und die Dokumente dahinter mit. Wir bauen das Evaluationsset und führen diese Ablation durch — auf Ihren Daten, in Ihrer Jurisdiktion.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

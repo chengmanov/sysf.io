@@ -1,8 +1,8 @@
 ---
 layout: layouts/base.njk
 order: 6
-title: News
-description: Reports, benchmarks and notes from sysf.io — reproducible evidence behind sovereign, task-tuned AI for regulated Swiss and EU organisations.
+title: Actualités
+description: Rapports, benchmarks et notes de sysf.io — des preuves reproductibles derrière une IA souveraine et spécialisée par tâche pour les organisations régulées suisses et européennes.
 ---
 {% from "partials/components.njk" import sectionHead, cta %}
 {% set locale = locale or "en" %}
@@ -10,12 +10,12 @@ description: Reports, benchmarks and notes from sysf.io — reproducible evidenc
 
 <section class="border-b border-ink-900/10 dark:border-white/10">
   <div class="container-x py-16 md:py-24">
-    <p class="eyebrow">News</p>
+    <p class="eyebrow">Actualités</p>
     <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Reports, benchmarks and notes.
+      Rapports, benchmarks et notes.
     </h1>
     <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      We'd rather show the work than describe it: reproducible evaluations on public data, harness open-sourced, every number checkable.
+      Nous préférons montrer le travail plutôt que le décrire : des évaluations reproductibles sur des données publiques, le harnais en open source, chaque chiffre vérifiable.
     </p>
   </div>
 </section>
@@ -35,7 +35,7 @@ description: Reports, benchmarks and notes from sysf.io — reproducible evidenc
         </h2>
         <p class="mt-3 max-w-2xl text-base prose-muted">{{ post.data.blurb or post.data.description }}</p>
         <a href="{{ post.url }}" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-swiss">
-          Read the report
+          Lire le rapport
           <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
         </a>
       </div>
@@ -43,8 +43,8 @@ description: Reports, benchmarks and notes from sysf.io — reproducible evidenc
     {% endfor %}
   </div>
   {% else %}
-  <p class="prose-muted">Nothing published yet — the first reports are on the way.</p>
+  <p class="prose-muted">Rien de publié pour l'instant — les premiers rapports arrivent.</p>
   {% endif %}
 </section>
 
-{{ cta("Want this on your task?", "The reports here run on public data. In a Pilot the same method runs on yours — on your documents, in your jurisdiction.") }}
+{{ cta("Vous voulez cela sur votre tâche ?", "Les rapports ici s'exécutent sur des données publiques. Dans un pilote, la même méthode s'exécute sur les vôtres — sur vos documents, dans votre juridiction.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

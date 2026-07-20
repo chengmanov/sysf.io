@@ -3,13 +3,19 @@ permalink: /sitemap.xml
 eleventyExcludeFromCollections: true
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
-  {%- set urls = ["/", "/platform/", "/concepts/", "/concepts/small-models/", "/concepts/quantization/", "/concepts/evaluation/", "/concepts/sovereign-architecture/", "/concepts/orchestration/", "/reports/finma-ablation/", "/reports/or-ablation/", "/news/", "/industries/", "/pricing/", "/about/", "/contact/"] %}
-  {%- for u in urls %}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {%- set paths = ["/", "/platform/", "/industries/", "/pricing/", "/configure/", "/concepts/", "/concepts/small-models/", "/concepts/quantization/", "/concepts/evaluation/", "/concepts/sovereign-architecture/", "/concepts/orchestration/", "/news/", "/about/", "/contact/", "/reports/finma-ablation/", "/reports/or-ablation/", "/reports/dsg-ablation/", "/reports/hmg-ablation/", "/reports/vvg-ablation/", "/reports/prsg-ablation/"] %}
+  {%- for base in paths %}
+  {%- for lc in locales %}
   <url>
-    <loc>{{ site.url }}{{ u }}</loc>
+    <loc>{{ site.url }}{{ base | localeUrl(lc) }}</loc>
+    {%- for alt in locales %}
+    <xhtml:link rel="alternate" hreflang="{{ i18n[alt].hreflang }}" href="{{ site.url }}{{ base | localeUrl(alt) }}" />
+    {%- endfor %}
+    <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ base }}" />
     <changefreq>monthly</changefreq>
-    <priority>{{ "1.0" if u == "/" else "0.8" }}</priority>
+    <priority>{{ "1.0" if base == "/" else "0.8" }}</priority>
   </url>
+  {%- endfor %}
   {%- endfor %}
 </urlset>

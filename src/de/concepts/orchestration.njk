@@ -1,0 +1,119 @@
+---
+layout: layouts/base.njk
+title: Orchestrierung in der Produktion — LangChain & LangGraph, gehärtet für regulierte Arbeit
+description: Wie sysf.io LangChain und LangGraph in regulierten Umgebungen in Produktion bringt — was das Framework bietet, was es bewusst nicht bietet (RBAC, Audit-Trails, PII-Disziplin, Evaluation), und die Härtung, die aus einer Agenten-Demo ein betreibbares System macht.
+faq:
+  - q: Warum LangGraph und nicht CrewAI, Microsofts Agent Framework (früher AutoGen) oder ein SDK eines Modellanbieters?
+    a: >-
+      Weil seine Primitive — explizite Graphen, Checkpointing, Human-in-the-Loop-Interrupts — am direktesten darauf abbilden, wie regulierte Workflows tatsächlich laufen, und es zu den am weitesten verbreiteten Orchestratoren in der heutigen Produktion gehört. Aber es ist ein Standard, den wir pro Engagement überprüfen, keine Doktrin — nichts an unserer Bauweise macht einen Wechsel teuer. Und während die SDKs von Modellanbietern nominell gegen jeden kompatiblen Endpunkt laufen, liegt ihr Schwerpunkt — gehostete Tools, Tracing, Evals, Roadmap — in der Cloud des Anbieters, genau die Abhängigkeit, die wir zu entfernen beauftragt sind.
+  - q: Ist LangChain tatsächlich produktionsreif?
+    a: >-
+      Das Framework schon; Produktionsreife ist eine Eigenschaft des Systems drumherum — die sechs Lücken und die Härtungspraktiken oben. Diese Schicht kommt von keinem Framework; sie wird pro System entwickelt und ist der grösste Teil der Arbeit.
+  - q: Muss unser Team LangChain lernen, um das System zu betreiben?
+    a: >-
+      Zum Betreiben — nein; Runbooks decken Deployment, Monitoring und Wiederherstellung ohne Framework-Interna ab. Zum Erweitern — etwas Vertrautheit hilft, und die Übergabe enthält eine Durchsprache des Graphen, der Tools und der Tests. Die Graphdefinitionen sind gewöhnlicher, lesbarer Code in Ihrem Repository, keine Anbieterkonfiguration — was by design auch Ihr Ausweg aus uns ist.
+  - q: Wie verbinden sich Tools mit unseren Systemen — unterstützen Sie MCP?
+    a: >-
+      Sowohl nativ als auch über das Model Context Protocol, einen offenen Standard zur Verbindung von Modellen mit Tools und Datenquellen. Wo bereits ein MCP-Server für ein System existiert, das Sie betreiben, können wir ihn hinter derselben Schema-Validierung und Least-Privilege-Disziplin nutzen wie jedes handgebaute Tool; wo keiner existiert, schreiben wir das Tool direkt. Der Standard zählt weniger als der Wrapper — jeder Tool-Aufruf wird validiert, protokolliert und berechtigungsbegrenzt, unabhängig vom Transport.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Konzepte · Orchestrierung</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Wo die Demo zum System wird.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Wir orchestrieren mit LangChain und LangGraph — und wir sagen Ihnen genau, was das bringt, was nicht, und wo das eigentliche Produktions-Engineering passiert. Das Framework ist Installation. Die Härtung ist das Produkt.
+    </p>
+  </div>
+</section>
+
+<!-- What the framework provides -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Die Installation", "Was LangGraph Ihnen tatsächlich gibt.", "Gute Primitive für zustandsbehaftete Workflows — kostenlos, weithin bekannt und stark in Produktion genutzt. Genau deshalb ist es Installation, keine Differenzierung.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <ul class="space-y-4">
+        {% set gives = [
+          {t:"Explizite Graphen, keine frei laufenden Agenten", d:"Workflows werden als Graphen definiert — Knoten, Kanten, Bedingungen — sodass die möglichen Kontrollpfade des Systems aufzählbar und prüfbar sind. Ein Auditor kann den Graphen lesen; niemand kann die Laune einer Agentenschleife lesen."},
+          {t:"State & Checkpointing", d:"Lang laufende Workflows persistieren ihren Zustand, überleben Neustarts und können mitten im Prozess fortsetzen — Grundvoraussetzung für Dokumentenpipelines, die stundenlang laufen. Token-Streaming kommt mit, sodass Nutzer die Ausgabe während der Generierung sehen."},
+          {t:"Human-in-the-Loop-Interrupts", d:"Der Graph kann an definierten Punkten pausieren und auf eine Person warten — so bleiben folgenreiche Aktionen (senden, einreichen, zahlen, ablegen) konstruktionsbedingt unter menschlicher Autorität."},
+          {t:"Tool-Aufrufe & Integrationen", d:"Eine ausgereifte Schnittstelle für Aufrufe in Ihre Systeme, mit LangChains Integrations-Ökosystem, wo es hilft, und handgebauten Tools, wo nicht."}
+        ] %}
+        {% for g in gives %}
+        <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <div>
+            <div class="font-semibold text-ink-900 dark:text-white">{{ g.t }}</div>
+            <p class="mt-1 text-sm prose-muted">{{ g.d }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- What it doesn't do -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die Lücke", "Was das Framework bewusst nicht liefert.", "Diese Liste ist der Grund, warum „wir nutzen LangChain“ Ihnen nichts darüber sagt, ob ein Anbieter KI in eine Bank bringen kann. Es ist auch der Teil, den Sie tatsächlich kaufen.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {% set gaps = [
+        {t:"Zugriffskontrolle & RBAC", d:"Wer welchen Workflow aufrufen darf, welche Tools ein Workflow berühren darf und mit wessen Berechtigungen. Die kostenpflichtige Plattformstufe schraubt einiges davon an — innerhalb der eigenen Mauern. Wir integrieren mit Ihrem Identity Provider und begrenzen jedes Tool auf Least Privilege, in Ihrer Infrastruktur."},
+        {t:"Audit-Trails", d:"Ein entscheidungstauglicher Nachweis: wer was fragte, welche Dokumente abgerufen wurden, welche Modellversion antwortete, welche Tools mit welchen Argumenten feuerten. In jedes System eingebaut, das wir ausliefern, aufbewahrt gemäss Ihrer Richtlinie."},
+        {t:"PII-Disziplin", d:"Redaktion und Minimierung an den Grenzen — inklusive Logs, Traces und gecheckpointetem Zustand: Tracing erfasst vollständige Ein- und Ausgaben, sobald aktiviert, und jeder Checkpoint persistiert den vollständigen Gesprächszustand. Inferenz-Logs sind personenbezogene Daten; wir behandeln sie so."},
+        {t:"Evaluation & Guardrails", d:"Das Framework führt jeden Graphen aus, den Sie ihm geben, gut oder schlecht. Qualitäts-Gates, adversariale Guardrail-Tests und Go/No-Go-Schwellen kommen aus unserem Evaluations-Harness, nicht vom Orchestrator."},
+        {t:"Trace- & Telemetrie-Residenz", d:"Die Standard-Observability des Ökosystems ist ein gehostetes SaaS — Traces voller Ihrer Daten, hinausgeschickt; das Selbst-Hosting ist ein Enterprise-Produkt. Wir deployen stattdessen selbst gehostetes Tracing innerhalb Ihrer Grenze — Langfuse mit ausgeschalteter eigener Nutzungstelemetrie oder ein OpenTelemetry-Backend."},
+        {t:"Versionierungsdisziplin", d:"Prompts, Graphdefinitionen, Modell-Builds und Eval-Werte zusammen versioniert, sodass jede Produktionsantwort auf die exakte Konfiguration zurückgeht, die sie erzeugte."}
+      ] %}
+      {% for g in gaps %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ g.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ g.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">Die Qualitäts-Gates kommen aus dem Evaluations-Harness, der eine eigene Seite hat: <a class="link-underline" href="/de/concepts/evaluation/">Evaluation-First-Lieferung</a>.</p>
+  </div>
+</section>
+
+<!-- Hardening practices -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Die Härtung", "Begrenzte Autonomie, validierte Grenzen.", "Der Unterschied zwischen einer Agenten-Demo und einem betreibbaren System ist eine Liste langweiliger Engineering-Entscheidungen. Das sind unsere.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Begrenzt, wo es zählt:</strong> Wir bevorzugen explizite Graphflüsse gegenüber offenen Agentenschleifen, und jede Schleife, die es gibt, hat ein hartes Iterationsbudget. Ein System, das umherwandern kann, ist ein System, das niemand zertifizieren wird.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Schemas an jeder Grenze:</strong> Modellausgaben werden gegen typisierte Schemas validiert, bevor sie ein nachgelagertes System berühren; Tool-Argumente werden vor der Ausführung validiert. Eine fehlerhafte Antwort ist ein behandelter Fehler, keine Überraschung in Ihrem Kernsystem.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Tools, die gut scheitern:</strong> Timeouts, begrenzte Retries mit Backoff, idempotente Writes und Circuit Breaker an jeder Integration — denn Ihre Kernsysteme haben Wartungsfenster, auch wenn das Modell keine hat.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Menschen auf dem folgenreichen Pfad:</strong> Aktionen mit externer Wirkung — senden, ablegen, zahlen, entscheiden — sitzen hinter Interrupt-Punkten mit benannten Freigebenden. Das Modell entwirft; ein Mensch verfügt.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Gepinnt und neu validiert:</strong> Framework-Versionen sind gepinnt, und jedes Upgrade — routinemässig oder CVE-getrieben — wird gegen Ihr Evaluationsset neu validiert, bevor es die Produktion erreicht, in derselben Change-Management-Kadenz wie ein Modell-Update.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Framework-agnostic honesty -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die Verpflichtung", "Eine Wahl, die wir neu verdienen, keine Ehe.", "Dieselbe Regel, die wir auf Modelle anwenden, gilt für Frameworks.") }}
+    <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
+      <p>LangGraph ist unser aktueller Standard: Unter den Orchestratoren, die für zustandsbehaftete, toolaufrufende Arbeit gebaut sind, hat es die meisten Produktionskilometer, und seine Primitive passen am besten zu regulierten Workflows. Das Feld bewegt sich — und wenn ein besserer Orchestrator den Platz verdient, ist der Wechsel bewusst günstig: Ihr Graphdesign, die Geschäftslogik Ihrer Tools, Ihr Evaluationsset und Ihre Guardrails sind die dauerhaften Assets, und sie portieren — nur die Framework-Bindings werden neu geschrieben — und bei der Übergabe ist der gesamte Graph schlichter Code in Ihrem Repository. Das Framework ist die eine Schicht des Stacks, die wir ohne Zeremonie tauschen würden.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zur Orchestrierung.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Zeigen Sie uns Ihre Integrationskarte.", "Kernsysteme, Identity Provider, Freigabeketten — ein Scoping-Gespräch, und Sie sehen den Graphen skizziert, mit eingezeichneten Vertrauensgrenzen.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

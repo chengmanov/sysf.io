@@ -1,0 +1,254 @@
+---
+layout: layouts/base.njk
+order: 0
+title: IA sovrana svizzera — Apertus ottimizzato, eseguito nella vostra giurisdizione
+description: sysf.io ottimizza Apertus — l'LLM aperto della Svizzera di EPFL, ETH Zurigo e CSCS — sui vostri documenti e lo esegue all'interno della vostra infrastruttura. Pesi aperti che i vostri auditor possono ispezionare, nessuna API statunitense nel circuito, e il modello è vostro.
+faq:
+  - q: Che cos'è sysf.io?
+    a: sysf.io è uno studio di ingegneria svizzero dedicato all'IA sovrana. Ottimizziamo il modello aperto svizzero Apertus sui vostri dati e lo consegniamo come sistema in produzione — retrieval, agenti e guardrail collegati ai vostri sistemi, distribuito in giurisdizione svizzera o UE, oppure completamente on-premise. I pesi e i runbook sono vostri.
+  - q: Quale modello usate — è sempre Apertus?
+    a: Apertus è la nostra base preferita — l'LLM completamente aperto e multilingue della Svizzera, di EPFL, ETH Zurigo e CSCS — con pesi e dati di addestramento che i vostri auditor possono ispezionare direttamente. Ma non siamo dogmatici — testiamo i modelli aperti rispetto a un set di valutazione costruito dai vostri documenti e distribuiamo quello che vince. Apertus, Llama o Mistral — decide la valutazione, non il logo. Tutti vengono eseguiti interamente nella vostra giurisdizione, con pesi che potete ispezionare e possedere.
+  - q: I nostri dati lasciano mai il nostro ambiente?
+    a: Per gli ingaggi Production e Air-gapped — no. Addestramento e inferenza vengono eseguiti all'interno del vostro ambiente o del vostro data center, senza API LLM di terze parti e senza fuoriuscita di dati. I pilot vengono eseguiti nel vostro ambiente o in un cloud svizzero dedicato a un singolo tenant — le opzioni di trattamento dei dati sono sulla <a class="link-underline" href="/it/pricing/">pagina dei prezzi</a>.
+  - q: In che senso è «conforme by design»?
+    a: I pesi aperti vi offrono trasparenza e verificabilità; la distribuzione nella vostra giurisdizione risponde alla Legge federale svizzera sulla protezione dei dati (LPD/nLPD) e al GDPR europeo; e una tracciabilità documentata dei dati, unita ai guardrail, sostiene i vostri obblighi ai sensi dell'AI Act europeo. Consegniamo la documentazione di conformità e di audit insieme al modello.
+  - q: Cosa significa qui «end-to-end»?
+    a: Seguiamo un caso d'uso dalla preparazione dei dati e dall'ottimizzazione fino alla valutazione, ai guardrail, al deployment, al monitoraggio e all'iterazione continua. Ottenete un sistema in produzione mantenuto, con orchestrazione di agenti, retrieval (RAG) e strumenti collegati ai vostri sistemi — più un contratto di supporto e manutenzione — non un proof-of-concept che si arena.
+  - q: Come iniziamo?
+    a: Gli ingaggi iniziano con un Pilot a perimetro fisso su un singolo caso d'uso ad alto valore — dimostrate i numeri sui vostri dati, poi decidete sulla produzione con un rapporto di valutazione in mano. Prenotate una call e ne definiremo il perimetro insieme a voi.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import statBand, hbarChart %}
+
+<!-- Hero -->
+<section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
+  <div class="circuit pointer-events-none absolute inset-0 -z-10 opacity-70 dark:opacity-20"></div>
+  <div class="container-x grid items-center gap-12 py-20 md:grid-cols-12 md:py-28">
+    <div class="md:col-span-7">
+      <p class="eyebrow">IA sovrana svizzera</p>
+      <h1 class="mt-4 text-4xl font-bold leading-[1.05] tracking-tightest text-ink-900 md:text-6xl dark:text-white">
+        L'IA per i dati<br />che non potete cedere.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg prose-muted md:text-xl">
+        Ottimizziamo <strong class="font-semibold text-ink-900 dark:text-white">Apertus</strong> — l'LLM aperto della Svizzera di EPFL, ETH Zurigo e CSCS — sui vostri documenti e lo eseguiamo all'interno della vostra infrastruttura: il vostro data center, il vostro cloud svizzero o completamente air-gapped. Pesi aperti che i vostri auditor possono ispezionare. Nessuna API statunitense nel circuito. Il modello è vostro.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/it/contact/" class="btn-primary">Prenota una call</a>
+        <a href="/it/configure/" class="btn-secondary">Configura la tua soluzione</a>
+      </div>
+      <p class="mt-6 text-sm text-ink-500">
+        Basato su <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — pesi aperti, addestrato sul supercomputer Alps a Lugano, già in produzione nel Cantone Ticino con il 94 % di accuratezza.
+      </p>
+    </div>
+    <div class="md:col-span-5">
+      {% include "partials/diagram.njk" %}
+    </div>
+  </div>
+</section>
+
+<!-- Compliance strip -->
+<section class="border-b border-ink-900/10 bg-white dark:border-white/10 dark:bg-ink-950">
+  <div class="container-x flex flex-wrap items-center gap-x-8 gap-y-3 py-6 text-sm">
+    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Conforme by design</span>
+    {% for b in ["LPD / nLPD svizzera", "GDPR europeo", "Documentazione AI Act europeo", "Giurisdizione svizzera", "Nessuna fuoriuscita di dati", "Pesi aperti"] %}
+    <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300">
+      <span class="h-1.5 w-1.5 bg-swiss"></span>{{ b }}
+    </span>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Proof stats -->
+<section class="container-x py-14 md:py-20">
+  {% set stats = [
+    {v:"94 %", label:"Accuratezza in produzione", sub:"L'Apertus-8B ottimizzato del Cantone Ticino, in servizio sull'infrastruttura cantonale"},
+    {v:"2×", label:"Fine-tuning + retrieval", sub:"Risposta corretta + citazione esatta passa dal 22,4 % al 45,4 % quando l'ottimizzazione si aggiunge al retrieval — benchmark pubblico FINMA, 183 domande verificate"},
+    {v:"100 %", label:"Conformità di formato", sub:"Da ~2 % a 100 % di output leggibile dalla macchina dopo l'ottimizzazione — misurato sullo stesso benchmark FINMA"},
+    {v:"0", label:"Byte di fuoriuscita dati", sub:"Nessuna API LLM di terze parti in addestramento o inferenza — la fuoriuscita nulla è architetturale, non contrattuale"}
+  ] %}
+  {{ statBand(stats) }}
+</section>
+
+<!-- Problem / positioning -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Il problema", "Le API di frontiera non sono state costruite per i team regolamentati.", "Per banche, ospedali, assicuratori ed enti pubblici, l'IA esterna non è vietata — è lenta e carica di rischio residuo: mesi di revisione legale, accordi sul trattamento dei dati, catene di subfornitori e, alla fine, un modello che ancora non controllate.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="grid gap-5 sm:grid-cols-2">
+        {% set problems = [
+          {t:"I dati sfuggono al vostro controllo", d:"Prompt e documenti vengono inviati a server di terze parti in un'altra giurisdizione."},
+          {t:"Nessuna trasparenza", d:"Pesi chiusi significano nessuna verificabilità — inaccettabile per i regolatori."},
+          {t:"Dipendenza dal fornitore", d:"Prezzi, disponibilità e comportamento del modello possono cambiare senza preavviso."},
+          {t:"Bloccati al PoC", d:"Le demo non superano una revisione di protezione dei dati o di sicurezza."}
+        ] %}
+        {% for p in problems %}
+        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+          <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="mt-6 text-base prose-muted">sysf.io rimuove l'ostacolo: un modello che vi <strong class="font-semibold text-ink-900 dark:text-white">appartiene</strong>, eseguito dove i vostri dati già risiedono.</p>
+      <p class="mt-4 text-base prose-muted">Il <strong class="font-semibold text-ink-900 dark:text-white">94 % qui sopra</strong> è il <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">servizio di traduzione Apertus-8B ottimizzato del Cantone Ticino</a>, in produzione sull'infrastruttura cantonale — <a class="link-underline" href="/it/concepts/small-models/">leggete il caso di studio completo</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Proof / measured results -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12 md:items-center">
+    <div class="md:col-span-5">
+      {{ sectionHead("Misurato, non promesso", "Dimostriamo i numeri prima che vi impegniate.", "Un'ablazione riproducibile a quattro vie di Apertus-8B su Q&amp;A relative alle circolari FINMA svizzere, valutata in modo deterministico — nessun giudice LLM. Il modello di base conosce spesso la risposta, ma solo l'ottimizzazione <em>e</em> il retrieval insieme superano l'asticella di produzione: una risposta corretta <strong class='font-semibold text-ink-900 dark:text-white'>con</strong> la citazione giuridica esatta.") }}
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/it/reports/finma-ablation/" class="btn-ghost">Leggi il rapporto completo</a>
+        <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/finma" class="btn-ghost" target="_blank" rel="noopener">Riproduci su GitHub →</a>
+      </div>
+    </div>
+    <div class="md:col-span-7">
+      {% set legend = [
+        {name:"Risposta corretta", cls:"bg-teal-300"},
+        {name:"Risposta + citazione (asticella di produzione)", cls:"bg-teal-600"},
+        {name:"Supera l'asticella", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Modello di base", bars:[{v:37.2, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"B · + Retrieval", bars:[{v:63.4, cls:"bg-teal-300"}, {v:22.4, cls:"bg-teal-600"}]},
+        {label:"C · Ottimizzato", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
+        {label:"D · Ottimizzato + retrieval", note:"il sistema completo", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "183 domande verificate da esseri umani su 10 circolari FINMA (DE + EN). L'asticella di produzione — risposta <strong class='text-ink-700 dark:text-ink-300'>e</strong> citazione esatta — passa dal 22,4 % al 45,4 % solo quando ottimizzazione e retrieval sono combinati (D).") }}
+    </div>
+  </div>
+</section>
+
+<!-- Six pillars -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Perché sysf.io", "Sei ragioni per cui questa architettura supera la revisione di conformità.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {% set pillars = [
+        {n:"01", t:"Svizzera per fondamento", d:"Basato su Apertus, l'LLM aperto e sovrano della Svizzera — pesi aperti e dati di addestramento documentati, non una scatola nera."},
+        {n:"02", t:"Conforme by design", d:"Costruito per la LPD/nLPD svizzera e il GDPR europeo, con la documentazione richiesta dai vostri obblighi ai sensi dell'AI Act. Il fascicolo di audit — tracciabilità dei dati, rapporto di valutazione, risultati dei test dei guardrail — viene consegnato con il modello."},
+        {n:"03", t:"Sovrano & privato", d:"Viene eseguito dove risiedono i vostri dati — il vostro data center, il vostro cloud svizzero o una singola GPU di classe workstation (un 8B ottimizzato richiede ~4,5 GB a 4 bit). Nessuna API statunitense da nessuna parte."},
+        {n:"04", t:"Personalizzato sui vostri dati", d:"Ottimizzazione di dominio, più RAG e strumenti agentici sul vostro corpus, i vostri sistemi e la vostra terminologia."},
+        {n:"05", t:"Consegna end-to-end", d:"Dati → ottimizzazione → valutazione → deployment → monitoraggio → manutenzione. Consegnato sotto un contratto di supporto e manutenzione."},
+        {n:"06", t:"Multilingue, incl. svizzero", d:"Tedesco, francese, italiano e romancio nativi — incluso lo svizzero tedesco — da un modello costruito per la Svizzera, non tradotto verso di essa."}
+      ] %}
+      {% for p in pillars %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="font-mono text-sm text-swiss">{{ p.n }}</div>
+        <h3 class="mt-4 text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Ownership / exit -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Proprietà", "Costruito per essere licenziati.", "Tutto ciò che costruiamo è vostro. È questo il senso dei pesi aperti: nessun modello in affitto, nessun lock-in, nessuna trattativa sotto ricatto al momento del rinnovo.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="grid gap-5 sm:grid-cols-3">
+        {% set owns = [
+          {t:"I pesi sono vostri", d:"Il modello ottimizzato è vostro — eseguitelo con noi, senza di noi o con qualsiasi team scegliate."},
+          {t:"Detenete i runbook", d:"Pipeline di dati, harness di valutazione e runbook operativi sono deliverable, non segreti."},
+          {t:"Il passaggio di consegne è un deliverable", d:"Ogni ingaggio include un passaggio di consegne documentato. La vostra strategia di uscita fa parte del perimetro, non di una trattativa."}
+        ] %}
+        {% for o in owns %}
+        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+          <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ o.t }}</h3>
+          <p class="mt-2 text-sm prose-muted">{{ o.d }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works teaser -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x">
+  {{ sectionHead("La piattaforma", "Dai vostri dati a un prodotto in produzione.") }}
+  <ol class="mt-12 grid gap-6 md:grid-cols-4">
+    {% set steps = [
+      {n:"1", t:"Definire & conformare", d:"Scoperta del caso d'uso e definizione della conformità (LPD, GDPR, AI Act)."},
+      {n:"2", t:"Ottimizzare su Apertus", d:"Preparazione dei dati e ottimizzazione di dominio, private e in giurisdizione."},
+      {n:"3", t:"Orchestrare", d:"Agenti, RAG e strumenti collegati ai vostri sistemi, con guardrail."},
+      {n:"4", t:"Distribuire & gestire", d:"Deployment nel vostro cloud o data center, monitoraggio, valutazione e iterazione sotto contratto di supporto."}
+    ] %}
+    {% for s in steps %}
+    <li class="relative border-t-2 border-swiss pt-5">
+      <div class="font-mono text-sm text-ink-500">Passo {{ s.n }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <div class="mt-10 flex flex-wrap gap-3"><a href="/it/platform/" class="btn-ghost">Esplora la piattaforma</a><a href="/it/concepts/" class="btn-ghost">Leggi i concetti alla base</a></div>
+  </div>
+</section>
+
+<!-- Industries teaser -->
+<section class="border-t border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Settori", "Costruito per i settori regolamentati della Svizzera.") }}
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {# Icons are Lucide (landmark, heart-pulse, scale, building-2, shield-check, factory) — inlined, no CDN. #}
+      {% set inds = [
+        {t:"Banche & Finanza", d:"Copiloti di consulenza, elaborazione documentale KYC/AML, Q&A normativo — on-prem, nessuna fuoriuscita di dati.", ic:'<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'},
+        {t:"Sanità & Farma", d:"Documentazione clinica e assistenti alla ricerca — i dati dei pazienti restano in Svizzera.", ic:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>'},
+        {t:"Legale & Conformità", d:"Analisi contrattuale multilingue e ricerca giuridica (DE/FR/IT), rispettosa del segreto professionale.", ic:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'},
+        {t:"Stato & Settore pubblico", d:"Servizi ai cittadini e traduzione di documenti in DE/FR/IT sull'infrastruttura propria dell'amministrazione.", ic:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'},
+        {t:"Assicurazione", d:"Automazione dei sinistri e copiloti di Q&A sulle polizze, ancorati ai vostri documenti.", ic:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/>'},
+        {t:"Manifattura", d:"Assistenti di conoscenza e manutenzione on-premise per il reparto produttivo.", ic:'<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>'}
+      ] %}
+      {% for i in inds %}
+      <a href="/it/industries/" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md dark:border-white/10 dark:bg-ink-950">
+        <span class="mb-5 inline-grid h-11 w-11 place-items-center rounded-lg bg-teal-50 text-swiss transition-colors group-hover:bg-teal-100 dark:bg-white/5 dark:text-teal-300">
+          <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{{ i.ic | safe }}</svg>
+        </span>
+        <h3 class="flex items-center justify-between text-lg font-semibold text-ink-900 dark:text-white">
+          {{ i.t }}
+          <span class="text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
+        </h3>
+        <p class="mt-2 text-sm prose-muted">{{ i.d }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Engagement teaser -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Ingaggio", "Iniziare in piccolo. Dimostrare i numeri. Scalare fino all'air-gapped.", "Ogni livello è sovrano — i vostri dati restano nella vostra giurisdizione; i livelli differiscono per profondità di deployment. Il prezzo è definito per ingaggio — <a class='link-underline' href='/it/pricing/'>vedete il modello</a>.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {% set tiers = [
+      {t:"Pilot", for:"Dimostrare i numeri su un caso d'uso"},
+      {t:"Production", for:"Il pilot, irrobustito per l'uso quotidiano"},
+      {t:"Air-gapped", for:"Regolamentato / massima sensibilità"}
+    ] %}
+    {% for t in tiers %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="mt-10"><a href="/it/pricing/" class="btn-ghost">Vedi il modello di ingaggio</a></div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Risposte per chi valuta.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Pronti a possedere la vostra IA?", "Prenotate una call di definizione del perimetro. Sceglieremo un caso d'uso, concorderemo le metriche di valutazione e definiremo un Pilot a perimetro fisso che dimostra i numeri sui vostri documenti.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

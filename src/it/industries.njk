@@ -1,0 +1,123 @@
+---
+layout: layouts/base.njk
+order: 2
+title: Settori
+description: Casi d'uso di IA sovrana per i settori regolamentati della Svizzera — banche & finanza, sanità & farma, legale, settore pubblico, assicurazioni e manifattura. Modelli su misura ottimizzati su Apertus, distribuiti on-prem con zero fuoriuscita di dati.
+faq:
+  - q: Quali settori servite?
+    a: >-
+      Ci concentriamo sui settori regolamentati e sensibili ai dati in Svizzera e nell'UE — banche e finanza, sanità e farma, legale e servizi professionali, Stato e settore pubblico, assicurazioni e manifattura.
+  - q: Potete lavorare con i nostri sistemi esistenti?
+    a: >-
+      Sì. Gli agenti si connettono ai vostri sistemi e alle vostre fonti di dati esistenti tramite strumenti e retrieval, così l'IA lavora con il vostro core banking, SIO/CCE, DMS, ERP, sistemi di gestione sinistri o pratiche anziché sostituirli.
+  - q: Operiamo in più lingue — è supportato?
+    a: >-
+      Apertus è multilingue per costruzione — tedesco, francese, italiano e romancio nativi, incluso lo svizzero tedesco, più oltre 1'000 altre lingue.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Settori</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Costruito per i settori che non possono cedere i dati.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Segreto bancario (art. 47), dati dei pazienti ai sensi dell'art. 9 GDPR, segreto professionale, diritto cantonale sulla protezione dei dati — l'ostacolo cambia da settore a settore; la risposta è la stessa: un modello ottimizzato sui vostri documenti, eseguito entro le vostre mura.
+    </p>
+  </div>
+</section>
+
+<div class="container-x divide-y divide-ink-900/10 dark:divide-white/10">
+  {% set industries = [
+    {
+      k:"Banche & Finanza",
+      p:"I dati identificativi del cliente (CID) e il segreto bancario (art. 47) non vietano l'IA esterna — ne fanno un progetto legale lungo mesi. Distribuiamo invece modelli ottimizzati nel vostro ambiente, con la residenza dei dati, la pista di audit e il piano di uscita documentato che la vostra seconda linea di difesa e la due diligence sull'esternalizzazione FINMA metteranno davvero alla prova.",
+      cases:[
+        "Copiloti di consulenza clienti ancorati ai vostri documenti di prodotto e di policy",
+        "Elaborazione documentale KYC / AML e supporto allo screening",
+        "Q&A normativo e di policy interna in DE/FR/IT/EN",
+        "Assistenti di ricerca e reporting sui vostri dati di mercato"
+      ],
+      note:"On-prem o confidential computing · zero fuoriuscita di dati · diritti di audit & piano di uscita documentati"
+    },
+    {
+      k:"Sanità & Farma",
+      p:"L'IA ospedaliera fallisce nella revisione, non nella demo. I dati degni di particolare protezione ai sensi dell'art. 5 nLPD e dell'art. 9 GDPR restano nella vostra rete clinica — integrati con il vostro SIO tramite HL7/FHIR e progettati secondo il vostro diritto cantonale sulla protezione dei dati, non solo la LPD federale. Restiamo deliberatamente fuori dal campo di applicazione di MDR/ODmed: nessuna funzionalità diagnostica o di triage.",
+      cases:[
+        "Lettere di dimissione e referti clinici redatti da note strutturate (DE/FR/IT)",
+        "Supporto alla codifica clinica (CHOP / ICD-10)",
+        "Assistenti di ricerca e letteratura sulle conoscenze interne",
+        "Automazione dei workflow amministrativi e della corrispondenza"
+      ],
+      note:"I dati dei pazienti restano in Svizzera · fuori dal campo MDR/ODmed by design"
+    },
+    {
+      k:"Legale & Servizi professionali",
+      p:"I vostri collaboratori perdono ore in prime bozze, ricerca di clausole e memo di ricerca multilingue — installiamo assistenti addestrati sui vostri modelli e sui vostri precedenti, eseguiti all'interno dello studio.",
+      cases:[
+        "Analisi, revisione dei contratti ed estrazione di clausole",
+        "Ricerca giuridica multilingue (DE / FR / IT / EN)",
+        "Assistenti di redazione ancorati ai vostri modelli e precedenti",
+        "Sintesi di due diligence e data room"
+      ],
+      note:"Rispettoso del segreto professionale · in giurisdizione · i vostri modelli e precedenti"
+    },
+    {
+      k:"Stato & Settore pubblico",
+      p:"Funziona già: il Cantone Ticino gestisce un sistema di traduzione Apertus-8B ottimizzato sulla propria infrastruttura — 94 % di accuratezza dopo l'ottimizzazione su dati cantonali. Lo stesso approccio — ottimizzare sul vostro corpus, misurare prima del go-live, distribuire su infrastruttura che controllate — vale per il vostro cantone o comune.",
+      cases:[
+        "Assistenti multilingue per i servizi ai cittadini (DE / FR / IT / RM)",
+        "Assistenti interni di conoscenza e procedure per il personale",
+        "Supporto all'elaborazione di documenti e domande",
+        "Redazione di comunicazioni accessibili in linguaggio semplice"
+      ],
+      note:"Eseguito su infrastruttura nazionale · i dati non lasciano mai il Paese"
+    },
+    {
+      k:"Assicurazioni",
+      p:"I vostri team sinistri reinseriscono tutto il giorno dati da moduli scansionati, referti medici e posta dei broker — documenti troppo sensibili per un'API statunitense. Distribuiamo modelli ancorati nel vostro ambiente che classificano, estraggono e redigono a fronte dei vostri sistemi core (Guidewire, Syrius, SAP FS-CM), strutturati fin dal primo giorno come un'esternalizzazione conforme alla FINMA.",
+      cases:[
+        "Ricezione, triage dei sinistri e automazione documentale",
+        "Copiloti di Q&A su polizze e coperture per agenti e clienti",
+        "Supporto alla ricerca e alla sintesi in sottoscrizione",
+        "Redazione di corrispondenza ancorata alle vostre polizze"
+      ],
+      note:"Output tracciabili · pronto per l'esternalizzazione FINMA · opzione on-prem"
+    },
+    {
+      k:"Manifattura & Industria",
+      p:"Parametri di processo, storici dei guasti e specifiche dei fornitori sono IP competitivo — e la maggior parte giace in condivisioni di file e raccoglitori che nessuno consulta. Distribuiamo assistenti sui vostri manuali, SOP, registri di manutenzione e documentazione delle macchine, su hardware nella rete dello stabilimento — una macchina di classe workstation (24–48 GB VRAM) basta all'edge — così nulla oltrepassa il confine del sito né raggiunge un'API cloud.",
+      cases:[
+        "Copiloti di manutenzione e risoluzione guasti nel reparto produttivo",
+        "Assistenti di conoscenza su manuali, SOP e specifiche",
+        "Supporto alla documentazione di qualità e conformità",
+        "Elaborazione dei documenti di fornitori e approvvigionamento"
+      ],
+      note:"On-prem / adatto all'edge · protegge l'IP operativo"
+    }
+  ] %}
+  {% for ind in industries %}
+  <section class="grid gap-8 py-14 md:grid-cols-12 md:py-16">
+    <div class="md:col-span-4">
+      <h2 class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ ind.k }}</h2>
+      <p class="mt-4 text-sm prose-muted">{{ ind.p }}</p>
+      <p class="mt-5 inline-flex items-center gap-2 text-xs font-medium text-swiss">
+        <span class="h-1.5 w-1.5 bg-swiss"></span>{{ ind.note }}
+      </p>
+    </div>
+    <div class="md:col-span-7 md:col-start-6">
+      <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Esempi di casi d'uso</div>
+      <ul class="mt-4 grid gap-5 sm:grid-cols-2">
+        {% for c in ind.cases %}
+        <li class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white p-5 text-sm text-ink-700 shadow-sm dark:border-white/10 dark:bg-ink-950 dark:text-ink-300">
+          <span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{{ cta("Non vedete il vostro settore?", "Se trattate dati riservati sotto regolamentazione svizzera o UE, l'IA sovrana si applica. Raccontateci il vostro caso d'uso.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

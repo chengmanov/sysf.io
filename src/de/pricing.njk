@@ -1,0 +1,155 @@
+---
+layout: layouts/base.njk
+order: 3
+title: Preise & Engagement
+description: Wie sysf.io-Engagements funktionieren — von einem Pilot mit festem Umfang über Production bis zu einem vollständig air-gapped On-Premise-Rollout. Jede Stufe ist souverän; der Preis wird pro Engagement umrissen. Buchen Sie einen Termin für einen Vorschlag.
+extraSchema:
+  "@context": "https://schema.org"
+  "@type": "Service"
+  serviceType: "Entwicklung und Produktivierung massgeschneiderter souveräner KI-Modelle"
+  provider:
+    "@type": "Organization"
+    name: "sysf.io"
+    url: "https://sysf.io"
+  areaServed: ["CH", "EU"]
+  description: "Massgeschneiderte, auf Apertus feinabgestimmte KI-Modelle mit Retrieval, Agenten und Guardrails, betrieben in Schweizer/EU-Jurisdiktion oder on-premise. Engagements reichen von einem Pilot mit festem Umfang über Production bis zu einem vollständig air-gapped On-Premise-Rollout."
+  offers:
+    "@type": "Offer"
+    priceSpecification:
+      "@type": "PriceSpecification"
+      priceCurrency: "CHF"
+    availability: "https://schema.org/InStock"
+    description: "Der Preis wird pro Engagement umrissen. Kontaktieren Sie sysf.io für einen Vorschlag."
+faq:
+  - q: Warum listen Sie keine Fixpreise?
+    a: >-
+      Jedes Engagement unterscheidet sich in Daten, Deployment-Ziel und Compliance-Umfang, daher legen wir den Preis nach einem 30-minütigen Scoping-Gespräch fest — der Vorschlag ist umfangs- und preisfest. Eine Zahl können wir vorab nennen: die Hardware. Ein On-Premise-Deployment der 8B-Klasse läuft auf einem GPU-Server der Workstation-Klasse (24–48 GB VRAM), typischerweise CHF 5'000–15'000, einmalig.
+  - q: Was umfasst ein Pilot typischerweise?
+    a: >-
+      Die Lieferergebnisse stehen oben auf der Pilot-Karte, und der Evaluationsbericht enthält eine Ablation Fine-Tuning vs. Retrieval. Von Ihrer Seite braucht ein Pilot drei Dinge: den Dokumentenkorpus für den Use Case, eine Fachexpertin oder einen Fachexperten, um das Evaluationsset mit uns zu verifizieren, und eine Entscheidung darüber, wo er läuft — in Ihrer Umgebung oder in unserer Single-Tenant-Swiss-Cloud.
+  - q: Was geschieht in einem Pilot mit unseren Daten?
+    a: >-
+      Läuft der Pilot in Ihrer Umgebung, verlässt sie nichts. Entscheiden Sie sich für unsere dedizierte Single-Tenant-Swiss-Cloud, werden Ihre Daten unter einem Auftragsverarbeitungsvertrag verarbeitet und bei Projektende werden alle Daten und abgeleiteten Gewichte gelöscht oder an Sie übergeben — Ihre Wahl beim Scoping. Production- und Air-gapped-Systeme laufen stets in Ihrer eigenen Umgebung.
+  - q: Fallen nach dem Deployment laufende Kosten an?
+    a: >-
+      Production-Systeme enthalten eine laufende Plattform- und Support-Komponente — Hosting oder On-Premise-Support, Monitoring, Evaluation und eine Wartungskadenz unter einem Supportvertrag. Die Support-Komponente ist eine eigene Position im Production- oder Air-gapped-Vorschlag — Baukosten und Betriebskosten nebeneinander.
+  - q: Gehört uns das Modell?
+    a: >-
+      Ja. Weil wir auf dem offenen Apertus-Modell aufbauen und in Ihrer Umgebung auf Ihren Daten feinabstimmen, behalten Sie Eigentum und Kontrolle über das resultierende Modell und können es unabhängig betreiben. Eine dokumentierte Übergabe ist in jedem Engagement ein Lieferergebnis — Ihre Exit-Strategie ist Teil des Umfangs.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Preise &amp; Engagement</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Klein starten. Wert beweisen. Bis air-gapped skalieren.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Ein Pilot beweist die Zahlen auf einem Use Case. Production härtet ihn für den täglichen Einsatz. Air-gapped entfernt das Netzwerk. Die Stufen unterscheiden sich in der Deployment-Tiefe, nicht im Prinzip — ein 30-minütiges Scoping-Gespräch bringt Ihnen einen Vorschlag mit festem Umfang vor jeder Verpflichtung, und das zentrale Lieferergebnis des Piloten ist ein Evaluationsbericht, an dem Sie uns messen können.
+    </p>
+  </div>
+</section>
+
+<!-- Stages -->
+<section class="container-x py-20 md:py-24">
+  <div class="grid gap-5 md:grid-cols-3">
+    {% set stages = [
+      {
+        t:"Pilot",
+        for:"Wert auf einem Use Case beweisen",
+        d:"Ein Engagement mit festem Umfang, um souveräne KI auf Ihren eigenen Daten zu validieren.",
+        price:"Fester Umfang",
+        pnote:"Preis nach einem 30-minütigen Scoping-Gespräch — kein offenes Time-and-Materials.",
+        inc:[
+          "Ein wertvoller Use Case",
+          "Private, in-jurisdiktionale Datenaufbereitung",
+          "Fine-Tuning & Retrieval auf Apertus",
+          "Evaluationsbericht gegen vereinbarte Metriken",
+          "Produktions-Roadmap",
+          "Ihre Umgebung oder dedizierte Swiss Cloud"
+        ]
+      },
+      {
+        t:"Production",
+        for:"Der Pilot, gehärtet für den täglichen Einsatz",
+        featured:true,
+        d:"Bringen Sie den bewiesenen Use Case zu einem gewarteten Produktivsystem.",
+        price:"Fester Build + Support",
+        pnote:"Build nach Umfang bepreist; Support & Wartung als transparente laufende Komponente.",
+        inc:[
+          "Alles aus Pilot",
+          "Agenten, RAG & Tools an Ihre Systeme angebunden",
+          "Sicherheits- & PII-Guardrails",
+          "Swiss-Cloud- oder On-Premise-Deployment",
+          "Monitoring & Evaluation",
+          "Support- & Wartungsvertrag"
+        ]
+      },
+      {
+        t:"Air-gapped",
+        for:"Regulierte / höchst sensible Umgebungen",
+        d:"Ein vollständig isolierter Rollout für Umgebungen, in denen nichts die Leitung überquert.",
+        price:"Individuell umrissen",
+        pnote:"Umrissen mit Ihren Infrastruktur- und Compliance-Teams.",
+        inc:[
+          "Alles aus Production",
+          "Vollständig on-prem / Confidential Computing",
+          "Operative Runbooks & dokumentierte Übergabe für Ihr Team",
+          "Compliance- & Audit-Dokumentation"
+        ]
+      }
+    ] %}
+    {% for s in stages %}
+    <div class="relative rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset shadow-md' if s.featured }}">
+      {% if s.featured %}<div class="absolute right-6 top-6 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">Am häufigsten</div>{% endif %}
+      <h2 class="text-xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ s.t }}</h2>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.for }}</p>
+      <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
+      <div class="mt-6 border-t border-ink-900/10 pt-6 dark:border-white/10">
+        <div class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ s.price }}</div>
+        <p class="mt-1 text-xs text-ink-500">{{ s.pnote }}</p>
+      </div>
+      <ul class="mt-6 space-y-2.5">
+        {% for i in s.inc %}
+        <li class="flex items-start gap-2.5 text-sm text-ink-700 dark:text-ink-300">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-swiss" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 10.7a1 1 0 1 1 1.4-1.4l3.1 3.1 6.8-6.8a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          {{ i }}
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="/de/contact/" class="mt-8 w-full {{ 'btn-primary' if s.featured else 'btn-ghost' }}">Termin buchen</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p class="mt-6 text-sm prose-muted">Das zentrale Lieferergebnis des Piloten ist der Evaluationsbericht. <a class="link-underline" href="/de/reports/finma-ablation/">Sehen Sie ein Beispiel</a> — eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Q&amp;A zu Schweizer FINMA-Rundschreiben.</p>
+
+  <div class="mt-8 flex flex-col gap-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 sm:flex-row sm:items-center sm:justify-between md:p-8">
+    <div>
+      <h2 class="text-lg font-bold tracking-tightest text-ink-900 dark:text-white">Unsicher, welche Stufe passt?</h2>
+      <p class="mt-1 text-sm prose-muted">Verbringen Sie zwei Minuten im Build-Konfigurator — wählen Sie Modell, Datenverarbeitung und Deployment, und er schlägt eine Stufe vor und gibt Ihnen eine einseitige Spezifikation zum Senden an uns.</p>
+    </div>
+    <a href="/de/configure/" class="btn-primary shrink-0">Ihre Lösung konfigurieren →</a>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="mt-10 border border-ink-900/10 p-6 dark:border-white/10">
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Add-ons</span>
+      {% for a in ["Compliance- & Audit-Paket", "Zusätzliche Sprachen", "Zusätzliche Use Cases", "Managed Hosting"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 bg-swiss"></span>{{ a }}</span>
+      {% endfor %}
+    </div>
+    <p class="mt-4 text-xs text-ink-500">Das Compliance- &amp; Audit-Paket umfasst: Model Card, Herkunftsnachweis der Trainingsdaten, Vorlage für den Auftragsverarbeitungsvertrag, technische &amp; organisatorische Massnahmen (TOM), Arbeitsblatt zur EU-AI-Act-Risikoklassifizierung und den Evaluationsbericht.</p>
+  </div>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zum Preis.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Umreissen wir Ihr Engagement.", "Ein kurzes Gespräch genügt, um einen Vorschlag mit festem Umfang für Ihren ersten Use Case zu formen.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

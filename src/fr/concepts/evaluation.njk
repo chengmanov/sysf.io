@@ -1,0 +1,112 @@
+---
+layout: layouts/base.njk
+title: Livraison guidée par l'évaluation — si nous ne pouvons pas le mesurer, nous ne le livrons pas
+description: Comment sysf.io construit des jeux d'évaluation à partir de vos propres documents, exécute l'ablation base vs. RAG vs. affinage, conditionne la mise en service à des métriques convenues, et surveille la dérive en production.
+faq:
+  - q: Quelle taille doit avoir un jeu d'évaluation ?
+    a: >-
+      Plus petit que vous ne le craignez, plus grand qu'une démo. Cinquante tâches soigneusement choisies avec des réponses de référence séparent déjà « ça marche » de « ça impressionne » ; 150–300 permettent des ventilations par catégorie — types de documents, langues, cas limites — assez grandes pour agir. Nous rapportons des intervalles de confiance à côté des scores — sur des échantillons de cette taille, un écart de deux points est du bruit, et nous préférons vous le dire que vous le vendre. Vos experts métier y passent des heures, pas des semaines, et le jeu devient un actif durable qui survit à tout modèle particulier.
+  - q: Qui définit ce que signifie « correct » ?
+    a: >-
+      Vos experts, par écrit, avant que quoi que ce soit ne soit construit — des critères par type de tâche, validés (les types de métriques à l'étape trois). Nous refusons les critères de succès vagues parce que c'est ainsi que les pilotes finissent « réussis » et inutilisés.
+  - q: Que se passe-t-il si le système n'atteint pas la barre ?
+    a: >-
+      Le rapport le dit, avec les catégories d'échec détaillées — et la feuille de route de production explique ce qui comblerait l'écart et ce que cela coûterait, ou recommande d'arrêter. Un pilote à périmètre fixe qui peut se terminer par un « non » documenté est précisément ce qui donne de la valeur à son « oui ».
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts · Évaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Si nous ne pouvons pas le mesurer, nous ne le livrons pas.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Chaque fournisseur d'IA promet de la qualité. Nous la définissons avec vous comme un nombre, sur vos documents, avant de construire — et y conditionnons la mise en service. Cette page explique la mécanique derrière cette promesse.
+    </p>
+    <p class="mt-6">
+      <a href="/fr/reports/finma-ablation/" class="btn-ghost">Voir un exemple concret →</a>
+    </p>
+    <p class="mt-3 max-w-2xl text-sm text-ink-500">Une ablation reproductible en quatre volets d'Apertus-8B sur des Q&amp;R relatives aux circulaires FINMA suisses — exactement l'évaluation décrite ci-dessous, exécutée sur des données publiques.</p>
+  </div>
+</section>
+
+<!-- Building the eval set -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Étape un", "Le jeu d'évaluation précède le modèle.", "Construit à partir de vos documents, avec vos experts, dans vos langues — c'est le contrat face auquel le système est construit.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Nous nous asseyons avec vos experts métier et extrayons à quoi ressemble « fait correctement » : de vrais intrants de votre workflow — contrats, sinistres, notes, courriers — associés à des réponses de référence et évalués selon des critères que vous validez. Typiquement 50–300 tâches couvrant vos types de documents, vos langues (DE/FR/IT selon les besoins) et vos cas limites connus, y compris les plus ingrats : fax scannés, fichiers multilingues, les exceptions que votre équipe traite en pilote automatique.</p>
+      <p>Ce jeu est délibérément construit <em>avant</em> le début de la modélisation, afin qu'il ne puisse pas être discrètement ajusté vers ce que le modèle fait bien par hasard. Il reste le vôtre — versionné, documenté et réutilisable face à tout modèle ou fournisseur futur, y compris celui qui nous remplacera.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The ablation -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Étape deux", "L'ablation en quatre volets.", "Un tableau qui tue le battage dans les deux sens — le nôtre inclus.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set arms = [
+        {n:"A", t:"Modèle de base", d:"Le modèle ouvert, non modifié. Le plancher honnête — et parfois une surprise : s'il franchit déjà la barre, vous ne devriez pas payer pour l'affinage."},
+        {n:"B", t:"+ Recherche", d:"Modèle de base ancré dans votre corpus. Montre ce qu'apporte un meilleur accès à vos documents — généralement le plus grand saut à lui seul."},
+        {n:"C", t:"+ Affinage", d:"Modèle entraîné sur votre tâche sans recherche. Montre ce qu'apporte le comportement appris : format, terminologie, ton, discipline de refus."},
+        {n:"D", t:"Les deux", d:"Le candidat de production. Si D n'est pas nettement meilleur que B et C, le rapport le dit et vous achetez le système le moins cher."}
+      ] %}
+      {% for a in arms %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="font-mono text-sm text-swiss">{{ a.n }}</div>
+        <h3 class="mt-3 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-3xl text-base prose-muted">Sur l'exemple concret FINMA, ce tableau se lit 0 → 22,4 → 1,6 → 45,4 % sur la barre de production de A à D : la recherche seule fait un cinquième du chemin, l'affinage seul presque nulle part, et seule la combinaison double la recherche. La même ablation couvre le choix du modèle — Apertus vs. Llama vs. Mistral sur votre jeu, et versions en pleine précision vs. <a class="link-underline" href="/fr/concepts/quantization/">quantifiées</a> — de sorte que chaque décision architecturale de votre système remonte à un écart mesuré, pas à une préférence. (Pourquoi nous sommes stricts sur ce que l'affinage peut et ne peut pas faire : <a class="link-underline" href="/fr/concepts/small-models/">petits modèles, mesurés</a>.)</p>
+  </div>
+</section>
+
+<!-- Metrics & guardrails -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Étape trois", "Des métriques qui mordent, des garde-fous avec des tests.", "« Ça semble bien » n'est pas une métrique. Un score de benchmark issu de la tâche d'un autre non plus.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Les métriques de tâche</strong> collent au travail : précision par correspondance exacte pour les champs extraits, scores par grille pour la rédaction, précision de la réponse <em>plus fidélité de la citation</em> pour les Q&R — une réponse correcte avec une source fabriquée compte comme un échec, parce que dans le travail régulé c'en est un.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Les garde-fous sont testés comme des fonctionnalités :</strong> traitement des PII, refus hors périmètre, résistance à l'injection de prompt et contraintes de sortie obtiennent chacun des cas de test adverses dans le jeu d'évaluation. Un garde-fou non testé est un vœu.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Le point de décision :</strong> la barre est convenue dans la proposition. Au-dessus, mise en service. En dessous, une analyse d'écart documentée et une décision — le combler, ou arrêter. Dans les deux cas, vous le savez avant de dépenser l'argent de la production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Production -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("En production", "L'évaluation ne s'arrête pas à la mise en service.", "Les modèles dérivent, les documents changent, les utilisateurs trouvent les failles. Le jeu d'évaluation continue de veiller.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set prod = [
+        {t:"Notation continue", d:"Des échantillons de production sont notés face aux mêmes métriques à une cadence fixe, de sorte que les régressions de qualité apparaissent comme des nombres sur un tableau de bord — pas comme des plaintes trois mois plus tard."},
+        {t:"Dérive & changement de données", d:"Nouveaux types de documents, nouvelle formulation de politique, nouveaux cas limites sont ajoutés au jeu d'évaluation dès leur apparition. Le jeu grandit avec votre réalité ; le système est revalidé face à lui."},
+        {t:"Tout versionné", d:"Jeux d'évaluation, versions de modèle et leurs scores sont versionnés ensemble. Chaque réponse journalisée remonte à la version du modèle et à la version d'évaluation qui l'ont produite — aussi longtemps que votre politique de rétention conserve le journal. Cette traçabilité est ce que vos auditeurs demanderont."}
+      ] %}
+      {% for p in prod %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Questions sur l'évaluation.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Définissez la barre avec nous.", "Apportez un workflow et les experts qui le connaissent. Nous façonnerons le jeu d'évaluation et les métriques lors de l'appel de cadrage.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

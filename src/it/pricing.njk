@@ -1,0 +1,155 @@
+---
+layout: layouts/base.njk
+order: 3
+title: Prezzi & Ingaggio
+description: Come funzionano gli ingaggi sysf.io — da un Pilot a perimetro fisso alla Production fino a un rollout on-premise completamente air-gapped. Ogni livello è sovrano; il prezzo è definito per ingaggio. Prenotate una call per ottenere una proposta.
+extraSchema:
+  "@context": "https://schema.org"
+  "@type": "Service"
+  serviceType: "Sviluppo e produzione di modelli di IA sovrani su misura"
+  provider:
+    "@type": "Organization"
+    name: "sysf.io"
+    url: "https://sysf.io"
+  areaServed: ["CH", "EU"]
+  description: "Modelli di IA su misura costruiti su Apertus con retrieval, agenti e guardrail, distribuiti in giurisdizione svizzera/UE o on-premise. Gli ingaggi vanno da un Pilot a perimetro fisso alla Production fino a un rollout on-premise completamente air-gapped."
+  offers:
+    "@type": "Offer"
+    priceSpecification:
+      "@type": "PriceSpecification"
+      priceCurrency: "CHF"
+    availability: "https://schema.org/InStock"
+    description: "Il prezzo è definito per ingaggio. Contattate sysf.io per una proposta."
+faq:
+  - q: Perché non indicate prezzi fissi?
+    a: >-
+      Ogni ingaggio differisce per dati, obiettivo di deployment e perimetro di conformità, quindi definiamo il prezzo dopo una call di definizione del perimetro di 30 minuti — la proposta è a perimetro fisso e a prezzo fisso. Un numero possiamo darlo in anticipo: l'hardware. Un deployment on-premise di classe 8B gira su un server GPU di classe workstation (24–48 GB VRAM), tipicamente CHF 5'000–15'000, una tantum.
+  - q: Cosa comporta tipicamente un Pilot?
+    a: >-
+      I deliverable sono sulla scheda Pilot qui sopra, e il rapporto di valutazione include un'ablazione ottimizzazione vs. retrieval. Dal vostro lato, un Pilot richiede tre cose: il corpus documentale per il caso d'uso, un esperto di dominio per verificare con noi il set di valutazione, e una decisione su dove viene eseguito — il vostro ambiente o il nostro cloud svizzero a tenant singolo.
+  - q: Cosa succede ai nostri dati in un Pilot?
+    a: >-
+      Se il Pilot viene eseguito nel vostro ambiente, nulla lo lascia mai. Se optate per il nostro ambiente di cloud svizzero dedicato a un singolo tenant, i vostri dati sono trattati sotto un accordo sul trattamento dei dati e, a fine progetto, tutti i dati e i pesi derivati vengono cancellati o consegnati a voi — a vostra scelta in fase di definizione del perimetro. I sistemi Production e Air-gapped vengono sempre eseguiti nel vostro ambiente.
+  - q: C'è un costo ricorrente dopo il deployment?
+    a: >-
+      I sistemi Production includono una componente ricorrente di piattaforma e supporto — hosting o supporto on-premise, monitoraggio, valutazione e una cadenza di manutenzione sotto contratto di supporto. La componente di supporto è una voce a sé nella proposta Production o Air-gapped — costo di costruzione e costo di esercizio affiancati.
+  - q: Il modello è nostro?
+    a: >-
+      Sì. Poiché costruiamo sul modello aperto Apertus e ottimizziamo sui vostri dati nel vostro ambiente, mantenete la proprietà e il controllo del modello risultante e potete eseguirlo in modo indipendente. Un passaggio di consegne documentato è un deliverable in ogni ingaggio — la vostra strategia di uscita fa parte del perimetro.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Prezzi &amp; ingaggio</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Iniziare in piccolo. Dimostrare il valore. Scalare fino all'air-gapped.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Un Pilot dimostra i numeri su un caso d'uso. La Production lo irrobustisce per l'uso quotidiano. L'air-gapped rimuove la rete. I livelli differiscono per profondità di deployment, non per principio — una call di definizione del perimetro di 30 minuti vi dà una proposta a perimetro fisso prima di qualsiasi impegno, e il deliverable centrale del Pilot è un rapporto di valutazione di cui potete chiederci conto.
+    </p>
+  </div>
+</section>
+
+<!-- Stages -->
+<section class="container-x py-20 md:py-24">
+  <div class="grid gap-5 md:grid-cols-3">
+    {% set stages = [
+      {
+        t:"Pilot",
+        for:"Dimostrare il valore su un caso d'uso",
+        d:"Un ingaggio a perimetro fisso per validare l'IA sovrana sui vostri dati.",
+        price:"Perimetro fisso",
+        pnote:"Prezzo definito dopo una call di 30 minuti — nessun time-and-materials aperto.",
+        inc:[
+          "Un caso d'uso ad alto valore",
+          "Preparazione dei dati, privata e in giurisdizione",
+          "Ottimizzazione & retrieval su Apertus",
+          "Rapporto di valutazione rispetto alle metriche concordate",
+          "Roadmap di produzione",
+          "Il vostro ambiente o cloud svizzero dedicato"
+        ]
+      },
+      {
+        t:"Production",
+        for:"Il Pilot, irrobustito per l'uso quotidiano",
+        featured:true,
+        d:"Portate il caso d'uso dimostrato a un sistema in produzione mantenuto.",
+        price:"Costruzione fissa + supporto",
+        pnote:"Costruzione a prezzo definito sul perimetro; supporto & manutenzione come componente ricorrente trasparente.",
+        inc:[
+          "Tutto ciò che è in Pilot",
+          "Agenti, RAG & strumenti collegati ai vostri sistemi",
+          "Guardrail di sicurezza & PII",
+          "Deployment su cloud svizzero o on-premise",
+          "Monitoraggio & valutazione",
+          "Contratto di supporto & manutenzione"
+        ]
+      },
+      {
+        t:"Air-gapped",
+        for:"Ambienti regolamentati / più sensibili",
+        d:"Un rollout completamente isolato per ambienti in cui nulla attraversa il cavo.",
+        price:"Definito individualmente",
+        pnote:"Definito con i vostri team di infrastruttura e conformità.",
+        inc:[
+          "Tutto ciò che è in Production",
+          "Completamente on-premise / confidential computing",
+          "Runbook operativi & passaggio di consegne documentato per il vostro team",
+          "Documentazione di conformità & audit"
+        ]
+      }
+    ] %}
+    {% for s in stages %}
+    <div class="relative rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset shadow-md' if s.featured }}">
+      {% if s.featured %}<div class="absolute right-6 top-6 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">Più comune</div>{% endif %}
+      <h2 class="text-xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ s.t }}</h2>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.for }}</p>
+      <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
+      <div class="mt-6 border-t border-ink-900/10 pt-6 dark:border-white/10">
+        <div class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ s.price }}</div>
+        <p class="mt-1 text-xs text-ink-500">{{ s.pnote }}</p>
+      </div>
+      <ul class="mt-6 space-y-2.5">
+        {% for i in s.inc %}
+        <li class="flex items-start gap-2.5 text-sm text-ink-700 dark:text-ink-300">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-swiss" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 10.7a1 1 0 1 1 1.4-1.4l3.1 3.1 6.8-6.8a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          {{ i }}
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="/it/contact/" class="mt-8 w-full {{ 'btn-primary' if s.featured else 'btn-ghost' }}">Prenota una call</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p class="mt-6 text-sm prose-muted">Il deliverable centrale del Pilot è il rapporto di valutazione. <a class="link-underline" href="/it/reports/finma-ablation/">Vedete un esempio</a> — un'ablazione riproducibile a quattro vie di Apertus-8B su Q&amp;A relative alle circolari FINMA svizzere.</p>
+
+  <div class="mt-8 flex flex-col gap-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 sm:flex-row sm:items-center sm:justify-between md:p-8">
+    <div>
+      <h2 class="text-lg font-bold tracking-tightest text-ink-900 dark:text-white">Non sapete quale livello fa per voi?</h2>
+      <p class="mt-1 text-sm prose-muted">Dedicate due minuti al configuratore — scegliete modello, trattamento dei dati e deployment, e vi suggerisce un livello e vi consegna una specifica di una pagina da inviarci.</p>
+    </div>
+    <a href="/it/configure/" class="btn-primary shrink-0">Configura la tua soluzione →</a>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="mt-10 border border-ink-900/10 p-6 dark:border-white/10">
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Add-on</span>
+      {% for a in ["Pacchetto conformità & audit", "Lingue aggiuntive", "Casi d'uso aggiuntivi", "Hosting gestito"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 bg-swiss"></span>{{ a }}</span>
+      {% endfor %}
+    </div>
+    <p class="mt-4 text-xs text-ink-500">Il pacchetto conformità &amp; audit include: model card, registro di tracciabilità dei dati di addestramento, modello di accordo sul trattamento dei dati, misure tecniche &amp; organizzative (MTO), foglio di classificazione del rischio AI Act, e il rapporto di valutazione.</p>
+  </div>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Domande sui prezzi.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Definiamo il vostro ingaggio.", "Una breve call basta per dare forma a una proposta a perimetro fisso per il vostro primo caso d'uso.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

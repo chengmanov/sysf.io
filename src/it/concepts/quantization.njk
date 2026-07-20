@@ -1,0 +1,121 @@
+---
+layout: layouts/base.njk
+title: La quantizzazione, spiegata — come un modello da data center entra nel vostro ufficio
+description: Cosa fa davvero la quantizzazione — byte per peso, il punto ideale a 4 bit, la frontiera 1–2 bit, la memoria della cache KV — e perché è la tecnologia che rende sostenibile l'IA sovrana, on-premise e air-gapped.
+faq:
+  - q: La quantizzazione peggiora il modello?
+    a: >-
+      Leggermente, e in modo misurabile — è questo il punto. «Spesso invisibile su un compito ristretto» non è un deliverable, quindi rieseguiamo il vostro set di valutazione sulla versione quantizzata e consegniamo la differenza accanto alla baseline a piena precisione. Un modello quantizzato senza rapporto di valutazione è un'ipotesi.
+  - q: Perché un contesto lungo richiede così tanta memoria?
+    a: >-
+      Il modello mantiene una cache chiave-valore (KV) per ogni token della conversazione, e con contesti lunghi la cache — non i pesi — diventa il maggior consumatore di memoria, crescendo linearmente con la lunghezza del contesto fino ai gigabyte. Anche la cache può essere quantizzata, riducendone l'impronta di diverse volte. È un secondo budget che dimensioniamo esplicitamente in fase di definizione del perimetro, perché «supporta 100K di contesto» su una scheda tecnica non significa nulla senza la memoria per contenerlo.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concetti · Quantizzazione</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Come un modello da data center entra nel vostro ufficio.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      La quantizzazione è la tecnologia poco appariscente che decide se l'IA sovrana costa un server o un data center. Ecco come funziona davvero, con dettaglio sufficiente perché i vostri ingegneri lo verifichino.
+    </p>
+  </div>
+</section>
+
+<!-- What it is -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Il meccanismo", "La dimensione di un modello è byte per peso × pesi.", "L'addestramento usa numeri a 16 bit. L'inferenza non deve — gran parte di quella precisione è ridondanza che potete spendere.") }}
+      <p class="mt-6 text-base prose-muted">La quantizzazione memorizza ogni peso in meno bit — raggruppati e riscalati così da preservare il comportamento del modello. Metà dei bit, metà della memoria, e di solito anche più veloce: ai carichi a basso batch e tenant singolo con cui i sistemi on-premise girano davvero, la velocità di generazione è limitata da quanto rapidamente i pesi fluiscono dalla memoria — quindi un modello più piccolo è più veloce.</p>
+    </div>
+    <div class="md:col-span-6 md:col-start-7">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[480px] border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Precisione</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Modello 8B</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Modello 70B</th>
+              <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Gira su</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+            {% set rows = [
+              {p:"16 bit (addestramento)", a:"~16 GB", b:"~140 GB", c:"Nodo multi-GPU"},
+              {p:"8 bit", a:"~8 GB", b:"~70 GB", c:"GPU da data center"},
+              {p:"4 bit (il punto ideale)", a:"~4,5 GB", b:"~40 GB", c:"Una GPU workstation / una scheda da 48 GB (al limite — o 2×24 GB)"},
+              {p:"1–2 bit (la frontiera)", a:"~1,5–2,5 GB", b:"~12–20 GB", c:"Laptop o box edge (un telefono, per la classe 27B e inferiore)"}
+            ] %}
+            {% for r in rows %}
+            <tr>
+              <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.p }}</td>
+              <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
+              <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+              <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-3 text-xs text-ink-500">Solo pesi — la memoria di lavoro aggiunge la cache KV (sotto) e l'overhead di runtime. Far stare un 70B su una scheda da 48 GB presuppone una variante 4 bit compatta e una cache quantizzata; le cifre esatte dipendono da formato e raggruppamento, e dimensioniamo il budget completo in fase di definizione del perimetro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Quality & practice -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Il compromesso", "Quanto costa, e come lo teniamo onesto.", "La quantizzazione scambia una porzione misurabile di qualità con una riduzione di memoria di 3–4× e il gradino hardware sottostante. La parola chiave è misurabile.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set cards = [
+        {t:"4 bit: il default di produzione", d:"I formati 4 bit moderni — K-quant GGUF per il serving in stile llama.cpp, AWQ o GPTQ altrove — costano tipicamente un punto o due sui benchmark ampi; su un compito ristretto e ottimizzato, spesso nulla di rilevabile. È qui che dovrebbe stare la maggior parte dei deployment sovrani: un 70B in ~40 GB di pesi, un 8B in meno di 5 GB."},
+        {t:"Sotto i 4 bit: progettato, non ingenuo", d:"Arrotondare più duramente distrugge la qualità. Formati ternari e binari costruiti ad hoc — sempre più abbinati a un addestramento consapevole della quantizzazione — mantengono utili i modelli a 1–2 bit per peso, riducendo un modello di classe 27B alle dimensioni di un telefono. Questa frontiera si muove in fretta, ed è quella che seguiamo più da vicino."},
+        {t:"La nostra regola: rivalutare, poi consegnare", d:"Ogni versione quantizzata viene rieseguita rispetto al vostro set di valutazione e consegnata con la differenza di qualità documentata accanto alla baseline a piena precisione. Se la quantizzazione costa più di quanto il guadagno di deployment valga per il vostro compito, il rapporto lo dice e saliamo di classe."}
+      ] %}
+      {% for c in cards %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ c.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ c.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- KV cache -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Il secondo budget", "Anche il contesto ha il suo conto in memoria.", "I pesi sono solo metà dell'esercizio di dimensionamento. L'altra metà è la cache KV — la memoria di lavoro del modello per la vostra conversazione o documento.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Per ogni token nel contesto, il modello memorizza attivazioni chiave-valore. Con contesti brevi è rumore; con contesti da 100K token — un lungo contratto, un fascicolo completo — la cache cresce fino ai <strong class="font-semibold text-ink-900 dark:text-white">gigabyte</strong> e può rivaleggiare con i pesi stessi.</p>
+      <p>Anche la cache si quantizza: una memorizzazione KV a 4 bit ne riduce l'impronta di diverse volte, il che spesso fa la differenza tra «i documenti lunghi ci stanno» e «non ci stanno» su una data macchina. Conta anche l'architettura — i modelli più recenti con attenzione ibrida mantengono la cache sproporzionatamente piccola rispetto alla loro dimensione.</p>
+      <p>Conseguenza pratica: quando ci impegniamo su «gestisce i vostri contratti di 200 pagine su una sola macchina», questa affermazione è stata dimensionata — pesi, cache, overhead — non sperata.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Why it matters for sovereignty -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Perché conta qui", "La quantizzazione è la curva di costo della sovranità.", "Ogni bit tolto a un peso sposta «gira dove risiedono i vostri dati» di un gradino più in basso sulla scala hardware.") }}
+    <div class="mt-10 max-w-3xl space-y-5 text-base prose-muted">
+      <p>A 16 bit, eseguire il proprio modello è una richiesta di investimento con una planimetria allegata. A 4 bit, è un server. Alla frontiera 1–2 bit, comincia a significare laptop, box edge e macchine che non hanno mai visto un cavo di rete — gli ambienti in cui i dati regolamentati vivono davvero.</p>
+      <p>Per questo trattiamo la quantizzazione come una disciplina di prima classe, non una casella da spuntare. Vedete su cosa girano i sistemi risultanti nel <a class="link-underline" href="/it/concepts/sovereign-architecture/">runtime sovrano</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Domande sulla quantizzazione.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Volete il dimensionamento per il vostro caso d'uso?", "Diteci i documenti e l'hardware che avete — torneremo con il budget di memoria e la macchina su cui viene eseguito.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

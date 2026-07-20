@@ -22,7 +22,10 @@
 </div>
 {% endmacro %}
 
-{% macro cta(heading, sub) %}
+{% macro cta(heading, sub, opts) %}
+{% set L = opts.L if opts and opts.L else "" %}
+{% set primary = opts.primary if opts and opts.primary else "Book a call" %}
+{% set secondary = opts.secondary if opts and opts.secondary else "See how it works" %}
 <section class="border-t border-ink-900/10 bg-ink-950 dark:border-white/10">
   <div class="container-x py-16 md:py-20">
     <div class="grid items-center gap-8 md:grid-cols-12">
@@ -31,8 +34,8 @@
         <p class="mt-4 max-w-2xl text-lg text-ink-300">{{ sub | safe }}</p>
       </div>
       <div class="flex flex-wrap gap-3 md:col-span-4 md:justify-end">
-        <a href="/contact/" class="btn-primary">Book a call</a>
-        <a href="/platform/" class="btn-ghost border-white/20 text-white hover:border-white/50">See how it works</a>
+        <a href="{{ L }}/contact/" class="btn-primary">{{ primary }}</a>
+        <a href="{{ L }}/platform/" class="btn-ghost border-white/20 text-white hover:border-white/50">{{ secondary }}</a>
       </div>
     </div>
   </div>

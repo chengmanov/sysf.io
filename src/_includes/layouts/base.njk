@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+{% set locale = locale or "en" %}
+{% set t = i18n[locale] %}
+{% set transBase = page.url | localeBase %}
+<html lang="{{ t.htmlLang }}" dir="{{ t.dir }}" class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,6 +15,10 @@
     <title>{{ pageTitle }}</title>
     <meta name="description" content="{{ pageDesc }}" />
     <link rel="canonical" href="{{ canonical }}" />
+    {%- for lc in locales %}
+    <link rel="alternate" hreflang="{{ i18n[lc].hreflang }}" href="{{ site.url }}{{ transBase | localeUrl(lc) }}" />
+    {%- endfor %}
+    <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ transBase }}" />
     <meta name="theme-color" content="{{ site.themeColor }}" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
@@ -22,7 +29,10 @@
     <meta property="og:description" content="{{ pageDesc }}" />
     <meta property="og:url" content="{{ canonical }}" />
     <meta property="og:image" content="{{ ogImage }}" />
-    <meta property="og:locale" content="en" />
+    <meta property="og:locale" content="{{ t.ogLocale }}" />
+    {%- for lc in locales %}{% if lc != locale %}
+    <meta property="og:locale:alternate" content="{{ i18n[lc].ogLocale }}" />
+    {%- endif %}{% endfor %}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -73,7 +83,7 @@
       "name": {{ site.name | dump | safe }},
       "url": {{ site.url | dump | safe }},
       "description": {{ site.shortDescription | dump | safe }},
-      "inLanguage": "en",
+      "inLanguage": {{ t.htmlLang | dump | safe }},
       "publisher": { "@type": "Organization", "name": {{ site.name | dump | safe }} }
     }
     </script>
@@ -83,7 +93,7 @@
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ site.url | dump | safe }} },
+        { "@type": "ListItem", "position": 1, "name": {{ ({"en":"Home","de":"Start","fr":"Accueil","it":"Home"}[locale]) | dump | safe }}, "item": {{ (site.url + ("/" | localeUrl(locale))) | dump | safe }} },
         { "@type": "ListItem", "position": 2, "name": {{ (title or site.name) | dump | safe }}, "item": {{ canonical | dump | safe }} }
       ]
     }
@@ -108,7 +118,7 @@
   </head>
 
   <body class="min-h-screen bg-neutral-50 text-ink-800 dark:bg-ink-950 dark:text-neutral-300">
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-swiss focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-swiss focus:px-4 focus:py-2 focus:text-white">{{ t.skip }}</a>
 
     {% include "partials/nav.njk" %}
 

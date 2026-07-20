@@ -1,0 +1,159 @@
+---
+layout: layouts/base.njk
+title: Durchgerechnetes Beispiel — Fine-Tuning eines kleinen Modells für Schweizer Vertragsrecht
+description: Eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Q&A zu Artikeln des Schweizer Obligationenrechts (OR) — und der retrieval-bewusste Trainingsfehler, der ein Fine-Tuning stillschweigend bricht, diagnostiziert und behoben. Deterministisch auf öffentlichen Daten bewertet.
+tags: writing
+date: 2026-07-20
+kicker: Bericht
+listTitle: Fine-Tuning eines kleinen Modells für Schweizer Vertragsrecht — und der Fehler, der es bricht.
+blurb: Eine zweite reproduzierbare Ablation, diesmal auf dem Schweizer Obligationenrecht. Fine-Tuning + Retrieval gewinnt mit 52,3 % — aber erst, nachdem wir einen Trainingsfehler entdeckten, der das naive Fine-Tuning schlechter als Retrieval allein machte. Der Fehler, diagnostiziert und behoben.
+faq:
+  - q: Ist das dieselbe Methode wie im FINMA-Bericht?
+    a: >-
+      Ja — bewusst. Dieselbe Vier-Wege-Ablation, dieselbe deterministische Bewertung, dasselbe Basismodell, auf einem anderen Sektor (Recht) und einem anderen Dokumenttyp (ein Gesetz, keine Rundschreiben). Den Befund auf einem zweiten Rechtskörper zu reproduzieren ist der Punkt: Die Methode verallgemeinert.
+  - q: Warum einen Fehler veröffentlichen, den Sie gemacht haben?
+    a: >-
+      Weil er der nützlichste Teil ist. Unser erstes Fine-Tuning wurde ohne Retrieval-Kontext trainiert und brach zusammen, sobald Retrieval hinzukam — schlechter als das Basismodell. Genau die Art von Fehler, den die Ablation eines echten Piloten aufdecken soll, bevor er die Produktion erreicht. Wir behoben ihn, indem wir das Modell so trainierten, wie es ausgeliefert wird; der Bericht zeigt beides.
+  - q: Wie wird das bewertet — gibt es einen LLM-Richter?
+    a: >-
+      Nirgends ein LLM-Richter. Das Obligationenrecht nummeriert jede Bestimmung, sodass eine korrekte Fundstelle exakt prüfbar ist. Die Antwortgenauigkeit ist String-/Zahlenabgleich gegen eine verifizierte Gold-Antwort; die Fundstelle ist ein exakter Artikelnummern-Abgleich. Jede Zahl wird aus eingefrorenen Laufprotokollen neu berechnet.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart, deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Durchgerechnetes Beispiel · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Fine-Tuning eines kleinen Modells für Schweizer Vertragsrecht.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Ein zweites durchgerechnetes Beispiel — dieselbe Methode wie im <a class="link-underline" href="/de/reports/finma-ablation/">FINMA-Bericht</a>, eine andere Domäne: Fragen zum Schweizer Obligationenrecht (OR) beantworten <em>mit</em> einer Fundstelle auf den exakten Artikel. Inklusive eines echten Fehlers, auf den wir unterwegs stiessen, und wie die Ablation ihn auffing.
+    </p>
+  </div>
+</section>
+
+<!-- The four arms -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Der Aufbau", "Vier Systeme, ein offenes Modell.", "Dasselbe Apertus-8B, identisch auf 4-Bit quantisiert, identisch ausgeliefert. Die einzige Variable sind die Gewichte. Deterministisch bewertet — kein LLM-Richter.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Basis", d:"Das offene Modell, wie ausgeliefert."},
+      {k:"B", t:"+ Retrieval", d:"Basismodell mit BM25-Retrieval über das Gesetz."},
+      {k:"C", t:"Feinabgestimmt", d:"LoRA-abgestimmt auf die Aufgabe, kein Retrieval."},
+      {k:"D", t:"Feinabgestimmt + Retrieval", d:"Das vollständige System."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Die produktive Messlatte ist <strong class="text-ink-700 dark:text-ink-300">beides zugleich</strong> — die Antwort korrekt <em>und</em> der korrekte Artikel zitiert. Eine richtige Antwort mit falscher oder fehlender Fundstelle ist ein Fehler, denn in juristischer Arbeit ist sie einer.</p>
+</section>
+
+<!-- Results -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Das Ergebnis", "Fine-Tuning plus Retrieval ist das beste System.", "172 menschlich verifizierte Fragen (98 Deutsch, 74 Französisch, 10 vertragsrechtliche Themen). Klammern sind 95-%-Konfidenzintervalle.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Antwort korrekt", cls:"bg-teal-500"},
+        {name:"Antwort + Fundstelle (produktive Messlatte)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Basis", bars:[{v:39.0, cls:"bg-teal-500"}, {v:4.1, cls:"bg-red-600"}]},
+        {label:"B · + Retrieval", bars:[{v:54.7, cls:"bg-teal-500"}, {v:38.4, cls:"bg-red-600"}]},
+        {label:"C · Feinabgestimmt", bars:[{v:46.5, cls:"bg-teal-500"}, {v:2.9, cls:"bg-red-600"}]},
+        {label:"D · Feinabgestimmt + Retrieval", note:"das vollständige System", bars:[{v:70.3, cls:"bg-teal-500"}, {v:52.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "Die produktive Messlatte (rot) ist ohne Retrieval nahezu null (A, C), erreicht mit Retrieval allein 38,4 % (B) und erreicht ihren Höchstwert von 52,3 % erst, wenn Fine-Tuning <strong class='text-ink-700 dark:text-ink-300'>und</strong> Retrieval sich verbinden (D) — dieselbe Form wie das FINMA-Ergebnis, auf einem anderen Rechtskörper.") }}
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metrik</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · Basis</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · abgestimmt</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · abgestimmt+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Antwort + Fundstelle (produktive Messlatte)", a:"4.1%", b:"38.4%", c:"2.9%", d:"52.3%", hi:true},
+            {m:"Antwort korrekt", a:"39.0%", b:"54.7%", c:"46.5%", d:"70.3%"},
+            {m:"Fundstelle korrekt", a:"7.0%", b:"69.8%", c:"5.8%", d:"62.2%"},
+            {m:"Gibt das geforderte Format aus", a:"1.2%", b:"0.0%", c:"89.5%", d:"70.9%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- The mistake -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Der veröffentlichenswerte Fehler", "Wir erreichten die 52 % nicht beim ersten Versuch.", "Das erste Fine-Tuning wurde auf die naheliegende Weise trainiert — auf Fragen und ihre Antwort + Fundstelle, ohne abgerufenen Kontext. Für sich allein sah es grossartig aus. Mit hinzugefügtem Retrieval brach es zusammen.") }}
+  <div class="mt-10 max-w-3xl">
+    {{ deltaBars([
+      {label:"Naives Fine-Tuning + RAG", v:8.1, cls:"bg-neutral-400 dark:bg-white/25", tag:"schlechter als B"},
+      {label:"Retrieval-bewusst + RAG", v:52.3, cls:"bg-red-600"}
+    ], "Arm D auf der produktiven Messlatte. Das naive Modell — dem abgerufene Passagen gezeigt wurden, die es im Training nie sah — kehrte zu knappen Antworten zurück und <strong class='text-ink-700 dark:text-ink-300'>liess die Fundstellenzeile weg</strong> und lag unter dem Basismodell mit Retrieval (38,4 %). Die Format-Compliance im Training unter Retrieval fiel auf 16 %.") }}
+  </div>
+  <div class="mt-10 max-w-3xl rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+    <p class="text-sm text-ink-700 dark:text-ink-300"><span class="font-semibold text-ink-900 dark:text-white">F.</span> Ist eine im Voraus getroffene Vereinbarung, die die Haftung für grobe Fahrlässigkeit ausschliesst, gültig? <span class="text-ink-500">(Gold: nein, Art. 100)</span></p>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Naives Fine-Tuning + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein</pre>
+        <p class="mt-1 text-xs text-swiss">Richtige Antwort, keine Fundstelle → durchgefallen</p>
+      </div>
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Retrieval-bewusst + RAG</div>
+        <pre class="mt-2 whitespace-pre-wrap rounded bg-ink-900/[0.04] p-3 font-mono text-xs text-ink-700 dark:bg-white/[0.04] dark:text-ink-300">ANSWER: nein
+SOURCE: OR Art. 100</pre>
+        <p class="mt-1 text-xs text-swiss">Bestanden</p>
+      </div>
+    </div>
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">Die Ursache ist ein <strong class="font-semibold text-ink-900 dark:text-white">Verteilungs-Mismatch zwischen Training und Inferenz</strong>: Ein Modell, das <em>mit</em> Retrieval ausgeliefert wird, muss <em>mit</em> Retrieval trainiert werden. Wir bauten das Fine-Tuning-Set neu, sodass jedes Beispiel sowohl schlicht als auch mit abgerufenem Kontext erscheint — der Gold-Artikel garantiert vorhanden — trainierten neu, und die produktive Messlatte stieg von 8,1 % auf 52,3 %. Genau die Art von Fehler, die die <a class="link-underline" href="/de/concepts/evaluation/">Ablation</a> eines Piloten auffängt, bevor er die Produktion erreicht. Wir messen, damit wir ihn nicht ausliefern.</p>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Die ehrlichen Grenzen", "Was das nicht behauptet.", "Eine Evaluation, der Sie vertrauen können, ist eine, die benennt, wo sie schwach ist.") }}
+    <div class="mt-10 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Listenantwort-Fragen erreichen nahezu null, in jedem Arm.</strong> Eine vollständige Mehrelement-Menge zu extrahieren und zu zitieren ist die schwierigste Teilaufgabe hier und das offensichtliche nächste Ziel — dieselbe Schwachstelle, die der FINMA-Bericht markierte.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Französisch liegt hinter Deutsch</strong> (D: 42 % FR vs. 60 % DE), was dem Trainings-Mix folgt (271 DE vs. 123 FR Elemente). Ausgewogenere Daten schliessen die Lücke; die Zahl ist ehrlich darüber, wo das Modell heute schwach ist.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Die Format-Compliance liegt bei 71 %, nicht 100 %.</strong> Das retrieval-bewusste Fine-Tuning lässt bei einigen Elementen weiterhin die Fundstelle weg — weit besser als die naiven 16 %, nicht perfekt. Es ist ein Boden: Ein grösseres, ausgewogeneres Trainingsset bewegt ihn weiter.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/or" class="btn-ghost" target="_blank" rel="noopener">Auf GitHub reproduzieren →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Über diesen Bericht.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Wollen Sie das auf Ihrer Aufgabe?", "Bringen Sie einen Workflow und die Dokumente dahinter mit. Wir bauen das Evaluationsset und führen diese Ablation durch — inklusive der Fehlermodi, die sie auffängt — auf Ihren Daten, in Ihrer Jurisdiktion.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

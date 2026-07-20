@@ -1,0 +1,112 @@
+---
+layout: layouts/base.njk
+title: Evaluation-First-Lieferung — was wir nicht messen können, liefern wir nicht aus
+description: Wie sysf.io Evaluationssets aus Ihren eigenen Dokumenten erstellt, die Ablation Basis vs. RAG vs. Fine-Tune ausführt, den Go-live an vereinbarte Metriken bindet und Drift in der Produktion überwacht.
+faq:
+  - q: Wie gross muss ein Evaluationsset sein?
+    a: >-
+      Kleiner, als Sie befürchten, grösser als eine Demo. Fünfzig sorgfältig gewählte Aufgaben mit Gold-Antworten trennen bereits „funktioniert“ von „beeindruckt“; 150–300 bringen Aufschlüsselungen pro Kategorie — Dokumenttypen, Sprachen, Randfälle — gross genug, um darauf zu handeln. Wir berichten Konfidenzintervalle neben den Werten — bei Stichproben dieser Grösse ist ein Zwei-Punkte-Unterschied Rauschen, und das sagen wir Ihnen lieber, als es zu verkaufen. Ihre Fachleute investieren Stunden, keine Wochen, und das Set wird ein dauerhaftes Asset, das jedes einzelne Modell überlebt.
+  - q: Wer definiert, was „korrekt“ bedeutet?
+    a: >-
+      Ihre Fachleute, schriftlich, bevor irgendetwas gebaut wird — Kriterien pro Aufgabentyp, abgezeichnet (die Metriktypen unter Schritt drei). Wir lehnen vage Erfolgskriterien ab, weil auf diese Weise Piloten „erfolgreich“ und ungenutzt enden.
+  - q: Was passiert, wenn das System die Messlatte verfehlt?
+    a: >-
+      Der Bericht sagt es, mit aufgeschlüsselten Fehlerkategorien — und die Produktions-Roadmap erklärt, was die Lücke schliessen würde und was es kosten würde, oder empfiehlt aufzuhören. Ein Pilot mit festem Umfang, der in einem dokumentierten „Nein“ enden kann, ist genau das, was sein „Ja“ etwas wert macht.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Konzepte · Evaluation</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Was wir nicht messen können, liefern wir nicht aus.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Jeder KI-Anbieter verspricht Qualität. Wir definieren sie mit Ihnen als Zahl, auf Ihren Dokumenten, bevor wir bauen — und binden den Go-live daran. Diese Seite erklärt die Maschinerie hinter diesem Versprechen.
+    </p>
+    <p class="mt-6">
+      <a href="/de/reports/finma-ablation/" class="btn-ghost">Ein durchgerechnetes Beispiel ansehen →</a>
+    </p>
+    <p class="mt-3 max-w-2xl text-sm text-ink-500">Eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Q&amp;A zu Schweizer FINMA-Rundschreiben — genau die unten beschriebene Evaluation, auf öffentlichen Daten ausgeführt.</p>
+  </div>
+</section>
+
+<!-- Building the eval set -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Schritt eins", "Das Evaluationsset kommt vor dem Modell.", "Aus Ihren Dokumenten erstellt, mit Ihren Fachleuten, in Ihren Sprachen — es ist der Vertrag, gegen den das System gebaut wird.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Wir setzen uns mit Ihren Fachleuten zusammen und extrahieren, wie „korrekt erledigt“ aussieht: echte Eingaben aus Ihrem Workflow — Verträge, Schäden, Notizen, Briefe — gepaart mit Gold-Antworten und nach Kriterien bewertet, die Sie abzeichnen. Typischerweise 50–300 Aufgaben über Ihre Dokumenttypen, Sprachen (DE/FR/IT nach Bedarf) und bekannte Randfälle, inklusive der unschönen: gescannte Faxe, gemischtsprachige Dateien, die Ausnahmen, die Ihr Team im Autopilot bewältigt.</p>
+      <p>Dieses Set wird bewusst <em>vor</em> Beginn der Modellierung gebaut, damit es nicht stillschweigend auf das getrimmt werden kann, was das Modell zufällig gut kann. Es bleibt Ihres — versioniert, dokumentiert und wiederverwendbar gegen jedes künftige Modell oder jeden Anbieter, einschliesslich unseres Nachfolgers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The ablation -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Schritt zwei", "Die Vier-Wege-Ablation.", "Eine Tabelle, die Hype in beide Richtungen tötet — unseren eingeschlossen.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set arms = [
+        {n:"A", t:"Basismodell", d:"Das offene Modell, unverändert. Der ehrliche Boden — und gelegentlich eine Überraschung: Erreicht dies bereits die Messlatte, sollten Sie nicht für Fine-Tuning zahlen."},
+        {n:"B", t:"+ Retrieval", d:"Basismodell, verankert in Ihrem Korpus. Zeigt, was besserer Zugang zu Ihren Dokumenten bringt — meist der grösste einzelne Sprung."},
+        {n:"C", t:"+ Fine-Tune", d:"Modell auf Ihrer Aufgabe trainiert, ohne Retrieval. Zeigt, was gelerntes Verhalten bringt: Format, Terminologie, Ton, Verweigerungsdisziplin."},
+        {n:"D", t:"Beides", d:"Der Produktionskandidat. Ist D nicht klar besser als B und C, sagt das der Bericht, und Sie kaufen das günstigere System."}
+      ] %}
+      {% for a in arms %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="font-mono text-sm text-swiss">{{ a.n }}</div>
+        <h3 class="mt-3 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-3xl text-base prose-muted">Im FINMA-Beispiel liest sich diese Tabelle als 0 → 22,4 → 1,6 → 45,4 % auf der produktiven Messlatte über A–D: Retrieval allein kommt ein Fünftel des Weges, Fine-Tuning allein fast nirgendwohin, und erst die Kombination verdoppelt Retrieval. Dieselbe Ablation deckt die Modellwahl ab — Apertus vs. Llama vs. Mistral auf Ihrem Set, und Builds in voller Präzision vs. <a class="link-underline" href="/de/concepts/quantization/">quantisiert</a> — sodass jede architektonische Entscheidung in Ihrem System auf einen gemessenen Unterschied zurückgeht, nicht auf eine Vorliebe. (Warum wir streng sind, was Fine-Tuning kann und nicht kann: <a class="link-underline" href="/de/concepts/small-models/">kleine Modelle, gemessen</a>.)</p>
+  </div>
+</section>
+
+<!-- Metrics & guardrails -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Schritt drei", "Metriken mit Zähnen, Guardrails mit Tests.", "„Es fühlt sich gut an“ ist keine Metrik. Ein Benchmark-Wert aus der Aufgabe eines anderen auch nicht.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Aufgabenmetriken</strong> passen zur Arbeit: Exact-Match-Genauigkeit für extrahierte Felder, Rubrik-Werte für Entwürfe, Antwortgenauigkeit <em>plus Zitattreue</em> für Q&A — eine korrekte Antwort mit erfundener Quelle zählt als Fehler, denn in regulierter Arbeit ist sie einer.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Guardrails werden wie Features getestet:</strong> PII-Behandlung, Out-of-Scope-Verweigerungen, Prompt-Injection-Resistenz und Ausgabe-Constraints erhalten jeweils adversariale Testfälle im Eval-Set. Ein Guardrail, das nicht getestet wird, ist ein Wunsch.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Das Gate:</strong> Die Messlatte wird im Vorschlag vereinbart. Darüber: Go-live. Darunter: eine dokumentierte Lückenanalyse und eine Entscheidung — schliessen oder aufhören. So oder so wissen Sie es, bevor Produktionsgeld ausgegeben wird.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Production -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("In der Produktion", "Evaluation endet nicht beim Go-live.", "Modelle driften, Dokumente ändern sich, Nutzer finden die Lücken. Das Evaluationsset schaut weiter zu.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set prod = [
+        {t:"Kontinuierliche Bewertung", d:"Produktionsstichproben werden gegen dieselben Metriken in einer festen Kadenz bewertet, sodass Qualitätsregressionen als Zahlen auf einem Dashboard erscheinen — nicht als Beschwerden drei Monate später."},
+        {t:"Drift & Datenänderung", d:"Neue Dokumenttypen, neue Richtlinienformulierungen, neue Randfälle werden dem Evaluationsset hinzugefügt, sobald sie auftauchen. Das Set wächst mit Ihrer Realität; das System wird dagegen neu validiert."},
+        {t:"Alles versioniert", d:"Evaluationssets, Modell-Builds und ihre Werte werden zusammen versioniert. Jede protokollierte Antwort geht auf den Modell-Build und die Eval-Version zurück, die sie erzeugt haben — so lange Ihre Aufbewahrungsrichtlinie das Protokoll behält. Diese Nachverfolgbarkeit ist, wonach Ihre Auditoren fragen werden."}
+      ] %}
+      {% for p in prod %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Fragen zur Evaluation.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Definieren Sie die Messlatte mit uns.", "Bringen Sie einen Workflow und die Fachleute mit, die ihn kennen. Wir formen das Evaluationsset und die Metriken im Scoping-Gespräch.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

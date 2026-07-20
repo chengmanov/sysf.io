@@ -1,0 +1,68 @@
+---
+layout: layouts/base.njk
+title: Concepts — L'ingénierie derrière l'IA souveraine
+description: Les concepts derrière l'approche de sysf.io, expliqués à une profondeur de praticien — pourquoi de petits modèles spécialisés par tâche gagnent le travail régulé, comment la quantification rend la souveraineté abordable, la livraison guidée par l'évaluation, et le runtime souverain de la workstation à l'air gap.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concepts</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      L'ingénierie derrière la promesse.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      « Souverain, conforme, privé » — la page d'accueil de chaque fournisseur le dit. La nôtre aussi. Ces pages expliquent <em>comment</em> — les concepts réels que nous appliquons, à la profondeur que vos ingénieurs et évaluateurs voudront vérifier.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-5 md:grid-cols-2">
+    {% set topics = [
+      {
+        u:"/fr/concepts/small-models/",
+        k:"Petits modèles",
+        t:"Petits modèles, mesurés.",
+        d:"Pourquoi un 4–8B affiné qui connaît vos documents bat une API de pointe qui ne les a jamais vus — l'effet de spécialisation, la répartition des rôles entre affinage et recherche, l'économie, et la liste honnête des cas où les petits modèles perdent."
+      },
+      {
+        u:"/fr/concepts/quantization/",
+        k:"Quantification",
+        t:"Comment un modèle de centre de données tient dans votre bureau.",
+        d:"Octets par poids, le point idéal de production en 4 bits, la frontière 1–2 bits qui met des modèles de classe 27B sur un téléphone, et la facture mémoire du cache KV que personne ne budgète. La technologie qui décide du coût de votre souveraineté."
+      },
+      {
+        u:"/fr/concepts/evaluation/",
+        k:"Évaluation",
+        t:"Si nous ne pouvons pas le mesurer, nous ne le livrons pas.",
+        d:"Comment le jeu d'évaluation est construit à partir de vos documents avant qu'aucun modèle ne soit touché, l'ablation en quatre volets qui montre l'apport de chaque composant — et ce qu'il n'apporte pas — les garde-fous testés comme des fonctionnalités, et le point de décision go/no-go qui détermine si la production est construite."
+      },
+      {
+        u:"/fr/concepts/sovereign-architecture/",
+        k:"Runtime souverain",
+        t:"D'une seule workstation à un air gap complet.",
+        d:"Les trois formes de déploiement, le routeur « petit d'abord » qui escalade vers un modèle local plus grand — jamais vers un cloud — et la fuite nulle comme propriété vérifiable à votre propre pare-feu."
+      },
+      {
+        u:"/fr/concepts/orchestration/",
+        k:"Orchestration",
+        t:"Là où la démo devient un système.",
+        d:"LangChain et LangGraph en production — ce que le framework fournit, les six choses qu'il vous laisse (RBAC, pistes d'audit, discipline PII, évaluation, résidence des traces, versionnage), et le durcissement qui transforme une démo d'agent en système exploitable."
+      }
+    ] %}
+    {% for t in topics %}
+    <a href="{{ t.u }}" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition hover:border-swiss/40 dark:border-white/10 dark:bg-ink-950">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">{{ t.k }}</p>
+      <h2 class="mt-3 flex items-start justify-between gap-4 text-xl font-bold tracking-tightest text-ink-900 dark:text-white">
+        {{ t.t }}
+        <span class="mt-1 text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
+      </h2>
+      <p class="mt-3 text-sm prose-muted">{{ t.d }}</p>
+    </a>
+    {% endfor %}
+  </div>
+  <p class="mt-10 max-w-2xl text-base prose-muted">Pour le pipeline de livraison dans lequel ces concepts s'insèrent — de la découverte au monitoring, étape par étape — voir <a class="link-underline" href="/fr/platform/">la plateforme</a>.</p>
+</section>
+
+{{ cta("Testez-nous sur les détails.", "Apportez vos questions les plus difficiles — l'appel de cadrage se fait avec l'ingénieur qui construit le système, pas avec un argumentaire commercial.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

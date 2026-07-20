@@ -1,0 +1,117 @@
+---
+layout: layouts/base.njk
+title: Modelli piccoli, misurati — perché un 8B ottimizzato batte un'API che affittate
+description: Perché i piccoli modelli linguistici specializzati per compito superano le API di frontiera sui workflow regolamentati ristretti — l'effetto di specializzazione, la divisione del lavoro tra ottimizzazione e RAG, l'economia, e quando un modello piccolo è la scelta sbagliata.
+faq:
+  - q: Un modello 8B è davvero abbastanza buono per testi giuridici o clinici in tedesco?
+    a: >-
+      Per un compito definito, di solito sì — ma non vi chiediamo mai di crederci sulla parola. Ogni ingaggio inizia costruendo un set di valutazione dai vostri documenti e misurando modello di base, RAG, ottimizzazione e la combinazione rispetto ad esso. Se il modello piccolo non supera l'asticella concordata in anticipo, lo vedete nel rapporto prima di spendere per la produzione. L'Apertus-8B ottimizzato del Cantone Ticino esegue la traduzione cantonale in produzione con il 94 % di accuratezza — lo schema è reale, ma è la valutazione a decidere per il vostro compito.
+  - q: E il lavoro a forte carico di ragionamento?
+    a: >-
+      Il ragionamento profondo a più passaggi su domande aperte è l'ambito in cui la dimensione del modello paga ancora. La nostra risposta è architetturale, non ideologica — un modello piccolo gestisce il volume di routine, e le richieste che non può gestire con sicurezza scalano a un modello aperto più grande in esecuzione sulla stessa infrastruttura. Nulla scala verso un'API cloud. La <a class="link-underline" href="/it/concepts/sovereign-architecture/">pagina del runtime sovrano</a> descrive come funziona questo router.
+  - q: L'ottimizzazione non diventa obsoleta ogni volta che esce un modello di base migliore?
+    a: >-
+      Gli asset costosi sopravvivono ai cambi di modello. Il vostro set di valutazione, i vostri dati di addestramento curati e il vostro corpus di retrieval si trasferiscono tutti invariati; rieseguire un'ottimizzazione LoRA su un modello di base più recente è questione di giorni, non una ricostruzione. È anche per questo che restiamo agnostici rispetto al modello — Apertus, Llama o Mistral, quello che vince sul vostro set di valutazione al momento.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import deltaBars %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concetti · Modelli piccoli</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Modelli piccoli, misurati.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Un modello 4–8B ottimizzato che conosce i vostri documenti batte un modello di frontiera che non li ha mai visti — sui compiti ristretti e ad alto volume che contano davvero nel lavoro regolamentato. Ecco perché, limiti onesti inclusi.
+    </p>
+  </div>
+</section>
+
+<!-- Specialization -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("L'effetto", "La specializzazione batte la scala sui compiti ristretti.", "I benchmark generali premiano l'ampiezza. Il vostro workflow premia la profondità — i vostri modelli, la vostra terminologia, i vostri formati, i vostri casi limite.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Pronto all'uso, un modello piccolo generico è un generalista che per caso parla la vostra lingua. Ottimizzato su qualche migliaio di esempi del <em>vostro compito</em>, diventa uno specialista che ha letto il vostro corpus. Quanto valga dipende da dove parte il modello di base — esattamente ciò che l'ablazione in ogni Pilot misura, sui vostri documenti, prima che vi impegniate.</p>
+      <p>Il punto di riferimento pubblico in Svizzera: il <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">servizio di traduzione del Cantone Ticino</a> è passato dal 90 % al <strong class="font-semibold text-ink-900 dark:text-white">94 % di accuratezza dopo l'ottimizzazione di Apertus-8B</strong> su dati cantonali, eseguito interamente su infrastruttura cantonale. Quattro punti in cima alla scala — in un servizio in produzione, la differenza tra controllare l'output a campione e rifarlo.</p>
+      <p>Un'API di frontiera ha due svantaggi strutturali su questo terreno: non ha mai visto i vostri documenti, e non potrà mai — perché sono i documenti che non potete cedere. Il vantaggio del modello piccolo non è l'intelligenza. È l'accesso.</p>
+    </div>
+  </div>
+  <div class="mt-12">
+    {% set ticino = [
+      {label:"Apertus-8B di base", v:90, cls:"bg-teal-300"},
+      {label:"Ottimizzato su dati cantonali", v:94, cls:"bg-red-600", tag:"+4 pt"}
+    ] %}
+    {{ deltaBars(ticino, "Cantone Ticino — accuratezza di traduzione su testo cantonale, prima e dopo l'ottimizzazione di Apertus-8B. <a class='link-underline' href='https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino' target='_blank' rel='noopener'>Fonte: CSCS</a>.") }}
+  </div>
+</section>
+
+<!-- Division of labour -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Il metodo", "L'ottimizzazione insegna il comportamento. Il retrieval fornisce i fatti.", "I due vengono regolarmente confusi — e questa confusione è dove i progetti di IA falliscono.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set roles = [
+        {t:"Ottimizzazione", d:"Insegna il compito: la vostra terminologia, i formati dei documenti, il tono, la struttura di output, il comportamento di rifiuto. Non memorizza i fatti in modo affidabile — usarla come archivio di conoscenza è un errore di progettazione che ci rifiutiamo di consegnare."},
+        {t:"Retrieval (RAG)", d:"Fornisce i fatti: la versione attuale delle vostre policy, contratti e archivi, citati fino alla pagina di origine. La conoscenza si aggiorna nel momento in cui lo fa il documento — nessun riaddestramento."},
+        {t:"L'ablazione", d:"Ogni Pilot valuta tutti e quattro i bracci — base, retrieval, ottimizzazione, combinato — sul vostro set di valutazione. La tabella dice quale sistema vale la pena acquistare."}
+      ] %}
+      {% for r in roles %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ r.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ r.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">Misurata, la divisione è netta: nella <a class="link-underline" href="/it/reports/finma-ablation/">nostra ablazione FINMA</a>, la sola ottimizzazione ha portato la conformità di formato da ~2 % a 100 % lasciando però l'accuratezza risposta-più-citazione all'1,6 % — comportamento appreso, fatti no. Solo retrieval: 22,4 %. Combinato: 45,4 %.</p>
+  </div>
+</section>
+
+<!-- Economics -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("L'economia", "Un ordine di grandezza più economico da eseguire — e più veloce.", "I modelli piccoli non rientrano solo nel vostro perimetro di conformità. Rientrano nel vostro budget — in franchi e in millisecondi.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Costo di servizio:</strong> eseguire un modello 7–8B costa all'incirca un ordine di grandezza in meno rispetto a un modello di classe 70B — la differenza tra una GPU di classe workstation e un nodo multi-GPU, tra un ordine d'acquisto e un ciclo di approvvigionamento.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Latenza:</strong> ogni chiamata a un'API cloud paga una tassa di andata e ritorno — salti di rete, TLS, attesa dietro altri tenant — prima ancora che i vostri token raggiungano una GPU; i primi token arrivano abitualmente solo dopo diverse centinaia di millisecondi. Un modello piccolo nel vostro rack evita del tutto questa tassa, e il suo prefill e decode più rapidi si aggiungono — è ciò che rende istantanei le pipeline documentali ad alto volume e gli assistenti interattivi.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Il moltiplicatore di sovranità:</strong> ogni parametro di cui non avete bisogno è conformità che non dovete acquistare. Un modello piccolo specializzato per compito gira su una sola macchina — la forma workstation nel <a class="link-underline" href="/it/concepts/sovereign-architecture/">runtime sovrano</a> — il che apre i deployment air-gapped e all'edge (reparto produttivo, clinica, servizio sul campo) dove le piattaforme gestite e le API statunitensi non possono strutturalmente seguire.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Honest limits -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("I limiti", "Quando un modello piccolo è la scelta sbagliata.", "Un esperto che non vi dice quando il suo strumento preferito perde non è un esperto. I modelli piccoli perdono qui:") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set limits = [
+        {t:"Assistenza aperta", d:"«Rispondi a tutto su tutto» premia la scala. Se vi serve un assistente di conversazione generale su conoscenza pubblica, un modello di frontiera se la cava meglio."},
+        {t:"Ampia conoscenza del mondo", d:"I modelli piccoli sanno di meno. Il retrieval colma il divario solo dove il vostro corpus ha la risposta — non può recuperare ciò che nessuno ha scritto."},
+        {t:"Ragionamento profondo a più passaggi", d:"Le lunghe catene di ragionamento inedito favoriscono ancora i modelli più grandi. Il volume di routine va al piccolo; la coda difficile scala a un modello locale più grande."},
+        {t:"Lavoro non sensibile e a basso volume", d:"Se i dati possono uscire e il volume è trascurabile, un abbonamento API è più semplice. Ve lo diremo nella call di definizione del perimetro."}
+      ] %}
+      {% for l in limits %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ l.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ l.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-2xl text-base prose-muted">La linea di demarcazione non è un'opinione — è il set di valutazione. Per questo ogni ingaggio inizia costruendone uno: <a class="link-underline" href="/it/concepts/evaluation/">consegna guidata dalla valutazione</a>.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Domande sui modelli piccoli.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Un modello piccolo supererebbe la vostra asticella?", "Un workflow, i vostri documenti, il nostro harness. Costruiremo il set di valutazione e vi mostreremo l'ablazione — nella vostra giurisdizione.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

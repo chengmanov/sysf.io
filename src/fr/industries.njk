@@ -1,0 +1,123 @@
+---
+layout: layouts/base.njk
+order: 2
+title: Secteurs
+description: Cas d'usage d'IA souveraine pour les secteurs régulés de la Suisse — banque & finance, santé & pharma, juridique, secteur public, assurance et industrie. Modèles sur mesure affinés sur Apertus, déployés on-prem avec zéro fuite de données.
+faq:
+  - q: Quels secteurs servez-vous ?
+    a: >-
+      Nous nous concentrons sur les secteurs régulés et sensibles aux données en Suisse et dans l'UE — banque et finance, santé et pharma, juridique et services professionnels, secteur public et administration, assurance, et industrie manufacturière.
+  - q: Pouvez-vous travailler avec nos systèmes existants ?
+    a: >-
+      Oui. Les agents appellent vos systèmes et sources de données existants via des outils et la recherche, de sorte que l'IA travaille avec votre core banking, SIH/DPI, GED, ERP, systèmes de sinistres ou de gestion de dossiers plutôt que de les remplacer.
+  - q: Nous opérons dans plusieurs langues — est-ce pris en charge ?
+    a: >-
+      Apertus est multilingue par construction — allemand, français, italien et romanche natifs, y compris le suisse allemand, plus plus de 1 000 autres langues.
+---
+{% from "partials/components.njk" import sectionHead, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Secteurs</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Conçu pour les secteurs qui ne peuvent pas confier leurs données.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Secret bancaire (art. 47), données patients au titre de l'art. 9 RGPD, secret professionnel, droit cantonal de la protection des données — le blocage diffère selon le secteur ; la réponse est la même : un modèle affiné sur vos documents, exécuté à l'intérieur de vos murs.
+    </p>
+  </div>
+</section>
+
+<div class="container-x divide-y divide-ink-900/10 dark:divide-white/10">
+  {% set industries = [
+    {
+      k:"Banque & Finance",
+      p:"Les données identifiant le client (CID) et le secret bancaire (art. 47) n'interdisent pas l'IA externe — ils en font un projet juridique de plusieurs mois. Nous déployons plutôt des modèles affinés dans votre environnement, avec la résidence des données, la piste d'audit et le plan de sortie documenté que votre deuxième ligne de défense et la due diligence d'externalisation FINMA testeront réellement.",
+      cases:[
+        "Copilotes de conseil client ancrés dans vos documents produits et politiques",
+        "Traitement documentaire KYC / AML et aide au screening",
+        "Q&R réglementaire et de politique interne en DE/FR/IT/EN",
+        "Assistants de recherche et de reporting sur vos propres données de marché"
+      ],
+      note:"On-prem ou confidential computing · zéro fuite de données · droits d'audit & plan de sortie documentés"
+    },
+    {
+      k:"Santé & Pharma",
+      p:"L'IA hospitalière échoue à la revue, pas à la démo. Les données sensibles au titre de l'art. 5 nLPD et de l'art. 9 RGPD restent dans votre réseau clinique — intégrées à votre SIH via HL7/FHIR, et conçues selon votre droit cantonal de la protection des données, pas seulement la LPD fédérale. Nous restons délibérément hors du champ du MDR/ODim : aucune fonctionnalité de diagnostic ou de triage.",
+      cases:[
+        "Lettres de sortie et rapports cliniques rédigés à partir de notes structurées (DE/FR/IT)",
+        "Aide au codage clinique (CHOP / CIM-10)",
+        "Assistants de recherche et de littérature sur les connaissances internes",
+        "Automatisation des workflows administratifs et de la correspondance"
+      ],
+      note:"Les données patients restent en Suisse · hors champ MDR/ODim par conception"
+    },
+    {
+      k:"Juridique & Services professionnels",
+      p:"Vos collaborateurs perdent des heures en premiers jets, recherche de clauses et mémos de recherche interlangues — nous installons des assistants entraînés sur vos propres modèles et jurisprudence, qui s'exécutent au sein du cabinet.",
+      cases:[
+        "Analyse, revue de contrats et extraction de clauses",
+        "Recherche juridique multilingue (DE / FR / IT / EN)",
+        "Assistants de rédaction ancrés dans vos modèles et votre jurisprudence",
+        "Synthèse de due diligence et de data room"
+      ],
+      note:"Respectueux du secret professionnel · en juridiction · vos modèles et votre jurisprudence"
+    },
+    {
+      k:"État & Secteur public",
+      p:"Cela fonctionne déjà : le Canton du Tessin exploite un système de traduction Apertus-8B affiné sur sa propre infrastructure — 94 % de précision après affinage sur des données cantonales. La même méthode — affiner sur votre corpus, mesurer avant la mise en service, déployer sur une infrastructure que vous contrôlez — s'applique à votre canton ou votre commune.",
+      cases:[
+        "Assistants de services aux citoyens multilingues (DE / FR / IT / RM)",
+        "Assistants de connaissances et de procédures internes pour le personnel",
+        "Aide au traitement des documents et des demandes",
+        "Rédaction d'une communication accessible en langage clair"
+      ],
+      note:"S'exécute sur une infrastructure nationale · les données ne quittent jamais le pays"
+    },
+    {
+      k:"Assurance",
+      p:"Vos équipes sinistres ressaisissent toute la journée des données issues de formulaires scannés, rapports médicaux et courriers de courtiers — des documents trop sensibles pour une API américaine. Nous déployons des modèles ancrés dans votre environnement qui classent, extraient et rédigent face à vos systèmes cœur (Guidewire, Syrius, SAP FS-CM), structurés dès le premier jour comme une externalisation conforme à la FINMA.",
+      cases:[
+        "Réception, triage des sinistres et automatisation documentaire",
+        "Copilotes de Q&R sur les polices et garanties pour agents et clients",
+        "Aide à la recherche et à la synthèse en souscription",
+        "Rédaction de correspondance ancrée dans vos polices"
+      ],
+      note:"Sorties traçables · prêt pour l'externalisation FINMA · option on-prem"
+    },
+    {
+      k:"Industrie manufacturière",
+      p:"Paramètres de procédé, historiques de pannes et spécifications fournisseurs sont une PI concurrentielle — et l'essentiel dort dans des partages de fichiers et des classeurs que personne ne consulte. Nous déployons des assistants sur vos manuels, SOP, journaux de maintenance et documentation machine, sur du matériel dans le réseau de l'usine — une machine de classe workstation (24–48 Go de VRAM) suffit en périphérie — de sorte que rien ne franchit la limite du site ni n'atteint une API cloud.",
+      cases:[
+        "Copilotes de maintenance et de dépannage à l'atelier",
+        "Assistants de connaissances sur manuels, SOP et spécifications",
+        "Aide à la documentation qualité et conformité",
+        "Traitement des documents fournisseurs et achats"
+      ],
+      note:"On-prem / adapté à l'edge · protège la PI opérationnelle"
+    }
+  ] %}
+  {% for ind in industries %}
+  <section class="grid gap-8 py-14 md:grid-cols-12 md:py-16">
+    <div class="md:col-span-4">
+      <h2 class="text-2xl font-bold tracking-tightest text-ink-900 dark:text-white">{{ ind.k }}</h2>
+      <p class="mt-4 text-sm prose-muted">{{ ind.p }}</p>
+      <p class="mt-5 inline-flex items-center gap-2 text-xs font-medium text-swiss">
+        <span class="h-1.5 w-1.5 bg-swiss"></span>{{ ind.note }}
+      </p>
+    </div>
+    <div class="md:col-span-7 md:col-start-6">
+      <div class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Exemples de cas d'usage</div>
+      <ul class="mt-4 grid gap-5 sm:grid-cols-2">
+        {% for c in ind.cases %}
+        <li class="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white p-5 text-sm text-ink-700 shadow-sm dark:border-white/10 dark:bg-ink-950 dark:text-ink-300">
+          <span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{{ cta("Votre secteur n'y figure pas ?", "Si vous traitez des données confidentielles sous réglementation suisse ou européenne, l'IA souveraine s'applique. Parlez-nous de votre cas d'usage.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

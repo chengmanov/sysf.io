@@ -1,33 +1,57 @@
+{% set locale = locale or "en" %}
+{% set t = i18n[locale] %}
+{% set L = "" if locale == "en" else "/" + locale %}
+{% set transBase = page.url | localeBase %}
 <header class="sticky top-0 z-40 border-b border-ink-900/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-ink-950/80">
   <nav class="container-x flex h-16 items-center justify-between" aria-label="Primary">
     <div class="flex items-center gap-3">
-      <a href="/" class="flex items-center gap-2.5 text-lg font-bold tracking-tightest text-ink-900 dark:text-white" aria-label="sysf.io home">
+      <a href="{{ L }}/" class="flex items-center gap-2.5 text-lg font-bold tracking-tightest text-ink-900 dark:text-white" aria-label="sysf.io home">
         {% include "partials/mark.njk" %}
         <span class="font-display font-extrabold">{{ site.brandBase }}<span class="text-red-600">{{ site.brandTld }}</span></span>
       </a>
       <span class="hidden items-center gap-3 lg:flex" aria-hidden="true">
         <span class="h-4 w-px bg-ink-900/15 dark:bg-white/15"></span>
-        <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">{{ site.slogan }}</span>
+        <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-500">{{ t.slogan }}</span>
       </span>
     </div>
 
     <div class="hidden items-center gap-8 md:flex">
-      {% for item in site.nav %}
-      <a href="{{ item.url }}"
-         class="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900 dark:text-ink-300 dark:hover:text-white {{ 'text-ink-900 dark:text-white' if page.url == item.url }}">
+      {% for item in t.nav %}
+      <a href="{{ L }}{{ item.url }}"
+         class="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900 dark:text-ink-300 dark:hover:text-white {{ 'text-ink-900 dark:text-white' if page.url == (L + item.url) }}">
         {{ item.label }}
       </a>
       {% endfor %}
     </div>
 
     <div class="flex items-center gap-2">
-      <button data-theme-toggle type="button" aria-label="Toggle dark mode"
+      <!-- Language switcher (no-JS <details> dropdown) -->
+      <details class="langswitch relative">
+        <summary class="flex h-9 cursor-pointer list-none items-center gap-1.5 border border-ink-900/10 px-2.5 text-ink-500 hover:text-ink-900 dark:border-white/10 dark:text-ink-300 dark:hover:text-white [&::-webkit-details-marker]:hidden"
+                 aria-label="{{ t.langMenu }}">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+          <span class="font-mono text-[11px] font-semibold uppercase tracking-wider">{{ locale }}</span>
+          <svg class="h-3 w-3 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-lg border border-ink-900/10 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-ink-900">
+          {% for lc in locales %}
+          <a href="{{ transBase | localeUrl(lc) }}" hreflang="{{ i18n[lc].hreflang }}"
+             lang="{{ i18n[lc].htmlLang }}"
+             class="flex items-center justify-between px-3.5 py-2 text-sm text-ink-700 hover:bg-neutral-50 hover:text-ink-900 dark:text-ink-300 dark:hover:bg-white/5 dark:hover:text-white {{ 'font-semibold text-ink-900 dark:text-white' if lc == locale }}">
+            {{ i18n[lc].label }}
+            {% if lc == locale %}<svg class="h-4 w-4 text-swiss" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </details>
+
+      <button data-theme-toggle type="button" aria-label="{{ t.themeToggle }}"
               class="grid h-9 w-9 place-items-center border border-ink-900/10 text-ink-500 hover:text-ink-900 dark:border-white/10 dark:text-ink-300 dark:hover:text-white">
         <svg class="h-4 w-4 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7"/><circle cx="12" cy="12" r="4"/></svg>
         <svg class="hidden h-4 w-4 dark:block" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
       </button>
-      <a href="/contact/" class="hidden btn-primary md:inline-flex">Book a call</a>
-      <button id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Menu"
+      <a href="{{ L }}/contact/" class="hidden btn-primary md:inline-flex">{{ t.cta }}</a>
+      <button id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="{{ t.menu }}"
               class="grid h-9 w-9 place-items-center border border-ink-900/10 text-ink-900 md:hidden dark:border-white/10 dark:text-white">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -36,10 +60,10 @@
 
   <div id="mobileMenu" class="hidden border-t border-ink-900/10 md:hidden dark:border-white/10">
     <div class="container-x flex flex-col gap-1 py-4">
-      {% for item in site.nav %}
-      <a href="{{ item.url }}" class="py-2 text-sm font-medium text-ink-700 dark:text-ink-300">{{ item.label }}</a>
+      {% for item in t.nav %}
+      <a href="{{ L }}{{ item.url }}" class="py-2 text-sm font-medium text-ink-700 dark:text-ink-300">{{ item.label }}</a>
       {% endfor %}
-      <a href="/contact/" class="btn-primary mt-3">Book a call</a>
+      <a href="{{ L }}/contact/" class="btn-primary mt-3">{{ t.cta }}</a>
     </div>
   </div>
 </header>

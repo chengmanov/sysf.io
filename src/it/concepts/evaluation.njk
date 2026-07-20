@@ -1,0 +1,112 @@
+---
+layout: layouts/base.njk
+title: Consegna guidata dalla valutazione — se non possiamo misurarlo, non lo consegniamo
+description: Come sysf.io costruisce set di valutazione dai vostri documenti, esegue l'ablazione base vs. RAG vs. ottimizzazione, vincola il go-live a metriche concordate, e monitora il drift in produzione.
+faq:
+  - q: Quanto grande deve essere un set di valutazione?
+    a: >-
+      Più piccolo di quanto temiate, più grande di una demo. Cinquanta compiti scelti con cura con risposte di riferimento separano già «funziona» da «impressiona»; 150–300 offrono suddivisioni per categoria — tipi di documento, lingue, casi limite — abbastanza ampie da agire. Riportiamo gli intervalli di confidenza accanto ai punteggi — su campioni di questa dimensione una differenza di due punti è rumore, e preferiamo dirvelo piuttosto che vendervelo. I vostri esperti di dominio ci dedicano ore, non settimane, e il set diventa un asset duraturo che sopravvive a qualsiasi singolo modello.
+  - q: Chi definisce cosa significa «corretto»?
+    a: >-
+      I vostri esperti, per iscritto, prima che si costruisca qualsiasi cosa — criteri per tipo di compito, approvati (i tipi di metrica al passo tre). Rifiutiamo criteri di successo vaghi perché è così che i pilot finiscono «riusciti» e inutilizzati.
+  - q: Cosa succede se il sistema non raggiunge l'asticella?
+    a: >-
+      Il rapporto lo dice, con le categorie di errore dettagliate — e la roadmap di produzione spiega cosa colmerebbe il divario e quanto costerebbe, oppure raccomanda di fermarsi. Un Pilot a perimetro fisso che può concludersi con un «no» documentato è precisamente ciò che rende prezioso il suo «sì».
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concetti · Valutazione</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Se non possiamo misurarlo, non lo consegniamo.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Ogni fornitore di IA promette qualità. Noi la definiamo con voi come un numero, sui vostri documenti, prima di costruire — e vi vincoliamo il go-live. Questa pagina spiega la meccanica dietro quella promessa.
+    </p>
+    <p class="mt-6">
+      <a href="/it/reports/finma-ablation/" class="btn-ghost">Vedi un esempio pratico →</a>
+    </p>
+    <p class="mt-3 max-w-2xl text-sm text-ink-500">Un'ablazione riproducibile a quattro vie di Apertus-8B su Q&amp;A relative alle circolari FINMA svizzere — esattamente la valutazione descritta qui sotto, eseguita su dati pubblici.</p>
+  </div>
+</section>
+
+<!-- Building the eval set -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Passo uno", "Il set di valutazione viene prima del modello.", "Costruito dai vostri documenti, con i vostri esperti, nelle vostre lingue — è il contratto rispetto al quale il sistema viene costruito.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Ci sediamo con i vostri esperti di dominio ed estraiamo com'è fatto «svolto correttamente»: input reali dal vostro workflow — contratti, sinistri, note, lettere — abbinati a risposte di riferimento e valutati su criteri che approvate. Tipicamente 50–300 compiti tra i vostri tipi di documento, lingue (DE/FR/IT secondo necessità) e casi limite noti, inclusi quelli scomodi: fax scansionati, file multilingue, le eccezioni che il vostro team gestisce in automatico.</p>
+      <p>Questo set è costruito deliberatamente <em>prima</em> che inizi la modellazione, così da non poter essere silenziosamente calibrato verso ciò che il modello fa bene per caso. Resta vostro — versionato, documentato e riutilizzabile rispetto a qualsiasi modello o fornitore futuro, incluso il nostro sostituto.</p>
+    </div>
+  </div>
+</section>
+
+<!-- The ablation -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Passo due", "L'ablazione a quattro vie.", "Una tabella che uccide l'hype in entrambe le direzioni — la nostra inclusa.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {% set arms = [
+        {n:"A", t:"Modello di base", d:"Il modello aperto, non modificato. Il pavimento onesto — e a volte una sorpresa: se questo supera già l'asticella, non dovreste pagare per l'ottimizzazione."},
+        {n:"B", t:"+ Retrieval", d:"Modello di base ancorato al vostro corpus. Mostra cosa apporta un migliore accesso ai vostri documenti — di solito il salto singolo più grande."},
+        {n:"C", t:"+ Ottimizzazione", d:"Modello addestrato sul vostro compito senza retrieval. Mostra cosa apporta il comportamento appreso: formato, terminologia, tono, disciplina di rifiuto."},
+        {n:"D", t:"Entrambi", d:"Il candidato di produzione. Se D non è chiaramente migliore di B e C, il rapporto lo dice e acquistate il sistema più economico."}
+      ] %}
+      {% for a in arms %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="font-mono text-sm text-swiss">{{ a.n }}</div>
+        <h3 class="mt-3 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="mt-8 max-w-3xl text-base prose-muted">Sull'esempio pratico FINMA, quella tabella si legge 0 → 22,4 → 1,6 → 45,4 % sull'asticella di produzione da A a D: il solo retrieval fa un quinto del percorso, la sola ottimizzazione quasi da nessuna parte, e solo la combinazione raddoppia il retrieval. La stessa ablazione copre la scelta del modello — Apertus vs. Llama vs. Mistral sul vostro set, e versioni a piena precisione vs. <a class="link-underline" href="/it/concepts/quantization/">quantizzate</a> — così ogni decisione architetturale del vostro sistema risale a una differenza misurata, non a una preferenza. (Perché siamo rigorosi su ciò che l'ottimizzazione può e non può fare: <a class="link-underline" href="/it/concepts/small-models/">modelli piccoli, misurati</a>.)</p>
+  </div>
+</section>
+
+<!-- Metrics & guardrails -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Passo tre", "Metriche con i denti, guardrail con i test.", "«Sembra buono» non è una metrica. Nemmeno un punteggio di benchmark del compito di qualcun altro.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Le <strong class="font-semibold text-ink-900 dark:text-white">metriche di compito</strong> si adattano al lavoro: accuratezza a corrispondenza esatta per i campi estratti, punteggi a rubrica per la redazione, accuratezza della risposta <em>più fedeltà della citazione</em> per le Q&A — una risposta corretta con una fonte inventata conta come errore, perché nel lavoro regolamentato lo è.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">I guardrail vengono testati come funzionalità:</strong> trattamento delle PII, rifiuti fuori perimetro, resistenza al prompt injection e vincoli di output ottengono ciascuno casi di test avversari nel set di valutazione. Un guardrail non testato è un desiderio.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Il gate:</strong> l'asticella è concordata nella proposta. Sopra, go-live. Sotto, un'analisi del divario documentata e una decisione — colmarlo, o fermarsi. In entrambi i casi lo sapete prima di spendere il denaro della produzione.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Production -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("In produzione", "La valutazione non finisce al go-live.", "I modelli derivano, i documenti cambiano, gli utenti trovano le falle. Il set di valutazione continua a vigilare.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set prod = [
+        {t:"Valutazione continua", d:"Campioni di produzione vengono valutati rispetto alle stesse metriche con cadenza fissa, così le regressioni di qualità emergono come numeri su una dashboard — non come lamentele tre mesi dopo."},
+        {t:"Drift & cambiamento dei dati", d:"Nuovi tipi di documento, nuove formulazioni di policy, nuovi casi limite vengono aggiunti al set di valutazione non appena compaiono. Il set cresce con la vostra realtà; il sistema viene rivalidato rispetto ad esso."},
+        {t:"Tutto versionato", d:"Set di valutazione, build del modello e i loro punteggi sono versionati insieme. Ogni risposta registrata risale al build del modello e alla versione di valutazione che l'hanno prodotta — finché la vostra policy di conservazione mantiene il log. Quella tracciabilità è ciò che i vostri auditor chiederanno."}
+      ] %}
+      {% for p in prod %}
+      <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Domande sulla valutazione.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Definite l'asticella con noi.", "Portate un workflow e gli esperti che lo conoscono. Daremo forma al set di valutazione e alle metriche nella call di definizione del perimetro.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

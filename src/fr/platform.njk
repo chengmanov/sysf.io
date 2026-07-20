@@ -1,0 +1,154 @@
+---
+layout: layouts/base.njk
+order: 1
+title: Plateforme
+description: Comment sysf.io livre une IA souveraine de bout en bout — cadrage de conformité, affinage privé sur Apertus, orchestration d'agents avec RAG et outils, garde-fous, et déploiement souverain avec monitoring et support.
+faq:
+  - q: Quelle est la pile technique ?
+    a: >-
+      Un modèle Apertus affiné au cœur, orchestré avec LangChain et LangGraph pour les agents, la génération augmentée par la recherche (RAG) sur vos connaissances, et l'appel d'outils vers vos systèmes. Nous ajoutons des harnais d'évaluation et des garde-fous, et déployons via des conteneurs dans votre cloud suisse, sur du matériel on-premise, ou dans une enclave de confidential computing.
+  - q: Faites-vous de l'affinage, ou seulement du RAG ?
+    a: >-
+      Le RAG d'abord ; l'affinage là où il le mérite. La recherche ancre les réponses dans vos documents actuels et c'est de là que vient l'essentiel de la précision. L'affinage enseigne la terminologie, les formats et le comportement de tâche de votre domaine — il ne mémorise pas les faits de façon fiable, donc nous ne l'utilisons jamais en substitut de la recherche. Chaque pilote est livré avec une ablation sur votre jeu d'évaluation — modèle de base vs. RAG vs. affinage vs. les deux — afin que vous voyiez exactement l'apport de chaque composant avant d'investir en production.
+  - q: Que requiert réellement l'on-premise ?
+    a: >-
+      Moins que vous ne le pensez. Un Apertus-8B affiné et quantifié s'exécute à vitesse interactive sur un seul serveur GPU de classe workstation (environ 24 à 48 Go de VRAM) installé dans votre rack existant. Le 70B nécessite un nœud multi-GPU ou une instance de confidential computing. Nous dimensionnons le déploiement lors du cadrage et nous engageons sur des chiffres de débit — et un pilote peut tourner sur du matériel que nous apportons, de sorte que vous ne dépensez rien en infrastructure avant que la valeur soit prouvée.
+  - q: Comment gérez-vous l'évaluation et les garde-fous ?
+    a: >-
+      Le jeu d'évaluation est construit à partir de vos documents et vérifié avec vos experts — le jeu FINMA en est le modèle : 183 questions vérifiées par des humains, notées de façon déterministe, sans juge LLM. Les garde-fous (sécurité, PII, contraintes de sortie) obtiennent leurs propres cas de test dans le même harnais, avec des taux de réussite rapportés avant la mise en service et surveillés en production.
+  - q: Où cela s'exécute-t-il ?
+    a: >-
+      Là où votre gouvernance des données l'exige — votre cloud suisse ou européen, votre propre centre de données, ou un environnement air-gapped avec confidential computing (AMD SEV-SNP ou Intel TDX avec attestation à distance). Ce que cela apporte, et sa réserve concernant le GPU, figure sur la <a class="link-underline" href="/fr/concepts/sovereign-architecture/">page du runtime souverain</a>. Rien ne dépend d'API LLM américaines externes.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">La plateforme</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      De vos documents à un système en production.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Pas un modèle remis dans un notebook — un système en production maintenu. Chaque étape du pipeline s'exécute dans votre juridiction, de la préparation des données au monitoring.
+    </p>
+  </div>
+</section>
+
+<!-- Pipeline -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Pipeline", "Sept étapes, une juridiction.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-2">
+    {% set steps = [
+      {n:"01", t:"Découverte & cadrage de conformité", d:"Nous cartographions le cas d'usage, les sources de données et le cadre réglementaire (LPD/nLPD, RGPD, AI Act), et définissons d'emblée les métriques de succès et les exigences de garde-fous."},
+      {n:"02", t:"Préparation des données, privée et en juridiction", d:"Les documents sont dédupliqués, formatés et répartis en jeux d'entraînement et d'évaluation là où ils vivent déjà, avec un enregistrement documenté de la traçabilité. Rien n'est envoyé à un service externe. Le traitement des PII est pensé dès le départ."},
+      {n:"03", t:"Affinage sur Apertus", d:"Nous affinons le modèle ouvert suisse Apertus sur votre corpus pour enseigner votre domaine, terminologie, formats et tâches — validé face à une base de référence en recherche seule, avec une transparence totale sur les poids et la traçabilité des données."},
+      {n:"04", t:"Orchestration d'agents & RAG", d:"Agents, génération augmentée par la recherche et appels d'outils vers vos systèmes, afin que les réponses soient ancrées dans vos documents actuels — avec citations — et que le système exécute des appels vers vos API internes."},
+      {n:"05", t:"Évaluation & garde-fous", d:'Un jeu d\'évaluation propre au cas d\'usage, des garde-fous de sécurité et PII, et des contraintes de sortie. Nous rapportons la qualité face aux métriques convenues avant la mise en service. Le même harnais a produit notre <a class="link-underline" href="/fr/reports/finma-ablation/">ablation FINMA</a> publique.'},
+      {n:"06", t:"Déploiement souverain", d:"Déploiement conteneurisé dans votre cloud suisse, sur votre propre matériel, ou sur des VM de confidential computing (AMD SEV-SNP / Intel TDX avec attestation à distance)."},
+      {n:"07", t:"Monitoring & itération", d:"Monitoring continu de la qualité, de la dérive et de l'usage, avec une cadence de maintenance et un contrat de support."}
+    ] %}
+    {% for s in steps %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <div class="font-mono text-sm text-swiss">{{ s.n }}</div>
+      <h3 class="mt-3 text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ s.d | safe }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x grid items-center gap-14 md:grid-cols-12">
+    <div class="md:col-span-6">
+      {{ sectionHead("Architecture", "Vos données ne quittent jamais votre juridiction.", "Une unique frontière de confiance contient tout — données, modèle et orchestration. Il n'y a aucun aller-retour vers une API externe.") }}
+      <ul class="mt-8 space-y-4">
+        {% set arch = [
+          {t:"Cœur Apertus", d:"LLM ouvert suisse affiné — poids ouverts, auditables, à vous d'exécuter."},
+          {t:"Orchestration d'agents", d:"Agents à état, routage et usage d'outils sur vos systèmes (LangChain + LangGraph, durcis pour la production)."},
+          {t:"Couche RAG", d:"Recherche sur vos bases de connaissances, ancrée et citée."},
+          {t:"Garde-fous & évaluation", d:"Contrôles de sécurité, PII et qualité, surveillés en production."},
+          {t:"Runtime souverain", d:"On-premise, cloud suisse, ou confidential computing."}
+        ] %}
+        {% for a in arch %}
+        <li class="flex gap-4">
+          <span class="mt-1 h-2 w-2 shrink-0 bg-swiss"></span>
+          <div>
+            <div class="font-semibold text-ink-900 dark:text-white">{{ a.t }}</div>
+            <div class="text-sm prose-muted">{{ a.d }}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      <p class="mt-6 text-sm text-ink-500">Agnostique au modèle par conception : Apertus, Llama ou Mistral — celui qui l'emporte sur votre jeu d'évaluation.</p>
+      <p class="mt-3 text-sm text-ink-500">Vous voulez la profondeur derrière chaque couche ? Les <a class="link-underline" href="/fr/concepts/">pages concepts</a> couvrent en détail les petits modèles, la quantification, l'évaluation et le runtime souverain.</p>
+    </div>
+    <div class="md:col-span-5 md:col-start-8">
+      {% include "partials/diagram.njk" %}
+    </div>
+  </div>
+</section>
+
+<!-- Compliance -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Conformité", "La conformité est une architecture, pas une case à cocher.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {% set comp = [
+      {t:"LPD / nLPD suisse", d:"Le traitement en juridiction et une traçabilité claire des données maintiennent les données personnelles sous droit et contrôle suisses."},
+      {t:"RGPD européen", d:"Minimisation des données, limitation des finalités et résidence, gérées par conception pour les opérations dans l'UE."},
+      {t:"AI Act européen", d:"Les données d'entraînement d'Apertus sont publiquement documentées — une avance qu'aucun modèle fermé n'offre. Nous ajoutons la fiche de classification des risques au titre de l'AI Act et la documentation technique qu'il exige."}
+    ] %}
+    {% for c in comp %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ c.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ c.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Chaque engagement est livré avec le rapport d'évaluation ; le dossier complet de conformité &amp; d'audit — fiche de modèle, enregistrement de traçabilité des données d'entraînement, modèle de DPA, MTO, fiche de classification des risques AI Act — est cadré là où vos obligations l'exigent. Ceci n'est pas un conseil juridique — nous travaillons avec vos équipes conformité et juridique pour satisfaire vos obligations.</p>
+</section>
+
+<!-- Differentiation -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Ce qui nous distingue", "Trois façons d'obtenir une IA souveraine — et ce que vous recevez réellement.") }}
+  <div class="mt-12 overflow-x-auto">
+    <table class="w-full min-w-[720px] border-collapse text-sm">
+      <thead>
+        <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+          <th class="py-4 pr-4 font-semibold text-ink-900 dark:text-white"></th>
+          <th class="py-4 pr-4 font-semibold text-swiss">sysf.io (studio)</th>
+          <th class="py-4 pr-4 font-semibold text-ink-500">Plateforme souveraine (endpoint hébergé)</th>
+          <th class="py-4 pr-4 font-semibold text-ink-500">API cloud américaine (région suisse)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+        {% set rows = [
+          {k:"Où vivent les données", a:"Votre infrastructure — on-prem, votre cloud, ou air-gapped", b:"Le centre de données suisse du fournisseur", c:"Région du fournisseur, sous portée juridique américaine"},
+          {k:"Poids du modèle", a:"Ouverts, affinés sur votre corpus, auditables", b:"Modèle de base partagé, ouvert ou fermé", c:"Fermés, opaques"},
+          {k:"Qui construit votre produit", a:"Nous — cas d'usage cadré, plan d'évaluation, livraison", b:"Votre équipe, sur leur endpoint", c:"Votre équipe, sur leur API"},
+          {k:"Précision sur votre tâche", a:"Mesurée face à votre jeu d'évaluation avant la mise en service", b:"Inconnue tant que vous n'avez pas construit et testé", c:"Inconnue tant que vous n'avez pas construit et testé"},
+          {k:"Propriété & sortie", a:"Vous possédez le modèle ; la reprise est un livrable", b:"Abonnement — l'accès prend fin avec le contrat", c:"Accès loué"},
+          {k:"Documentation de conformité", a:"Livrée avec le système", b:"Au niveau plateforme ; la conformité du cas d'usage vous incombe", c:"Responsabilité partagée — surtout la vôtre"}
+        ] %}
+        {% for r in rows %}
+        <tr>
+          <td class="py-4 pr-4 font-medium text-ink-900 dark:text-white">{{ r.k }}</td>
+          <td class="py-4 pr-4 text-ink-700 dark:text-ink-300">{{ r.a }}</td>
+          <td class="py-4 pr-4 text-ink-500">{{ r.b }}</td>
+          <td class="py-4 pr-4 text-ink-500">{{ r.c }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-6 max-w-3xl text-sm text-ink-500">Pour être juste envers les alternatives : une plateforme managée est la bonne réponse si vous avez une équipe d'ingénierie IA et ne voulez que l'infrastructure, et une API cloud américaine est la bonne réponse si vos données peuvent sortir. Nous sommes la réponse quand les données ne peuvent pas sortir et que vous voulez le système construit, mesuré et remis.</p>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Questions sur la plateforme.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Voyez-le sur votre cas d'usage.", "Apportez un workflow à forte valeur. Nous vous montrerons le pipeline de bout en bout — sur vos données, dans votre juridiction.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}

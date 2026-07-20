@@ -1,26 +1,22 @@
+{% set locale = locale or "en" %}
+{% set d = i18n[locale].diagram %}
 <figure class="relative">
-  <figcaption class="sr-only">Architecture: your data stays inside your jurisdiction. sysf.io fine-tunes Apertus and orchestrates agents, retrieval and tools, with no data sent to third-party US LLM APIs.</figcaption>
+  <figcaption class="sr-only">{{ d.caption }}</figcaption>
 
   <!-- Excluded external API -->
   <div class="mb-3 flex items-center justify-end gap-2 text-xs text-ink-500">
-    <span class="line-through decoration-swiss decoration-2">Third-party US LLM API</span>
+    <span class="line-through decoration-swiss decoration-2">{{ d.excluded }}</span>
     <span class="grid h-5 w-5 place-items-center border border-swiss text-swiss" aria-hidden="true">✕</span>
   </div>
 
   <div class="relative rounded-xl border-2 border-teal-400 bg-white p-5 shadow-md dark:bg-ink-900">
     <div class="absolute -top-3 left-4 flex items-center gap-1.5 bg-white px-2 text-xs font-semibold uppercase tracking-[0.14em] text-swiss dark:bg-ink-900">
       <span class="inline-block h-3 w-3 bg-swiss" aria-hidden="true"></span>
-      Your jurisdiction
+      {{ d.jurisdiction }}
     </div>
 
     <ul class="space-y-2.5">
-      {% set nodes = [
-        {t:"Your data", d:"Documents, records, systems — never leaves"},
-        {t:"Fine-tuned Apertus", d:"Swiss open model, trained on your corpus"},
-        {t:"Agent orchestration", d:"Agents · RAG · tools · guardrails"},
-        {t:"Your product", d:"Copilots & workflows — yours to run"}
-      ] %}
-      {% for n in nodes %}
+      {% for n in d.nodes %}
       <li>
         <div class="flex items-center gap-3 rounded-md border border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
           <span class="font-mono text-xs text-swiss">0{{ loop.index }}</span>
@@ -34,5 +30,5 @@
       {% endfor %}
     </ul>
   </div>
-  <p class="mt-3 text-center text-xs text-ink-500">On-prem · Swiss cloud · Confidential compute — zero data egress</p>
+  <p class="mt-3 text-center text-xs text-ink-500">{{ d.foot }}</p>
 </figure>

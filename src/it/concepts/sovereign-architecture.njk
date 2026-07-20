@@ -1,0 +1,102 @@
+---
+layout: layouts/base.njk
+title: Il runtime sovrano — da una workstation a un air gap completo
+description: Le forme di deployment dietro «gira dove risiedono i vostri dati» — server mono-GPU di classe workstation, nodi multi-GPU, confidential computing con attestazione, il router di escalation «prima il modello piccolo», e come i sistemi air-gapped restano aggiornati.
+faq:
+  - q: Quanto costa davvero l'hardware?
+    a: >-
+      La forma workstation — un server mono-GPU che esegue un 4–8B specializzato per compito — è tipicamente una macchina da CHF 5'000–15'000 che risiede nel vostro rack esistente o in un armadio d'ufficio con serratura. La forma nodo per i modelli di classe 70B è un investimento a metà delle cinque cifre o un noleggio nel vostro cloud svizzero. Il dimensionamento esatto (e le cifre di throughput impegnate) fa parte di ogni proposta — e l'hardware del Pilot può essere il nostro, così la spesa in infrastruttura inizia solo dopo il superamento della valutazione.
+  - q: Cos'è il confidential computing, concretamente?
+    a: >-
+      Macchine virtuali cifrate a livello hardware — AMD SEV-SNP o Intel TDX — in cui la memoria è cifrata con chiavi che l'operatore cloud non detiene mai, e l'attestazione remota vi consente di verificare crittograficamente lo stato di avvio (firmware, immagine, configurazione) prima che qualsiasi dato entri. Significato pratico — potete noleggiare infrastruttura svizzera spostando al contempo il fornitore fuori dal confine di fiducia della riservatezza dei dati. Una riserva che solleviamo prima del vostro team di sicurezza — una enclave CPU da sola non copre la GPU dove l'inferenza viene effettivamente eseguita; estendere il confine all'acceleratore richiede GPU compatibili con il confidential computing (classe NVIDIA H100, con trasferimenti cifrati e attestazione GPU), e dimensioniamo esattamente per questo quando il modello di minaccia lo richiede.
+  - q: Come ricevono aggiornamenti i sistemi air-gapped?
+    a: >-
+      Deliberatamente e in modo verificabile — mai via cavo. Aggiornamenti del modello, ricostruzioni dell'indice di retrieval e patch software arrivano come pacchetti offline firmati e con checksum, in finestre di manutenzione pianificate, installati da runbook documentati che il vostro personale può eseguire. Ogni aggiornamento viene rivalidato rispetto al vostro set di valutazione prima di sostituire la versione in esecuzione. Più lento dell'aggiornamento automatico cloud — che è esattamente ciò che vuole il vostro team di sicurezza.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Concetti · Runtime sovrano</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Da una workstation a un air gap completo.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      «Gira dove risiedono i vostri dati» è un'affermazione su hardware, reti e confini di fiducia. Ecco le forme di deployment reali — e lo schema di routing che mantiene veloci i modelli piccoli senza mai chiamare un cloud.
+    </p>
+  </div>
+</section>
+
+<!-- Deployment shapes -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Le forme", "Tre involucri di deployment, un principio.", "Ogni forma mantiene dati, modello e orchestrazione all'interno di un unico confine di fiducia che controllate. Differiscono per dove si trova quel confine.") }}
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {% set shapes = [
+      {t:"Classe workstation", w:"4–8B specializzato per compito, quantizzato", d:"Un server GPU nel vostro rack — o un armadio con serratura nel vostro ufficio. Esegue un modello piccolo ottimizzato con retrieval a velocità interattiva per un team o una pipeline documentale. È la forma che rende l'IA sovrana una voce di budget anziché un progetto."},
+      {t:"Classe nodo", w:"Classe 70B, o più modelli", d:"Un server multi-GPU nel vostro data center o nel vostro cloud svizzero. Esegue modelli più grandi, più carichi di lavoro concorrenti, e il livello di escalation del router qui sotto. La forma per i rollout a livello di organizzazione."},
+      {t:"Air-gapped / confidenziale", w:"Qualsiasi dimensione, massima isolazione", d:"O infrastruttura fisicamente scollegata con runbook di aggiornamento offline, o VM di confidential computing con attestazione remota — memoria cifrata con chiavi che l'operatore non detiene mai. Dettaglio a livello di chip nelle FAQ qui sotto."}
+    ] %}
+    {% for s in shapes %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
+      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ s.w }}</p>
+      <p class="mt-4 text-sm prose-muted">{{ s.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-8 max-w-3xl text-base prose-muted">Ciò che rende possibile la forma workstation è una <a class="link-underline" href="/it/concepts/quantization/">quantizzazione</a> aggressiva e verificata dalla valutazione.</p>
+</section>
+
+<!-- Router -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    <div class="grid gap-12 md:grid-cols-12">
+      <div class="md:col-span-5">
+        {{ sectionHead("Lo schema", "Prima il piccolo, escalation locale.", "L'architettura di routing che cattura l'economia dei modelli piccoli senza rinunciare alla coda difficile — né alla sovranità.") }}
+      </div>
+      <div class="md:col-span-6 md:col-start-7">
+        <ol class="space-y-4">
+          {% set steps = [
+            {n:"01", t:"Il modello piccolo vede ogni richiesta per primo", d:"Il 4–8B specializzato per compito risponde per primo — veloce, economico, sulla forma classe workstation. Per un workflow ben definito, è la stragrande maggioranza del volume."},
+            {n:"02", t:"Un router sorveglia i problemi", d:"Le violazioni di schema e le chiamate di strumenti fallite sono trigger inequivocabili. I segnali di confidenza e fuori distribuzione sono più difficili — li calibriamo per compito rispetto al vostro set di valutazione, e la soglia di escalation è un compromesso misurato, non un default di cui ci fidiamo ciecamente."},
+            {n:"03", t:"L'escalation va a un modello locale più grande", d:"Le richieste segnalate vengono rieseguite sul livello classe nodo: un modello aperto più grande sulla vostra infrastruttura. La versione cloud di questo schema scala verso un'API statunitense — la nostra mai. Sui deployment solo workstation, le richieste segnalate vengono invece instradate a una coda di revisione umana: un sistema piccolo che sa quando passare la mano batte uno grande che non lo fa mai."},
+            {n:"04", t:"Tutto viene registrato e rivalutato", d:"I tassi di escalation e gli esiti alimentano il ciclo di valutazione: un tasso crescente significa che il compito è derivato o che il modello piccolo ha bisogno di un aggiornamento — visibile nelle metriche settimane prima che gli utenti se ne accorgano."}
+          ] %}
+          {% for s in steps %}
+          <li class="flex gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-ink-950">
+            <span class="font-mono text-sm text-swiss">{{ s.n }}</span>
+            <div>
+              <div class="font-semibold text-ink-900 dark:text-white">{{ s.t }}</div>
+              <p class="mt-1 text-sm prose-muted">{{ s.d }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Zero egress -->
+<section class="container-x py-20 md:py-28">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      {{ sectionHead("Il confine", "La fuoriuscita nulla è una proprietà di progettazione, non una promessa.", "Non dovreste dover credere sulla parola a un fornitore per «nulla esce». Dovreste poterlo verificare al firewall.") }}
+    </div>
+    <div class="md:col-span-6 md:col-start-7 space-y-5 text-base prose-muted">
+      <p>Il runtime è containerizzato e autosufficiente: pesi del modello, indice di retrieval, orchestrazione e monitoraggio girano tutti all'interno del vostro segmento di rete. Nessun componente chiama verso l'esterno — nessuna telemetria, nessun ping di licenza, nessuna «statistica d'uso anonima». Le vostre regole del firewall possono dire <em>deny all egress</em>, e il sistema continua a funzionare. Questo è il test, e potete eseguirlo voi stessi.</p>
+      <p>Anche il monitoraggio resta all'interno: dashboard, log e punteggi di valutazione sono serviti localmente, e la conservazione dei log segue la vostra policy — i log di inferenza contengono i vostri dati. Lo stack di tracing self-hosted alla base di ciò è sulla <a class="link-underline" href="/it/concepts/orchestration/">pagina dell'orchestrazione</a>.</p>
+      <p>Sulle forme workstation e air-gapped, questa è anche una demo che ci piace fare: staccate il cavo di rete, continuate a lavorare.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Domande sul runtime.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Quale forma si adatta ai vostri vincoli?", "Descrivete i vostri vincoli di data governance nella call di definizione del perimetro — li mapperemo a una forma di deployment e metteremo dimensionamento e throughput nella proposta.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

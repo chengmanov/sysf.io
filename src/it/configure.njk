@@ -1,0 +1,846 @@
+---
+layout: layouts/base.njk
+order: 3.5
+title: Configura la tua soluzione di IA sovrana
+description: Un configuratore interattivo — scegliete modello, dimensione, quantizzazione, lingue, trattamento dei dati, deployment e conformità, e ottenete una specifica di una pagina. Spieghiamo ogni scelta. Nulla lascia il vostro browser finché non lo inviate.
+faq:
+  - q: Qualcosa lascia il mio browser mentre configuro?
+    a: >-
+      No. Ogni risposta resta nel vostro browser mentre procedete — nulla viene inviato da nessuna parte finché non premete «Invia a sysf.io», che apre il vostro client di posta con la specifica precompilata. È lo stesso principio di tutto ciò che costruiamo: il modello viene ai vostri dati — i vostri dati non vengono mai da noi.
+  - q: Posso davvero scegliere il modello?
+    a: >-
+      Questo configuratore definisce il punto di partenza. Apertus è il nostro default — l'LLM completamente aperto della Svizzera. Ma in un ingaggio reale decide la valutazione: testiamo i modelli aperti su un set costruito dai vostri documenti e distribuiamo quello che vince. Apertus, Llama o Mistral — decide la valutazione, non il logo.
+  - q: La specifica è un preventivo?
+    a: >-
+      No — è un brief strutturato, non un preventivo. Ci dà abbastanza per tornare con una proposta a perimetro fisso dopo una breve call. Perché non pubblichiamo prezzi fissi è spiegato sulla <a class='link-underline' href='/it/pricing/'>pagina dei prezzi</a>.
+  - q: Da dove vengono i numeri nei calcolatori?
+    a: >-
+      Le cifre di memoria sono semplice aritmetica — parametri × bit per peso — usando gli stessi numeri della nostra spiegazione della quantizzazione. I pavimenti di accuratezza sono risultati misurati dal nostro benchmark pubblico FINMA, con harness open source. Nulla in questa pagina è una proiezione.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+
+<style>
+  /* Print shows only the generated spec — but only once one exists (html.spec-ready),
+     so printing the page before generating doesn't produce a blank sheet. */
+  @media print {
+    html.spec-ready body * { visibility: hidden !important; }
+    html.spec-ready #specPrint, html.spec-ready #specPrint * { visibility: visible !important; }
+    html.spec-ready #specPrint { position: absolute; left: 0; top: 0; width: 100%; }
+    html.spec-ready #specActions { display: none !important; }
+  }
+</style>
+
+<!-- Hero -->
+<section class="relative overflow-hidden border-b border-ink-900/10 dark:border-white/10">
+  <div class="circuit pointer-events-none absolute inset-0 -z-10 opacity-70 dark:opacity-20"></div>
+  <div class="container-x py-16 md:py-20">
+    <p class="eyebrow">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+      Configuratore di build
+    </p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-bold leading-[1.06] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Specificate il vostro build sovrano in tre minuti.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Otto passi brevi, dal caso d'uso alla conformità. Spieghiamo cosa significa ogni scelta mentre procedete, poi vi consegniamo una specifica di una pagina da inviarci. È il modo più rapido per trasformare «dovremmo dare un'occhiata» in una proposta concreta.
+    </p>
+    <div class="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      {% for c in ["8 passi · ~3 minuti", "Nessun account, nessuna registrazione", "Nulla lascia il vostro browser prima dell'invio"] %}
+      <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300"><span class="h-1.5 w-1.5 shrink-0 bg-swiss"></span>{{ c }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <div class="container-x py-10">
+    <div class="card">
+      <p class="text-sm text-ink-700 dark:text-ink-300">Il configuratore richiede JavaScript. Nessun problema — <a class="link-underline" href="/it/contact/">raccontateci semplicemente cosa vorreste costruire</a> e lo definiremo insieme.</p>
+    </div>
+  </div>
+</noscript>
+
+<!-- Builder -->
+<section id="builder" class="container-x py-14 md:py-20">
+  <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <!-- Wizard -->
+    <div class="lg:col-span-8">
+      <div class="mb-8">
+        <div class="mb-2 flex items-center justify-between">
+          <span id="progressLabel" class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Passo 1 / 8</span>
+          <span id="progressPct" class="font-mono text-xs tabular-nums text-ink-500">13%</span>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/10">
+          <div id="progressFill" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 13%"></div>
+        </div>
+      </div>
+
+      <div id="stepContainer" aria-live="polite"></div>
+
+      <div class="mt-10 flex items-center justify-between gap-4 border-t border-ink-900/10 pt-6 dark:border-white/10">
+        <button id="backBtn" type="button" class="btn-ghost">← Indietro</button>
+        <button id="nextBtn" type="button" class="btn-primary">Avanti →</button>
+      </div>
+    </div>
+
+    <!-- Live summary -->
+    <aside class="lg:col-span-4">
+      <div id="summaryCard" class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
+        <div class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">La vostra soluzione finora</div>
+        <div class="mt-4">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ingaggio suggerito</div>
+          <div id="tierChip" class="mt-1.5 inline-flex items-center gap-2 rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">Pilot</div>
+          <p class="mt-1.5 text-xs prose-muted">Definito dopo una breve call — non un preventivo.</p>
+        </div>
+        <dl id="summaryList" class="mt-5 space-y-2.5 border-t border-neutral-200 pt-5 text-sm dark:border-white/10"></dl>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Generated spec (hidden until generated) -->
+<section id="specPrint" class="container-x hidden py-14 md:py-20">
+  <div id="specBody"></div>
+</section>
+
+<!-- FAQ -->
+<section class="border-t border-ink-900/10 py-16 dark:border-white/10 md:py-24">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Prima di iniziare.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Preferite parlarne direttamente?", "Saltate il modulo — prenotate una call di definizione del perimetro di 30 minuti e mapperemo insieme il vostro primo caso d'uso.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}
+
+<script>
+(function () {
+  "use strict";
+  var CONTACT_EMAIL = "{{ site.email }}";
+  var L = "/it";
+
+  // ---- Selected-state class tokens (must appear literally so Tailwind emits them) ----
+  // Important variants so they beat the card's base dark:bg-ink-950 / dark:border-white/10.
+  var SEL = ["ring-2", "ring-teal-500", "!border-teal-500", "!bg-teal-50", "dark:!bg-teal-500/10", "dark:!border-teal-500"];
+
+  // ---- Question bank -------------------------------------------------------
+  var Q = {
+    sector: { title: "In quale settore operate?", type: "single", cols: 2, hint: "Scegliete il più vicino — plasma i compiti, i sistemi e la conformità per cui progettiamo.", opts: [
+      { id: "banking", label: "Banche & Finanza", imp: "Dati identificativi del cliente e segreto dell'art. 47 — on-prem o confidential computing, zero fuoriuscita, diritti di audit e un piano di uscita documentato." },
+      { id: "healthcare", label: "Sanità & Farma", imp: "Dati degni di particolare protezione ai sensi di nLPD / GDPR, integrazione SIO tramite HL7-FHIR. Fuori dal campo MDR by design — nessuna funzione diagnostica o di triage." },
+      { id: "legal", label: "Legale & Servizi professionali", imp: "Rispettoso del segreto professionale e in giurisdizione — analisi contrattuale, ricerca multilingue e redazione sui vostri modelli e precedenti." },
+      { id: "government", label: "Stato & Settore pubblico", imp: "Eseguito su infrastruttura nazionale, i dati non lasciano mai il Paese — lo schema che il Cantone Ticino gestisce in produzione con il 94 % di accuratezza." },
+      { id: "insurance", label: "Assicurazioni", imp: "Esternalizzazione conforme alla FINMA dal primo giorno — sinistri, Q&A sulle polizze e corrispondenza a fronte di sistemi core come Guidewire o SAP FS-CM." },
+      { id: "manufacturing", label: "Manifattura & Industria", imp: "On-prem / adatto all'edge e protegge l'IP operativo — copiloti sui vostri manuali, SOP e specifiche." },
+      { id: "other", label: "Qualcos'altro", imp: "Indicatelo nel campo — il metodo è lo stesso: misurare sui vostri dati, distribuire il modello più piccolo che supera l'asticella." }
+    ]},
+    task: { title: "Qual è il compito principale?", type: "single", cols: 2, hint: "È ciò che ottimizzeremmo e misureremmo per primo.", opts: [
+      { id: "qa", label: "Q&A documentale & normativo", imp: "Retrieval-first: risposte ancorate ai vostri documenti, con citazioni. Il set di valutazione è costruito da domande reali che i vostri team pongono." },
+      { id: "extract", label: "Estrazione & classificazione", imp: "L'ottimizzazione blocca il formato di output così che ogni risultato sia leggibile dalla macchina e finisca in modo pulito nei vostri sistemi." },
+      { id: "draft", label: "Redazione & corrispondenza", imp: "Ottimizzato sui vostri modelli e sul vostro stile aziendale — bozze nella vostra voce, nella lingua giusta, pronte da modificare." },
+      { id: "intake", label: "Ricezione & triage", imp: "Instrada e struttura i casi in arrivo abbinando un piccolo modello ottimizzato alle vostre regole di business — non una scatola nera." },
+      { id: "coding", label: "Codifica di dominio (ICD/CHOP, tag di clausole…)", imp: "Un compito ristretto e misurabile in cui un 4–8B ottimizzato batte un'API generica — e resta entro le vostre mura." },
+      { id: "other", label: "Qualcos'altro", imp: "Descrivetelo in una riga — se è misurabile, possiamo costruire per esso. Se non è ancora misurabile, è la prima cosa che sistemeremmo insieme." }
+    ]},
+    audience: { title: "Chi lo userà, all'incirca?", type: "single", cols: 2, hint: "La scala cambia l'irrobustimento, non il principio.", opts: [
+      { id: "team", label: "Un piccolo team (< 25)", imp: "Iniziate focalizzati — un Pilot su un workflow con le persone che sentono il problema ogni giorno è il test onesto più economico." },
+      { id: "dept", label: "Un reparto (25–200)", imp: "Vale la pena collegarlo ai sistemi in cui il reparto già vive — controllo degli accessi e piste di audit dal primo giorno." },
+      { id: "org", label: "A livello di organizzazione (200+)", imp: "La scala richiede l'irrobustimento Production: monitoraggio, una cadenza di valutazione e un contratto di supporto." },
+      { id: "external", label: "Rivolto a clienti o cittadini", imp: "Gli utenti esterni alzano l'asticella: guardrail testati, disciplina PII e fallback diventano parte del perimetro, non un'opzione." }
+    ]},
+    languages: { title: "Quali lingue deve gestire?", type: "multi", cols: 3, note: "Tutte e quattro le lingue nazionali in modo nativo — incluso lo svizzero tedesco — più l'inglese. Nessuno strato di traduzione nel circuito.", opts: [
+      { id: "de", label: "Tedesco" }, { id: "fr", label: "Francese" }, { id: "it", label: "Italiano" },
+      { id: "rm", label: "Romancio" }, { id: "gsw", label: "Svizzero tedesco" }, { id: "en", label: "Inglese" },
+      { id: "other", label: "Altro" }
+    ]},
+    dataVolume: { title: "Su quanto materiale lavorerà all'incirca?", type: "single", cols: 2, hint: "Una fascia approssimativa va bene — incide soprattutto sull'ingegneria del retrieval, non sulla dimensione del modello.", opts: [
+      { id: "small", label: "Meno di 1.000 documenti", imp: "Ampiamente sufficiente per il retrieval e un set di valutazione mirato (50–300 compiti). I dati di ottimizzazione sono curati, non in massa." },
+      { id: "med", label: "1.000 – 100k documenti", imp: "Comodo per un indice di retrieval in produzione; ne campioniamo un set di valutazione rappresentativo." },
+      { id: "large", label: "100k – milioni", imp: "Suddividiamo l'indice e aggiungiamo il re-ranking. Il volume è un problema di ingegneria del retrieval, non un motivo per un modello più grande." },
+      { id: "unsure", label: "Non ancora sicuro", imp: "Va bene — dimensioniamo indice e set di valutazione insieme in fase di definizione del perimetro." }
+    ]},
+    dataFormats: { title: "Che forma ha il materiale di origine?", type: "multi", cols: 2, note: "Il formato guida la pipeline: il testo nativo digitale è semplice; le scansioni aggiungono una fase OCR che testiamo come tutto il resto; i dati strutturati spesso vogliono strumenti e query, non embedding.", opts: [
+      { id: "digital", label: "Documenti digitali (PDF, Office)" },
+      { id: "scans", label: "Carta scansionata / immagini (richiede OCR)" },
+      { id: "structured", label: "Dati strutturati (export DB, tabelle)" },
+      { id: "comms", label: "E-mail, ticket, log di chat" },
+      { id: "other", label: "Qualcos'altro" }
+    ]},
+    dataLocation: { title: "Dove risiedono oggi quei dati?", type: "single", cols: 3, note: "Dove risiedono i vostri dati decide dove viene eseguito il modello — viene ai dati, mai il contrario.", opts: [
+      { id: "onprem", label: "Il nostro data center / server" },
+      { id: "swisscloud", label: "Cloud svizzero" },
+      { id: "mixed", label: "Misto / da decidere" }
+    ]},
+    pii: { title: "Contiene PII da trattare prima che il modello le veda?", type: "single", cols: 2, note: "Il trattamento delle PII è un guardrail testato, non un ripensamento — oscuramento / minimizzazione viene eseguito nella pipeline e misuriamo che regga. Questo non è un parere legale; collaboriamo con il vostro team di conformità.", opts: [
+      { id: "none", label: "Nessuna PII sensibile" },
+      { id: "redact", label: "Sì — oscurare prima del trattamento" },
+      { id: "pseudo", label: "Sì — pseudonimizzare / tokenizzare" },
+      { id: "unsure", label: "Non sicuro" }
+    ]},
+    model: { title: "Da quale famiglia di modelli partire?", type: "single", cols: 2, opts: [
+      { id: "apertus", label: "Apertus", sub: "Consigliato · Svizzero", imp: "L'LLM completamente aperto della Svizzera di EPFL, ETH Zurigo e CSCS — pesi aperti e dati di addestramento documentati, esattamente ciò che gli auditor vogliono vedere. Il nostro default, e il riferimento di produzione del Cantone Ticino." },
+      { id: "llama", label: "Llama", sub: "Meta · pesi aperti", imp: "La famiglia aperta di Meta — un forte candidato generico che testiamo regolarmente, con dimensioni in entrambe le nostre classi. Se vince sul vostro set di valutazione, viene distribuito; i pesi restano comunque nella vostra infrastruttura." },
+      { id: "mistral", label: "Mistral", sub: "Europeo · pesi aperti", imp: "Modelli aperti europei e candidato frequente sui compiti multilingue. Stessa regola: viene distribuito solo se vince la vostra valutazione." },
+      { id: "eval", label: "Lasciar decidere alla valutazione", sub: "Come faremmo", imp: "Confrontiamo Apertus, Llama e Mistral su un set costruito dai vostri documenti e distribuiamo il vincitore — vedete i numeri prima di qualsiasi distribuzione." },
+      { id: "other", label: "Un altro modello aperto", imp: "Indicatelo nel campo — se i pesi sono aperti e viene eseguito nella vostra giurisdizione, può entrare nella valutazione." }
+    ]},
+    size: { title: "Classe di dimensione del modello", type: "single", cols: 2, opts: [
+      { id: "s8", label: "4–8B · classe workstation", sub: "~24–48 GB VRAM", imp: "Viene eseguito a velocità interattiva su un singolo server GPU di classe workstation (all'incirca 24–48 GB di VRAM). Il punto ideale di produzione per un compito ristretto e ben definito — e la classe in cui gira il sistema del Ticino." },
+      { id: "s70", label: "70B · classe nodo", sub: "multi-GPU", imp: "Per ragionamento più ampio o come obiettivo di escalation locale — richiede un nodo multi-GPU o un'istanza di confidential computing. L'escalation resta locale, mai verso un'API cloud." },
+      { id: "unsure", label: "Non sicuro", imp: "Scegliamo il modello più piccolo che supera la vostra asticella di valutazione. Più piccolo è più economico, più veloce e più facile da eseguire — il calcolatore qui sotto assume 4–8B finché non lo definiamo." }
+    ]},
+    quant: { title: "Quantizzazione", type: "single", cols: 3, opts: [
+      { id: "fp16", label: "16 bit", sub: "piena precisione", imp: "Qualità di riferimento e la maggiore impronta — 2 byte per peso. Utile come baseline di valutazione; raramente ciò che distribuiamo." },
+      { id: "q4", label: "4 bit", sub: "consigliato", imp: "Il punto ideale di produzione — K-quant GGUF a circa 4,5 bit per peso. Rivalutato dopo la quantizzazione; se la qualità cala, non lo distribuiamo." },
+      { id: "q12", label: "1–2 bit", sub: "frontiera", imp: "La frontiera ternaria / binaria — richiede un addestramento consapevole della quantizzazione e viene distribuita solo se supera la vostra asticella di valutazione. I pesi 8B scendono a ~2 GB — meno della metà dei 4 bit." }
+    ]},
+    approach: { title: "Come dovrebbe diventare bravo nel vostro compito?", type: "single", cols: 2, opts: [
+      { id: "base", label: "Solo modello di base", imp: "Il modello aperto così com'è consegnato — una baseline con cui confrontarsi, raramente la risposta da solo." },
+      { id: "rag", label: "+ Retrieval (RAG)", imp: "Àncora le risposte ai vostri documenti. La conoscenza si aggiorna nel momento in cui lo fa un documento — nessun riaddestramento." },
+      { id: "ft", label: "+ Ottimizzazione (LoRA)", imp: "Insegna la vostra terminologia, i formati e il comportamento di compito. NON memorizza i fatti in modo affidabile — non la usiamo mai come archivio di conoscenza." },
+      { id: "both", label: "Ottimizzazione + Retrieval", sub: "Consigliato", imp: "Il sistema completo: il retrieval fornisce i fatti, l'ottimizzazione blocca formato e voce. Sul nostro benchmark FINMA questo raddoppia l'asticella di produzione rispetto al solo retrieval." }
+    ]},
+    deployment: { title: "Dove dovrebbe essere eseguito?", type: "single", cols: 2, opts: [
+      { id: "swisscloud", label: "Cloud svizzero dedicato", imp: "A tenant singolo, in giurisdizione, sotto un accordo sul trattamento dei dati. Un percorso pulito per un Pilot." },
+      { id: "onprem_ws", label: "Workstation on-prem", imp: "Un singolo server GPU di classe workstation nel vostro data center — un 4–8B ottimizzato su una macchina da CHF 5–15k." },
+      { id: "onprem_node", label: "Nodo on-prem", imp: "Un nodo multi-GPU per modelli più grandi o throughput più elevato, interamente entro le vostre mura." },
+      { id: "airgapped", label: "Air-gapped / confidential computing", imp: "Completamente isolato — gli aggiornamenti arrivano come pacchetti offline firmati e con checksum. Staccate il cavo di rete, continuate a lavorare." }
+    ]},
+    integration: { title: "Come dovrebbe collegarsi al vostro runtime?", type: "multi", cols: 2, note: "Il modello è il motore; l'orchestrazione lo collega ai vostri sistemi con controllo degli accessi, piste di audit e disciplina PII. Il framework è l'impianto — l'irrobustimento è il prodotto.", opts: [
+      { id: "chat", label: "Interfaccia di chat autonoma" },
+      { id: "api", label: "Un'API verso le nostre app esistenti" },
+      { id: "systems", label: "In un sistema core (HL7-FHIR, Guidewire, SAP…)" },
+      { id: "agents", label: "Agenti & strumenti (MCP)" },
+      { id: "other", label: "Qualcos'altro" }
+    ]},
+    ongoing: { title: "Quanto volete che gestiamo in seguito?", type: "single", cols: 1, opts: [
+      { id: "pilot", label: "Pilot una tantum, poi consegna", imp: "Il modello è vostro e lo eseguite in modo indipendente. Un passaggio di consegne documentato è il deliverable — la vostra strategia di uscita è nel perimetro." },
+      { id: "production", label: "Production con monitoraggio & supporto", imp: "Monitoriamo il drift, valutiamo con una cadenza e manteniamo il sistema sotto contratto di supporto." },
+      { id: "managed", label: "Riaddestramento continuo gestito", imp: "Rieseguiamo l'ottimizzazione man mano che i vostri dati crescono o esce una base aperta più forte. I fatti si aggiornano comunque istantaneamente tramite il retrieval — il riaddestramento è per il comportamento, non per la conoscenza." }
+    ]},
+    timeline: { title: "Quando deve diventare reale?", type: "single", cols: 2, hint: "Una tempistica onesta riceve una risposta onesta.", opts: [
+      { id: "exploring", label: "Solo in esplorazione", imp: "Bene — questo configuratore più una breve call è esattamente il modo economico di esplorare." },
+      { id: "quarter", label: "Pilot nei prossimi 3 mesi", imp: "Realistico — un Pilot si definisce in settimane, non in trimestri." },
+      { id: "year", label: "Production quest'anno", imp: "Sequenzieremmo Pilot → Production e coinvolgeremmo presto i vostri team di infrastruttura e conformità." },
+      { id: "urgent", label: "Urgente — abbiamo una scadenza", imp: "Mettete la data nelle note. Vi diremo onestamente cosa ci sta prima — e cosa no." }
+    ]},
+    frameworks: { title: "Quali regimi si applicano?", type: "multi", cols: 2, note: "Il deployment in giurisdizione risponde alla LPD / nLPD svizzera e al GDPR europeo; una tracciabilità documentata dei dati e guardrail testati sostengono i vostri obblighi ai sensi dell'AI Act. Non un parere legale — lavoriamo a fianco dei vostri team di conformità e legali.", opts: [
+      { id: "fadp", label: "LPD / nLPD svizzera" },
+      { id: "gdpr", label: "GDPR europeo" },
+      { id: "aiact", label: "AI Act europeo" },
+      { id: "unsure", label: "Non ancora sicuro" }
+    ]},
+    compliancePack: { title: "Includere il pacchetto conformità & audit?", type: "single", cols: 2, note: "Il pacchetto: model card, registro di tracciabilità dei dati di addestramento, modello di accordo sul trattamento dei dati, misure tecniche & organizzative (MTO), foglio di classificazione del rischio AI Act, e il rapporto di valutazione.", opts: [
+      { id: "yes", label: "Sì, includerlo" },
+      { id: "no", label: "Non necessario" },
+      { id: "unsure", label: "Indeciso" }
+    ]},
+    nextStep: { title: "Cosa dovrebbe succedere dopo che lo inviate?", type: "single", cols: 2, opts: [
+      { id: "call", label: "Una call di definizione del perimetro di 30 minuti", imp: "Arriviamo preparati con la vostra specifica; ve ne andate con la forma di una proposta a perimetro fisso." },
+      { id: "written", label: "Prima una breve reazione scritta", imp: "Rispondiamo alla vostra specifica via e-mail con una valutazione onesta — incluso un no chiaro se non è la scelta giusta — prima di qualsiasi call." }
+    ]}
+  };
+
+  // Placeholders for the free-text "Other" inputs.
+  var OTHER_PLACEHOLDER = {
+    sector: "Il vostro settore — es. energia, logistica, istruzione…",
+    task: "Descrivete il compito in una riga",
+    languages: "Quale/i lingua/e?",
+    dataFormats: "In che formato è?",
+    model: "Quale modello? (pesi aperti)",
+    integration: "A cosa deve collegarsi?"
+  };
+
+  // ---- Steps ---------------------------------------------------------------
+  var STEPS = [
+    { eyebrow: "01 · Caso d'uso", title: "Cosa state costruendo, e per chi?", intro: "Iniziate dalla forma del lavoro. Non ci sono risposte sbagliate — questo definisce da dove partiamo.", questions: ["sector", "task", "audience"] },
+    { eyebrow: "02 · Lingue", title: "Le lingue in cui il vostro lavoro avviene davvero.", intro: "Il multilingue non è una funzionalità qui — è il default. Scegliete tutto ciò che i vostri documenti e i vostri utenti usano davvero.", questions: ["languages"] },
+    { eyebrow: "03 · I vostri dati", title: "I dati che non potete cedere.", intro: "È tutto il punto — perciò lo chiediamo con cura, iniziando da com'è fatto e dove risiede.", questions: ["dataVolume", "dataFormats", "dataLocation", "pii"] },
+    { eyebrow: "04 · Modello & approccio", title: "Scegliete il motore — e guardatelo entrare.", intro: "Questa è la parte divertente. Cambiate dimensione e quantizzazione e guardate il modello rimpicciolirsi sul vostro hardware; cambiate l'approccio e guardate il pavimento di accuratezza misurato spostarsi.", questions: ["model", "size", "quant", "approach"], widgets: true },
+    { eyebrow: "05 · Deployment", title: "Dove viene eseguito, e come si collega.", intro: "Il modello viene ai dati — mai il contrario. Questo passo decide cosa significhi fisicamente.", questions: ["deployment", "integration"] },
+    { eyebrow: "06 · Continuità", title: "Una tantum, mantenuto o gestito.", intro: "Tutto ciò che costruiamo è comunque vostro — la domanda è per quanta parte dell'esercizio volete tenerci.", questions: ["ongoing", "timeline"] },
+    { eyebrow: "07 · Conformità", title: "I documenti che i vostri auditor chiederanno.", intro: "La conformità è integrata nell'architettura, poi documentata — gli auditor leggono il pacchetto, i regolatori lo riconoscono.", questions: ["frameworks", "compliancePack"] },
+    { eyebrow: "08 · Voi", title: "Dove dobbiamo inviare la proposta?", intro: "Le vostre risposte sono rimaste nel vostro browser per tutto questo tempo. Lo lasciano solo quando premete invia.", questions: ["nextStep"], contact: true }
+  ];
+
+  // ---- Static reference data ----------------------------------------------
+  // Weights-only memory, GB — same numbers as /concepts/quantization/:
+  // 8B: 16 GB (16-bit) → ~4.5 GB (4-bit K-quants) → ~2 GB (1–2 bit)
+  // 70B: 140 GB → ~40 GB → ~18 GB (70e9 × 2 bits ≈ 17.5)
+  var GB = { s8: { fp16: 16, q4: 4.5, q12: 2 }, s70: { fp16: 140, q4: 40, q12: 18 }, unsure: { fp16: 16, q4: 4.5, q12: 2 } };
+  var GB_MAX = 140;
+  var PARAM_LABEL = { s8: "8B", s70: "70B", unsure: "8B" };
+  var BITS_LABEL = { fp16: "16 bit", q4: "~4,5 bit", q12: "~2 bit" };
+  var QUANT_SHORT = { fp16: "16 bit", q4: "4 bit", q12: "1–2 bit" };
+
+  // Measured on the public FINMA benchmark (183 items, deterministic scoring).
+  var ABLATION = [
+    { id: "base", label: "Modello di base" },
+    { id: "rag", label: "+ Retrieval" },
+    { id: "ft", label: "+ Ottimizzazione" },
+    { id: "both", label: "Ottimizzazione + Retrieval" }
+  ];
+  var ABL_VALUES = {
+    prod: { base: 0, rag: 22.4, ft: 1.6, both: 45.4 },
+    ans:  { base: 37.2, rag: 63.4, ft: 44.8, both: 80.9 }
+  };
+
+  // ---- State ---------------------------------------------------------------
+  var state = { model: "apertus", size: "s8", quant: "q4", approach: "both", languages: [], dataFormats: [], integration: [], frameworks: [], other: {}, contact: {} };
+  var metric = "prod"; // ablation widget view toggle — not part of the brief
+  var cur = 0;
+
+  // ---- DOM refs ------------------------------------------------------------
+  var stepContainer = document.getElementById("stepContainer");
+  var progressFill = document.getElementById("progressFill");
+  var progressLabel = document.getElementById("progressLabel");
+  var progressPct = document.getElementById("progressPct");
+  var backBtn = document.getElementById("backBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var summaryList = document.getElementById("summaryList");
+  var tierChip = document.getElementById("tierChip");
+  var builder = document.getElementById("builder");
+  var specPrint = document.getElementById("specPrint");
+  var specBody = document.getElementById("specBody");
+
+  // ---- Helpers -------------------------------------------------------------
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function optOf(qk, oid) { return Q[qk].opts.filter(function (x) { return x.id === oid; })[0]; }
+  function labelOf(qk, oid) { var o = oid && optOf(qk, oid); return o ? o.label : ""; }
+  function isSel(qk, oid) {
+    var v = state[qk];
+    return Q[qk].type === "multi" ? (v || []).indexOf(oid) > -1 : v === oid;
+  }
+  function anySel(qk) { return (state[qk] || []).length > 0; }
+  function hasOther(qk) { return Q[qk].opts.some(function (o) { return o.id === "other"; }); }
+  // Single-select label, with the free-text detail folded in when "Other" is picked.
+  function labelWithOther(qk) {
+    var l = labelOf(qk, state[qk]);
+    if (state[qk] === "other" && state.other[qk]) l += " — " + state.other[qk];
+    return l;
+  }
+  // Multi-select labels joined, with "Other" expanded to its free text.
+  function multiWithOther(qk) {
+    return (state[qk] || []).map(function (id) {
+      if (id === "other" && state.other[qk]) return "Altro — " + state.other[qk];
+      return labelOf(qk, id);
+    }).join(", ");
+  }
+  function familyLabel() {
+    var m = { apertus: "Apertus", llama: "Llama", mistral: "Mistral", eval: "Deciso dalla valutazione" }[state.model];
+    if (m) return m;
+    return state.other.model ? "Altro — " + state.other.model : "Altro";
+  }
+
+  var CHECK = '<svg data-check class="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function optionHtml(qk, o) {
+    var sel = isSel(qk, o.id);
+    var selCls = sel ? " " + SEL.join(" ") : "";
+    var sub = o.sub ? '<span class="mt-0.5 block text-xs font-semibold uppercase tracking-[0.1em] text-teal-600 dark:text-teal-300">' + esc(o.sub) + '</span>' : "";
+    return '<button type="button" data-qk="' + qk + '" data-oid="' + o.id + '" role="' + (Q[qk].type === "multi" ? "checkbox" : "radio") + '" aria-checked="' + (sel ? "true" : "false") +
+      '" class="option-card group flex items-start justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-4 text-left shadow-xs transition hover:border-teal-400 dark:border-white/10 dark:bg-ink-950' + selCls + '">' +
+      '<span class="min-w-0"><span class="block text-sm font-semibold text-ink-900 dark:text-white">' + esc(o.label) + '</span>' + sub + '</span>' +
+      '<span class="mt-0.5">' + CHECK + '</span>' +
+      '</button>';
+  }
+
+  function questionHtml(qk) {
+    var q = Q[qk];
+    var gridCols = q.cols === 1 ? "grid-cols-1" : q.cols === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2";
+    var opts = q.opts.map(function (o) { return optionHtml(qk, o); }).join("");
+    var impText = "";
+    if (q.type === "multi") { impText = anySel(qk) ? (q.note || "") : (q.hint || ""); }
+    else { impText = state[qk] ? (optOf(qk, state[qk]).imp || q.note || "") : (q.hint || q.note || ""); }
+    var otherField = "";
+    if (hasOther(qk)) {
+      otherField = '<div data-otherwrap="' + qk + '" class="mt-3' + (isSel(qk, "other") ? "" : " hidden") + '">' +
+        '<input data-otherfor="' + qk + '" type="text" value="' + esc(state.other[qk] || "") + '" placeholder="' + esc(OTHER_PLACEHOLDER[qk] || "Raccontateci di più") + '"' +
+        ' class="w-full max-w-md rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />' +
+        '</div>';
+    }
+    return '<fieldset class="mt-8" data-qfield="' + qk + '">' +
+      '<legend class="text-base font-bold tracking-tight text-ink-900 dark:text-white">' + esc(q.title) + '</legend>' +
+      (q.type === "multi" ? '<p class="mt-1 text-xs text-ink-500">Scegliete tutto ciò che si applica.</p>' : "") +
+      '<div class="mt-3 grid gap-3 ' + gridCols + '">' + opts + '</div>' +
+      otherField +
+      '<p data-imp="' + qk + '" class="mt-3 min-h-[1.25rem] text-sm prose-muted">' + esc(impText) + '</p>' +
+      '</fieldset>';
+  }
+
+  // ---- Interactive widgets (step 04) --------------------------------------
+  function widgetsHtml() {
+    var barRows = ABLATION.map(function (a) {
+      var v = ABL_VALUES[metric][a.id];
+      return '<div class="flex items-center gap-3">' +
+        '<span class="w-40 shrink-0 text-sm font-medium text-ink-900 dark:text-white">' + a.label + '</span>' +
+        '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]">' +
+        '<div data-arm="' + a.id + '" class="h-full rounded bg-teal-500 transition-[width,background-color] duration-300" style="width: ' + v + '%"></div>' +
+        '</div>' +
+        '<span data-armval="' + a.id + '" class="w-12 shrink-0 text-right font-mono text-xs font-semibold tabular-nums text-ink-900 dark:text-white">' + v + '%</span>' +
+        '</div>';
+    }).join("");
+    return '<div class="mt-10 grid gap-5 md:grid-cols-2">' +
+      // memory-fit
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Entra in memoria</figcaption>' +
+        '<div class="mt-4 flex items-baseline gap-2">' +
+          '<span id="memGb" class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">4.5</span>' +
+          '<span class="text-lg font-semibold text-ink-500">GB</span>' +
+        '</div>' +
+        '<p id="memFormula" class="mt-1 font-mono text-xs tabular-nums text-ink-500">8B pesi × ~4,5 bit ≈ 4.5 GB</p>' +
+        '<div class="relative mt-4 h-2.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-white/[0.06]">' +
+          '<div id="memBar" class="h-full rounded-full bg-teal-500 transition-[width] duration-300" style="width: 3%"></div>' +
+          '<div class="pointer-events-none absolute inset-y-0 w-px bg-ink-900/25 dark:bg-white/30" style="left: 17.1%"></div>' +
+          '<div class="pointer-events-none absolute inset-y-0 w-px bg-ink-900/25 dark:bg-white/30" style="left: 34.3%"></div>' +
+        '</div>' +
+        '<div class="relative mt-1 h-4 font-mono text-[10px] text-ink-500">' +
+          '<span class="absolute left-0">0</span>' +
+          '<span class="absolute" style="left: 17.1%; transform: translateX(-50%)">24</span>' +
+          '<span class="absolute" style="left: 34.3%; transform: translateX(-50%)">48</span>' +
+          '<span class="absolute right-0">140 GB</span>' +
+        '</div>' +
+        '<div id="memVerdict" class="mt-3 inline-flex items-center gap-2 rounded-md bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-700 dark:bg-teal-500/10 dark:text-teal-200">Entra nella classe workstation (24–48 GB VRAM, CHF 5–15k)</div>' +
+        '<p id="memAssume" class="mt-2 min-h-[1rem] text-xs prose-muted"></p>' +
+        '<p class="mt-2 text-xs prose-muted">Solo pesi — i marcatori 24 &amp; 48 GB indicano la fascia workstation. La cache KV è un secondo budget che cresce con il contesto; la quantizziamo anch\'essa a 4 bit.</p>' +
+      '</figure>' +
+      // ablation
+      '<figure class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">' +
+        '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Pavimento di accuratezza misurato</figcaption>' +
+        '<div class="mt-3 inline-flex overflow-hidden rounded-md border border-neutral-300 dark:border-white/15" role="group" aria-label="Metrica">' +
+          '<button type="button" data-metric="prod" aria-pressed="true" class="px-3 py-1.5 text-xs font-semibold transition bg-teal-600 text-white">Risposta + citazione</button>' +
+          '<button type="button" data-metric="ans" aria-pressed="false" class="px-3 py-1.5 text-xs font-semibold transition bg-white text-ink-700 dark:bg-ink-950 dark:text-ink-300">Solo risposta</button>' +
+        '</div>' +
+        '<div class="mt-4 space-y-2.5">' + barRows + '</div>' +
+        '<p id="ablationCap" class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10"></p>' +
+      '</figure>' +
+    '</div>' +
+    '<p class="mt-4 text-xs prose-muted">La matematica: <a class="link-underline" href="' + L + '/concepts/quantization/">la quantizzazione, spiegata</a> · L\'esperimento: <a class="link-underline" href="' + L + '/reports/finma-ablation/">l\'ablazione FINMA</a> — 183 domande verificate, valutazione deterministica, harness open source.</p>';
+  }
+
+  function updateMemory() {
+    var sizeKey = state.size || "s8";
+    var q = state.quant || "q4";
+    var gb = (GB[sizeKey] || GB.s8)[q];
+    var memGb = document.getElementById("memGb");
+    if (!memGb) return;
+    memGb.textContent = gb;
+    document.getElementById("memFormula").textContent = PARAM_LABEL[sizeKey] + " pesi × " + BITS_LABEL[q] + " ≈ " + gb + " GB";
+    document.getElementById("memBar").style.width = Math.max(2, Math.round(gb / GB_MAX * 100)) + "%";
+    // The verdict respects the size CLASS, not just raw GB — 70B is node-class
+    // positioning even when frontier quants shrink the weights (24–48 GB VRAM and
+    // the CHF 5–15k figure belong to the 4–8B workstation class only).
+    var verdict, fits = true;
+    if (sizeKey === "s70") {
+      fits = false;
+      verdict = q === "q12"
+        ? gb + " GB di pesi alla frontiera — potrebbe portare il 70B verso la fascia mono-GPU, ma viene distribuito solo se supera la vostra asticella di valutazione"
+        : "Classe nodo — richiede un server multi-GPU o un'istanza di confidential computing";
+    } else if (gb <= 24) verdict = "Entra in una singola GPU da 24 GB — classe workstation (CHF 5–15k)";
+    else if (gb <= 48) verdict = "Entra nella classe workstation (24–48 GB VRAM, CHF 5–15k)";
+    else { verdict = "Richiede un nodo multi-GPU o un'istanza di confidential computing"; fits = false; }
+    if (sizeKey !== "s70" && q === "q12") verdict += " · frontiera — distribuita solo se supera la vostra asticella di valutazione";
+    var memVerdict = document.getElementById("memVerdict");
+    memVerdict.textContent = verdict;
+    // one-red rule: the heavier case goes neutral, not red
+    memVerdict.className = "mt-3 inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold " +
+      (fits ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-200" : "bg-neutral-100 text-ink-700 dark:bg-white/10 dark:text-ink-300");
+    document.getElementById("memAssume").textContent = sizeKey === "unsure" ? "Assumendo 4–8B finché non lo definiamo insieme." : "";
+  }
+
+  function updateAblation() {
+    var pick = state.approach;
+    ABLATION.forEach(function (a) {
+      var bar = document.querySelector('[data-arm="' + a.id + '"]');
+      if (!bar) return;
+      var v = ABL_VALUES[metric][a.id];
+      bar.style.width = v + "%";
+      bar.className = "h-full rounded transition-[width,background-color] duration-300 " + (a.id === pick ? "bg-red-600" : "bg-teal-500");
+      var val = document.querySelector('[data-armval="' + a.id + '"]');
+      if (val) val.textContent = v + "%";
+    });
+    // toggle buttons
+    stepContainer.querySelectorAll("[data-metric]").forEach(function (b) {
+      var on = b.getAttribute("data-metric") === metric;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.className = "px-3 py-1.5 text-xs font-semibold transition " + (on ? "bg-teal-600 text-white" : "bg-white text-ink-700 dark:bg-ink-950 dark:text-ink-300");
+    });
+    var cap = document.getElementById("ablationCap");
+    if (!cap) return;
+    var metricLine = metric === "prod"
+      ? "Asticella di produzione: risposta corretta E la citazione esatta, sul nostro benchmark pubblico FINMA. Un pavimento, non un soffitto."
+      : "Solo risposta: risposta corretta, citazione non richiesta — l'asticella più morbida. Stesso benchmark, stesse esecuzioni.";
+    var lead = "";
+    if (pick === "ft") lead = "La sola ottimizzazione muove appena l'asticella della citazione — insegna formato e terminologia, non i fatti. Abbinatela al retrieval e raddoppia. ";
+    else if (pick === "both") lead = "Il sistema completo: il retrieval fornisce i fatti, l'ottimizzazione blocca il formato. ";
+    else if (pick === "rag") lead = "Il solo retrieval raggiunge il 22,4 % sull'asticella di produzione — valore reale, e spesso il primo passo giusto. ";
+    else if (pick === "base") lead = "Il modello aperto così com'è consegnato — ecco perché nessuno dovrebbe distribuire un modello di base su un compito regolamentato. ";
+    cap.textContent = lead + metricLine;
+  }
+
+  // ---- Contact step --------------------------------------------------------
+  function inputHtml(field, label, type, req) {
+    var c = state.contact[field] || "";
+    return '<label class="block">' +
+      '<span class="text-sm font-medium text-ink-900 dark:text-white">' + label + (req ? ' <span class="text-red-600">*</span>' : "") + '</span>' +
+      '<input data-field="' + field + '" type="' + type + '" value="' + esc(c) + '"' + (req ? ' required' : "") +
+      ' class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white" />' +
+      '</label>';
+  }
+  function contactHtml() {
+    var c = state.contact;
+    return '<div class="mt-8 grid gap-5">' +
+      '<div class="grid gap-5 sm:grid-cols-2">' + inputHtml("name", "Nome", "text", true) + inputHtml("email", "E-mail di lavoro", "email", true) + '</div>' +
+      inputHtml("org", "Organizzazione", "text", false) +
+      '<label class="block"><span class="text-sm font-medium text-ink-900 dark:text-white">Qualcosa da aggiungere?</span>' +
+      '<textarea data-field="notes" rows="3" maxlength="600" placeholder="Scadenze, sistemi, vincoli, ciò che vi preoccupa davvero…" class="mt-1.5 w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/25 dark:border-white/15 dark:bg-ink-900 dark:text-white">' + esc(c.notes || "") + '</textarea></label>' +
+      '<p id="contactMsg" role="alert" class="min-h-[1rem] text-sm font-semibold text-red-700 dark:text-red-400"></p>' +
+      '<p class="text-xs text-ink-500">L\'invio apre il vostro client di posta con la specifica precompilata — nulla viene memorizzato su un server.</p>' +
+      '</div>';
+  }
+
+  // ---- Render --------------------------------------------------------------
+  function renderStep(skipFocus) {
+    var step = STEPS[cur];
+    var pct = Math.round((cur + 1) / STEPS.length * 100);
+    progressFill.style.width = pct + "%";
+    progressLabel.textContent = "Passo " + (cur + 1) + " / " + STEPS.length;
+    progressPct.textContent = pct + "%";
+
+    var html = '<p class="eyebrow">' + step.eyebrow + '</p>';
+    html += '<h2 id="stepHeading" tabindex="-1" class="mt-3 text-2xl font-bold tracking-tightest text-ink-900 outline-none md:text-3xl dark:text-white">' + esc(step.title) + '</h2>';
+    if (step.intro) html += '<p class="mt-3 max-w-2xl text-base prose-muted">' + esc(step.intro) + '</p>';
+    if (step.questions) step.questions.forEach(function (qk) { html += questionHtml(qk); });
+    if (step.widgets) html += widgetsHtml();
+    if (step.contact) html += contactHtml();
+    stepContainer.innerHTML = html;
+
+    if (step.widgets) { updateMemory(); updateAblation(); }
+    // check-icon visibility for pre-rendered selections
+    stepContainer.querySelectorAll("[data-check]").forEach(function (ck) {
+      var btn = ck.closest(".option-card");
+      var sel = btn && btn.getAttribute("aria-checked") === "true";
+      ck.classList.toggle("hidden", !sel);
+    });
+
+    backBtn.classList.toggle("invisible", cur === 0);
+    nextBtn.textContent = cur === STEPS.length - 1 ? "Genera la mia specifica →" : "Avanti →";
+    // Move focus on navigation only — focusing on initial page load would scroll
+    // the visitor straight past the hero.
+    if (!skipFocus) {
+      var h = document.getElementById("stepHeading");
+      if (h) h.focus({ preventScroll: true });
+    }
+    updateSummary();
+  }
+
+  // ---- Selection handling (event delegation) ------------------------------
+  stepContainer.addEventListener("click", function (e) {
+    var mBtn = e.target.closest("[data-metric]");
+    if (mBtn) { metric = mBtn.getAttribute("data-metric"); updateAblation(); return; }
+    var btn = e.target.closest(".option-card");
+    if (!btn) return;
+    var qk = btn.getAttribute("data-qk");
+    var oid = btn.getAttribute("data-oid");
+    var q = Q[qk];
+    if (q.type === "multi") {
+      state[qk] = state[qk] || [];
+      var i = state[qk].indexOf(oid);
+      if (i > -1) state[qk].splice(i, 1); else state[qk].push(oid);
+      paint(btn, i === -1);
+      setImp(qk, anySel(qk) ? (q.note || "") : (q.hint || ""));
+    } else {
+      state[qk] = oid;
+      btn.closest("[data-qfield]").querySelectorAll(".option-card").forEach(function (b) { paint(b, b === btn); });
+      setImp(qk, optOf(qk, oid).imp || q.note || "");
+      // The MDR exemption depends on intake staying administrative — say so the
+      // moment the healthcare + intake combination exists, whichever came second.
+      if (isHealthTriage() && (qk === "task" || qk === "sector")) setImp("task", HEALTH_TRIAGE_NOTE);
+    }
+    // free-text "Other" input visibility + focus
+    if (hasOther(qk)) {
+      var wrap = stepContainer.querySelector('[data-otherwrap="' + qk + '"]');
+      if (wrap) {
+        var show = isSel(qk, "other");
+        wrap.classList.toggle("hidden", !show);
+        if (show && oid === "other") { var inp = wrap.querySelector("input"); if (inp) inp.focus(); }
+      }
+    }
+    if (qk === "size" || qk === "quant") updateMemory();
+    if (qk === "approach") updateAblation();
+    updateSummary();
+  });
+
+  stepContainer.addEventListener("input", function (e) {
+    var f = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (f) { state.contact[f] = e.target.value; return; }
+    var o = e.target.getAttribute && e.target.getAttribute("data-otherfor");
+    if (o) { state.other[o] = e.target.value; updateSummary(); }
+  });
+
+  function paint(btn, on) {
+    SEL.forEach(function (c) { btn.classList.toggle(c, on); });
+    btn.setAttribute("aria-checked", on ? "true" : "false");
+    var ck = btn.querySelector("[data-check]");
+    if (ck) ck.classList.toggle("hidden", !on);
+  }
+  function setImp(qk, text) {
+    var el = stepContainer.querySelector('[data-imp="' + qk + '"]');
+    if (el) el.textContent = text;
+  }
+
+  // ---- Suggested tier ------------------------------------------------------
+  function suggestTier() {
+    if (state.deployment === "airgapped") return "Air-gapped";
+    // A workstation deployment is exactly the Pilot entry offer — only node-class
+    // hardware, ongoing commitments or scale promote the suggestion to Production.
+    if (state.deployment === "onprem_node" ||
+        state.ongoing === "managed" || state.ongoing === "production" ||
+        state.audience === "org" || state.audience === "external") return "Production";
+    return "Pilot";
+  }
+
+  // ---- Live summary --------------------------------------------------------
+  function summaryRow(label, value) {
+    return '<div class="flex items-baseline justify-between gap-3"><dt class="shrink-0 text-xs font-semibold uppercase tracking-[0.1em] text-ink-500">' + label + '</dt>' +
+      '<dd class="min-w-0 text-right text-sm font-medium text-ink-900 dark:text-white">' + esc(value) + '</dd></div>';
+  }
+
+  function updateSummary() {
+    tierChip.textContent = suggestTier();
+    // Every answered question, in step order — the sidebar is the one-glance mirror of the whole build.
+    var fields = [
+      ["Settore", state.sector && labelWithOther("sector")],
+      ["Compito", state.task && labelWithOther("task")],
+      ["Pubblico", state.audience && labelOf("audience", state.audience)],
+      ["Lingue", multiWithOther("languages")],
+      ["Volume di dati", state.dataVolume && labelOf("dataVolume", state.dataVolume)],
+      ["Formati", multiWithOther("dataFormats")],
+      ["Posizione dei dati", state.dataLocation && labelOf("dataLocation", state.dataLocation)],
+      ["Trattamento PII", state.pii && labelOf("pii", state.pii)],
+      ["Modello", familyLabel()],
+      ["Dimensione", labelOf("size", state.size).split(" · ")[0]],
+      ["Quantizzazione", QUANT_SHORT[state.quant]],
+      ["Approccio", labelOf("approach", state.approach)],
+      ["Deployment", state.deployment && labelOf("deployment", state.deployment)],
+      ["Integrazione", multiWithOther("integration")],
+      ["Continuità", state.ongoing && labelOf("ongoing", state.ongoing).split(",")[0]],
+      ["Tempistica", state.timeline && labelOf("timeline", state.timeline)],
+      ["Conformità", multiWithOther("frameworks")],
+      ["Pacchetto audit", state.compliancePack && labelOf("compliancePack", state.compliancePack)],
+      ["Passo successivo", state.nextStep && labelOf("nextStep", state.nextStep)]
+    ];
+    var rows = "";
+    fields.forEach(function (p) { if (p[1]) rows += summaryRow(p[0], p[1]); });
+    summaryList.innerHTML = rows || '<p class="text-xs prose-muted">Le vostre scelte appariranno qui man mano che procedete.</p>';
+  }
+
+  // ---- Navigation ----------------------------------------------------------
+  nextBtn.addEventListener("click", function () {
+    if (cur === STEPS.length - 1) { generateSpec(); return; }
+    cur++;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  backBtn.addEventListener("click", function () {
+    if (cur === 0) return;
+    cur--;
+    renderStep();
+    builder.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // ---- Build spec ----------------------------------------------------------
+  function line(label, val) { return val ? (label + ": " + val + "\n") : ""; }
+  function buildBrief() {
+    var b = "";
+    b += line("Settore", labelWithOther("sector"));
+    b += line("Compito principale", labelWithOther("task"));
+    b += line("Pubblico", labelOf("audience", state.audience));
+    b += line("Lingue", multiWithOther("languages"));
+    b += line("Volume di dati", labelOf("dataVolume", state.dataVolume));
+    b += line("Formati dei dati", multiWithOther("dataFormats"));
+    b += line("Posizione dei dati", labelOf("dataLocation", state.dataLocation));
+    b += line("Trattamento PII", labelOf("pii", state.pii));
+    b += line("Modello", state.model === "eval" ? "Deciso dalla valutazione (Apertus / Llama / Mistral)" : labelWithOther("model"));
+    b += line("Classe di dimensione", labelOf("size", state.size));
+    b += line("Quantizzazione", labelOf("quant", state.quant));
+    b += line("Approccio", labelOf("approach", state.approach));
+    b += line("Deployment", labelOf("deployment", state.deployment));
+    b += line("Integrazione", multiWithOther("integration"));
+    b += line("Continuità", labelOf("ongoing", state.ongoing));
+    b += line("Tempistica", labelOf("timeline", state.timeline));
+    b += line("Conformità", multiWithOther("frameworks"));
+    b += line("Pacchetto conformità & audit", labelOf("compliancePack", state.compliancePack));
+    b += line("Passo successivo preferito", labelOf("nextStep", state.nextStep));
+    b += line("Nota di perimetro", isHealthTriage() ? "Solo instradamento amministrativo della ricezione — nessun triage clinico (fuori dal campo MDR)" : "");
+    b += line("Ingaggio suggerito", suggestTier());
+    var c = state.contact;
+    b += "\nContatto: " + (c.name || "") + (c.email ? " <" + c.email + ">" : "") + (c.org ? ", " + c.org : "") + "\n";
+    if (c.notes) b += "Note: " + c.notes + "\n";
+    return b;
+  }
+
+  function specStat(label, value) {
+    return '<div class="bg-white p-5 dark:bg-ink-950"><dd class="font-mono text-2xl font-bold tabular-nums text-ink-900 dark:text-white md:text-3xl">' + esc(value) + '</dd>' +
+      '<dt class="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-700 dark:text-ink-300">' + label + '</dt></div>';
+  }
+  function specSection(label, value) {
+    if (!value) return "";
+    return '<div class="flex flex-col gap-1 border-b border-neutral-200 py-3 last:border-0 dark:border-white/10 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">' +
+      '<dt class="text-xs font-semibold uppercase tracking-[0.1em] text-ink-500 sm:w-48 sm:shrink-0">' + label + '</dt>' +
+      '<dd class="text-sm text-ink-800 dark:text-ink-200 sm:flex-1 sm:text-right">' + esc(value) + '</dd></div>';
+  }
+
+  function modelStatValue() {
+    if (state.model === "eval") return "Deciso da eval";
+    if (state.model === "apertus") {
+      if (state.size === "s8") return "Apertus 8B";
+      if (state.size === "s70") return "Apertus 70B";
+      return "Apertus";
+    }
+    if (state.model === "other") {
+      var t = state.other.model || "Personalizzato";
+      return t.length > 16 ? t.slice(0, 15) + "…" : t; // full name lives in the recap + brief
+    }
+    return { llama: "Llama", mistral: "Mistral" }[state.model] || "—";
+  }
+  // Healthcare + intake needs an explicit scope note — the site's MDR exemption
+  // rests on having no clinical triage function.
+  function isHealthTriage() { return state.sector === "healthcare" && state.task === "intake"; }
+  var HEALTH_TRIAGE_NOTE = "La ricezione in ambito sanitario è definita al solo instradamento e strutturazione amministrativi — nessun triage o prioritizzazione clinica, il che mantiene il sistema fuori dal campo MDR by design.";
+
+  function generateSpec() {
+    var floor = ABL_VALUES.prod[state.approach] != null ? ABL_VALUES.prod[state.approach] : ABL_VALUES.prod.both;
+    var approachLabel = labelOf("approach", state.approach);
+    var quantShort = QUANT_SHORT[state.quant] || labelOf("quant", state.quant);
+    var deployShort = labelOf("deployment", state.deployment) || "Da definire";
+    var headTask = (state.task === "other" && state.other.task) ? state.other.task : (labelOf("task", state.task) || "Build IA sovrana");
+    var headSector = (state.sector === "other" && state.other.sector) ? state.other.sector : labelOf("sector", state.sector);
+
+    var html = "";
+    html += '<p class="eyebrow"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></svg> La vostra specifica</p>';
+    html += '<h2 class="mt-3 text-3xl font-bold tracking-tightest text-ink-900 md:text-4xl dark:text-white">' + esc(headTask) + (headSector ? ' per ' + esc(headSector) : "") + '</h2>';
+    html += '<p class="mt-3 max-w-2xl text-base prose-muted">Un punto di partenza strutturato — non un preventivo. Inviatelo e torneremo con una proposta a perimetro fisso dopo una breve call.</p>';
+    if (isHealthTriage()) html += '<p class="mt-3 max-w-2xl border-l-2 border-teal-500 pl-3 text-sm prose-muted">' + esc(HEALTH_TRIAGE_NOTE) + '</p>';
+
+    // headline stats
+    html += '<dl class="mt-8 grid gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 dark:border-white/10 dark:bg-white/10 grid-cols-2 lg:grid-cols-4">' +
+      specStat("Modello", modelStatValue()) +
+      specStat("Quantizzazione", quantShort) +
+      specStat("Approccio", approachLabel) +
+      specStat("Deployment", deployShort) +
+      '</dl>';
+
+    // ablation floor
+    html += '<figure class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<figcaption class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Pavimento di produzione misurato · ' + esc(approachLabel) + '</figcaption>' +
+      '<div class="mt-4 flex items-center gap-4">' +
+      '<span class="font-mono text-4xl font-bold tabular-nums text-ink-900 dark:text-white md:text-5xl">' + floor + '%</span>' +
+      '<div class="relative h-6 flex-1 overflow-hidden rounded bg-neutral-100 dark:bg-white/[0.06]"><div class="h-full rounded bg-red-600" style="width: ' + floor + '%"></div></div>' +
+      '</div>' +
+      '<figcaption class="mt-4 border-t border-neutral-200 pt-3 text-xs prose-muted dark:border-white/10">Risposta corretta + citazione esatta sul nostro benchmark pubblico FINMA (solo risposta: ' + ABL_VALUES.ans[state.approach] + '%). Un pavimento, non un soffitto — i vostri dati e le vostre metriche fissano l\'obiettivo reale.</figcaption>' +
+      '</figure>';
+
+    // recap
+    html += '<dl class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      specSection("Pubblico", labelOf("audience", state.audience)) +
+      specSection("Lingue", multiWithOther("languages")) +
+      specSection("Volume di dati", labelOf("dataVolume", state.dataVolume)) +
+      specSection("Formati di origine", multiWithOther("dataFormats")) +
+      specSection("Posizione dei dati", labelOf("dataLocation", state.dataLocation)) +
+      specSection("Trattamento PII", labelOf("pii", state.pii)) +
+      specSection("Modello", state.model === "other" ? (state.other.model || "Modello aperto personalizzato") : "") +
+      specSection("Classe di dimensione", labelOf("size", state.size)) +
+      specSection("Integrazione runtime", multiWithOther("integration")) +
+      specSection("Continuità", labelOf("ongoing", state.ongoing)) +
+      specSection("Tempistica", labelOf("timeline", state.timeline)) +
+      specSection("Regimi di conformità", multiWithOther("frameworks")) +
+      specSection("Pacchetto conformità & audit", labelOf("compliancePack", state.compliancePack)) +
+      specSection("Passo successivo preferito", labelOf("nextStep", state.nextStep)) +
+      '</dl>';
+
+    // tier + next
+    html += '<div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 md:p-8">' +
+      '<div class="flex flex-wrap items-center gap-3"><span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Ingaggio suggerito</span>' +
+      '<span class="inline-flex items-center rounded-full border border-teal-600/30 bg-teal-50 px-3 py-1 text-sm font-bold text-teal-700 dark:border-teal-300/20 dark:bg-teal-500/10 dark:text-teal-200">' + suggestTier() + '</span></div>' +
+      '<ul class="mt-4 space-y-2 text-sm prose-muted">' +
+      // What-happens-next honours the visitor's own choice of next step.
+      (state.nextStep === "written"
+        ? ['Una reazione scritta a questa specifica via e-mail — una valutazione onesta prima di qualsiasi call', 'Una proposta a perimetro fisso sui vostri dati — entro una settimana', 'Un no chiaro in quella prima e-mail se un modello aperto ottimizzato non è la scelta giusta']
+        : ['Una call di 30 minuti con l\'ingegnere che costruirà il vostro sistema', 'Una proposta a perimetro fisso sui vostri dati — entro una settimana', 'Un no chiaro entro il minuto 20 se un modello aperto ottimizzato non è la scelta giusta']
+      ).map(function (x) {
+        return '<li class="flex items-start gap-2.5"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 bg-swiss"></span>' + x + '</li>';
+      }).join("") + '</ul>' +
+      '</div>';
+
+    // actions
+    html += '<div id="specActions" class="mt-8 flex flex-wrap items-center gap-3">' +
+      '<button id="sendBtn" type="button" class="btn-primary">Invia a sysf.io →</button>' +
+      '<button id="copyBtn" type="button" class="btn-ghost">Copia il brief</button>' +
+      '<button id="printBtn" type="button" class="btn-ghost">Stampa / salva come PDF</button>' +
+      '<button id="editBtn" type="button" class="btn-secondary">← Modifica le risposte</button>' +
+      '<span id="actionMsg" class="text-sm text-ink-500" role="status" aria-live="polite"></span>' +
+      '</div>';
+
+    specBody.innerHTML = html;
+    builder.classList.add("hidden");
+    specPrint.classList.remove("hidden");
+    document.documentElement.classList.add("spec-ready");
+    specPrint.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    document.getElementById("sendBtn").addEventListener("click", sendBrief);
+    document.getElementById("copyBtn").addEventListener("click", copyBrief);
+    document.getElementById("printBtn").addEventListener("click", function () { window.print(); });
+    document.getElementById("editBtn").addEventListener("click", function () {
+      specPrint.classList.add("hidden");
+      document.documentElement.classList.remove("spec-ready");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function msg(t) { var m = document.getElementById("actionMsg"); if (m) m.textContent = t; }
+
+  function sendBrief() {
+    var c = state.contact;
+    if (!c.name || !c.email) {
+      // Bounce back to the contact step with a VISIBLE explanation there —
+      // #actionMsg lives inside the spec section we're about to hide.
+      specPrint.classList.add("hidden");
+      document.documentElement.classList.remove("spec-ready");
+      builder.classList.remove("hidden");
+      cur = STEPS.length - 1;
+      renderStep();
+      var cm = document.getElementById("contactMsg");
+      if (cm) cm.textContent = "Aggiungete il vostro nome e la vostra e-mail di lavoro, poi generate di nuovo la specifica — si invia da lì.";
+      var email = stepContainer.querySelector('[data-field="' + (c.name ? "email" : "name") + '"]');
+      if (email) email.focus();
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    var subject = "Specifica di build — " + (c.org || c.name);
+    var body = "Ecco la specifica di build che ho configurato su sysf.io:\n\n" + buildBrief();
+    var url = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    // Some mail clients silently truncate very long mailto URLs (~2k chars).
+    // If we're over budget, trim the free-text notes from the email and point at Copy brief.
+    if (url.length > 1900 && c.notes) {
+      var shortBrief = buildBrief().replace(/\nNote: [\s\S]*$/, "\nNote: (ridotte per la lunghezza dell'e-mail — chiedetemele, o le incollo)\n");
+      url = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("Ecco la specifica di build che ho configurato su sysf.io:\n\n" + shortBrief);
+      msg("Le note lunghe sono state ridotte dall'e-mail — usate «Copia il brief» per la versione completa.");
+    }
+    window.location.href = url;
+  }
+
+  function copyBrief() {
+    var text = "Specifica di build sysf.io\n\n" + buildBrief();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { msg("Copiato negli appunti."); }, function () { msg("Impossibile copiare — selezionate e copiate manualmente."); });
+    } else { msg("Appunti non disponibili — usate invece Stampa."); }
+  }
+
+  // ---- Go ------------------------------------------------------------------
+  renderStep(true);
+})();
+</script>

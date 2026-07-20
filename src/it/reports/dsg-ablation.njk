@@ -1,0 +1,144 @@
+---
+layout: layouts/base.njk
+title: "Rapporto — nLPD: l'ottimizzazione di un modello piccolo aiuta sulla protezione dei dati svizzera?"
+description: "Un'ablazione riproducibile a quattro vie (base / +RAG / ottimizzato / entrambi) di Apertus-8B su Q&A relative alla legge federale svizzera sulla protezione dei dati riveduta (nLPD) (RS 235.1), valutata in modo deterministico su accuratezza della risposta e citazione esatta dell'articolo. Nessun giudice LLM."
+tags: writing
+date: 2026-07-20
+kicker: Rapporto
+listTitle: "Protezione dei dati svizzera: l'ottimizzazione di un modello piccolo aiuta?"
+blurb: "Un'ablazione riproducibile a quattro vie di Apertus-8B su Q&A relative alla protezione dei dati svizzera, sulla legge federale sulla protezione dei dati riveduta (nLPD) (RS 235.1). L'ottimizzazione più il retrieval porta l'asticella di produzione (risposta + citazione esatta) dal 37,0 % al 54,3 % — valutazione deterministica, dati Fedlex pubblici, harness open source. Settore: Stato & settore pubblico."
+faq:
+  - q: È sui nostri dati?
+    a: >-
+      No — deliberatamente. Viene eseguita interamente sul testo Fedlex pubblico e fissato della LPD così che chiunque possa riprodurla. In un Pilot il metodo identico viene eseguito sui vostri documenti, nel vostro ambiente, e il rapporto resta vostro.
+  - q: Perché la sola ottimizzazione (braccio C) fallisce?
+    a: >-
+      Perché un modello piccolo non può richiamare in modo affidabile i numeri esatti degli articoli dai parametri. L'ottimizzazione insegna il formato risposta/citazione e quale articolo governa quale tema, ma la citazione esatta ha ancora bisogno del testo recuperato davanti. Per questo il sistema vincente è l'ottimizzazione più il retrieval, non l'uno o l'altro da solo.
+  - q: C'è un giudice LLM?
+    a: >-
+      Nessun giudice LLM da nessuna parte. La LPD numera i suoi articoli; una citazione corretta è esattamente verificabile. L'accuratezza della risposta è una corrispondenza di stringa/numero rispetto a una risposta di riferimento verificata; la citazione è una corrispondenza esatta di articolo. Ogni numero è ricalcolato da registrazioni di esecuzione congelate con intervalli di Wilson al 95 %.
+---
+{% from "partials/components.njk" import sectionHead, faqList, cta %}
+{% from "partials/charts.njk" import hbarChart %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Esempio pratico · Stato & settore pubblico</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      L'ottimizzazione aiuta sulla protezione dei dati svizzera?
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Non un'opinione — una misura. Abbiamo preso Apertus-8B ed eseguito la stessa ablazione a quattro vie che eseguiamo all'inizio di ogni <a class="link-underline" href="/it/concepts/evaluation/">Pilot</a>, su un compito in cui la risposta può essere valutata esattamente: rispondere a domande sulla legge svizzera riveduta sulla protezione dei dati <em>con</em> una citazione all'articolo esatto su cui si basa. Il risultato: l'ottimizzazione più il retrieval porta l'asticella di produzione dal 37,0 % al 54,3 %.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("L'impostazione", "Quattro sistemi, un modello aperto.", "Lo stesso Apertus-8B, quantizzato in modo identico a 4 bit, servito in modo identico. L'unica variabile è ciò che abbiamo aggiunto.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-4">
+    {% set arms = [
+      {k:"A", t:"Base", d:"Il modello aperto, così com'è consegnato."},
+      {k:"B", t:"+ Retrieval", d:"Modello di base con retrieval BM25 sulla legge."},
+      {k:"C", t:"Ottimizzato", d:"Calibrato con LoRA sul compito, senza retrieval."},
+      {k:"D", t:"Ottimizzato + retrieval", d:"Il sistema completo."}
+    ] %}
+    {% for a in arms %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950 {{ 'ring-2 ring-red-500 ring-inset' if a.k == 'D' }}">
+      <div class="font-mono text-sm text-swiss">{{ a.k }}</div>
+      <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ a.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ a.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="mt-6 max-w-2xl text-sm text-ink-500">Due cose vengono valutate, entrambe in modo deterministico — nessun giudice LLM: se la risposta è corretta, e se ha citato l'articolo corretto. L'asticella di produzione è <strong class="text-ink-700 dark:text-ink-300">entrambe insieme</strong> — una risposta giusta con una citazione errata o mancante è un fallimento, perché nel lavoro regolamentato lo è.</p>
+</section>
+
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Il risultato", "L'ottimizzazione più il retrieval è il sistema vincente.", "46 domande verificate (32 tedesco, 14 francese). Le parentesi nel rapporto sono intervalli di confidenza al 95 %.") }}
+    <div class="mt-10">
+      {% set legend = [
+        {name:"Risposta corretta", cls:"bg-teal-300"},
+        {name:"Risposta + citazione (asticella di produzione)", cls:"bg-teal-600"},
+        {name:"Sistema completo (D)", cls:"bg-red-600"}
+      ] %}
+      {% set groups = [
+        {label:"A · Base", bars:[{v:50.0, cls:"bg-teal-300"}, {v:4.3, cls:"bg-teal-600"}]},
+        {label:"B · + Retrieval", bars:[{v:82.6, cls:"bg-teal-300"}, {v:37.0, cls:"bg-teal-600"}]},
+        {label:"C · Ottimizzato", bars:[{v:32.6, cls:"bg-teal-300"}, {v:0.0, cls:"bg-teal-600"}]},
+        {label:"D · Ottimizzato + retrieval", note:"il sistema completo", bars:[{v:60.9, cls:"bg-teal-300"}, {v:54.3, cls:"bg-red-600"}]}
+      ] %}
+      {{ hbarChart(groups, legend, "Leggete la riga dell'asticella di produzione: quasi zero senza retrieval (A, C), 37,0 % con il solo retrieval (B), e solo ottimizzazione <strong class='text-ink-700 dark:text-ink-300'>e</strong> retrieval insieme raggiungono il 54,3 % (D, in rosso).") }}
+    </div>
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[680px] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metrica</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">A · base</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">B · +RAG</th>
+            <th class="py-3 pr-4 font-semibold text-ink-500">C · ottim.</th>
+            <th class="py-3 pr-4 font-semibold text-swiss">D · ottim.+RAG</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          {% set rows = [
+            {m:"Risposta + citazione (asticella di produzione)", a:"4.3%", b:"37.0%", c:"0.0%", d:"54.3%", hi:true},
+            {m:"Risposta corretta", a:"50.0%", b:"82.6%", c:"32.6%", d:"60.9%"},
+            {m:"Citazione corretta", a:"4.3%", b:"45.7%", c:"2.2%", d:"82.6%"},
+            {m:"Emette il formato richiesto", a:"2%", b:"0%", c:"100%", d:"93%"}
+          ] %}
+          {% for r in rows %}
+          <tr class="{{ 'bg-swiss/[0.04]' if r.hi }}">
+            <td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">{{ r.m }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.a }}</td>
+            <td class="py-3 pr-4 text-ink-700 dark:text-ink-300">{{ r.b }}</td>
+            <td class="py-3 pr-4 text-ink-500">{{ r.c }}</td>
+            <td class="py-3 pr-4 font-semibold text-swiss">{{ r.d }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Cosa apporta ogni livello", "L'ablazione impedisce a chiunque — noi inclusi — di fare aria fritta.", "Ogni scheda àncora un meccanismo a un numero della tabella qui sopra.") }}
+  <div class="mt-10 grid gap-5 md:grid-cols-3">
+    {% set parts = [
+      {t:"Il retrieval abilita la citazione", d:"La citazione corretta sale dal 4,3 % al 45,7 % solo quando il retrieval è attivo. Un modello piccolo non può citare un numero di articolo che non ha mai visto — perciò entrambi i bracci senza retrieval restano vicini a zero sull'asticella di produzione, per quanto ben addestrati."},
+      {t:"L'ottimizzazione abilita un output utilizzabile", d:"Il modello di base conosce spesso la risposta (82,6 % con RAG) ma emette il formato a due righe richiesto, leggibile dalla macchina, solo il 2 % delle volte. L'ottimizzazione lo rende affidabile (93 %) e porta la citazione sotto retrieval all'82,6 %."},
+      {t:"La sola ottimizzazione non basta", d:"Il braccio C — ottimizzato, senza retrieval — raggiunge il 100 % di formato ma solo il 2,2 % di citazione e il 32,6 % di risposta: il modello impara come rispondere, non i fatti esatti. Il sistema vincente è la combinazione, il braccio D al 54,3 %."}
+    ] %}
+    {% for p in parts %}
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
+      <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("I limiti onesti", "Cosa questo non pretende.", "Una valutazione di cui potete fidarvi nomina i propri punti deboli.") }}
+    <div class="mt-8 max-w-3xl space-y-4 text-base prose-muted">
+      <p><strong class="font-semibold text-ink-900 dark:text-white">54,3 % è un pavimento, non un soffitto.</strong> Un modello piccolo, 4 bit, una singola modesta esecuzione LoRA, retrieval BM25 deliberatamente semplice, un set di valutazione verificato compatto (n=46). Ognuno di questi è una leva che un vero Pilot aziona.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">La sola ottimizzazione può regredire.</strong> L'accuratezza di risposta del braccio C è sotto il modello di base — prova che l'ottimizzazione senza retrieval è lo strumento sbagliato per i compiti a citazione esatta. Lo pubblichiamo anziché nasconderlo.</p>
+      <p><strong class="font-semibold text-ink-900 dark:text-white">Il metodo è il prodotto, non il numero.</strong> Il vostro compito, i vostri documenti, esattamente questa ablazione — eseguita prima che vi impegniate in produzione, così che il go/no-go poggi sulla misura, non su una promessa.</p>
+    </div>
+    <div class="mt-8">
+      <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/dsg" class="btn-ghost" target="_blank" rel="noopener">Riproducilo su GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+  <div class="container-x grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-4">{{ sectionHead("FAQ", "Su questo rapporto.") }}</div>
+    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
+  </div>
+</section>
+
+{{ cta("Lo volete sul vostro compito?", "Portate un workflow e i documenti che lo sostengono. Costruiremo il set di valutazione ed eseguiremo questa ablazione — sui vostri dati, nella vostra giurisdizione.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}

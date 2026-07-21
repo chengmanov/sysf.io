@@ -1,0 +1,74 @@
+---
+layout: layouts/base.njk
+order: 6
+title: Ressourcen — Konzepte, Berichte und eine Live-Demo
+description: Das Engineering hinter souveräner KI, auf Praktiker-Niveau erklärt — warum kleine, aufgabenspezifische Modelle regulierte Arbeit gewinnen, reproduzierbare Ablationsberichte auf öffentlichen Schweizer Daten und ein Sprachmodell, das Sie in Ihrem eigenen Browser ausführen können.
+---
+{% from "partials/components.njk" import sectionHead, resourceCard, cta %}
+{% set locale = locale or "en" %}
+{% set items = collections.resources | byLocale(locale) %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Ressourcen</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      Das Engineering, gezeigt — nicht behauptet.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      Das Denken hinter souveräner KI, der gemessene Beweis auf öffentlichen Daten und ein Modell, das Sie jetzt in Ihrem Browser ausführen können.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-14 md:py-20">
+  <div class="mb-10 flex flex-wrap gap-2.5" role="group" aria-label="Ressourcen filtern">
+    {% set pills = [
+      {f:"all", label:"Alle"},
+      {f:"concept", label:"Konzepte"},
+      {f:"report", label:"Berichte"},
+      {f:"demo", label:"Demo"}
+    ] %}
+    {% for p in pills %}
+    <button type="button" data-filter="{{ p.f }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"
+            class="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold text-ink-700 transition hover:border-teal-600 hover:text-teal-700 aria-[pressed=true]:border-teal-600 aria-[pressed=true]:bg-teal-600 aria-[pressed=true]:text-white dark:border-white/15 dark:text-ink-300 dark:hover:text-teal-300 dark:aria-[pressed=true]:bg-teal-600 dark:aria-[pressed=true]:text-white">
+      {{ p.label }}
+    </button>
+    {% endfor %}
+  </div>
+
+  {% if items and items.length %}
+  <div id="resGrid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% for item in items %}
+    {{ resourceCard(item, locale, "Lesen") }}
+    {% endfor %}
+  </div>
+  <p id="resEmpty" class="hidden py-10 text-center prose-muted">Nichts in dieser Kategorie.</p>
+  {% else %}
+  <p class="prose-muted">Noch nichts veröffentlicht — die ersten Ressourcen sind unterwegs.</p>
+  {% endif %}
+</section>
+
+{{ cta("Diese Methode auf Ihrer Aufgabe?", "Die Konzepte und Berichte hier laufen auf öffentlichen Daten. In einem Pilot läuft dieselbe Methode auf Ihren — auf Ihren Dokumenten, in Ihrer Jurisdiktion.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}
+
+<script>
+  (function () {
+    var grid = document.getElementById("resGrid");
+    if (!grid) return;
+    var pills = Array.prototype.slice.call(document.querySelectorAll("[data-filter]"));
+    var cards = Array.prototype.slice.call(grid.querySelectorAll("[data-restype]"));
+    var empty = document.getElementById("resEmpty");
+    pills.forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var f = pill.getAttribute("data-filter");
+        pills.forEach(function (x) { x.setAttribute("aria-pressed", x === pill ? "true" : "false"); });
+        var shown = 0;
+        cards.forEach(function (c) {
+          var match = f === "all" || c.getAttribute("data-restype") === f;
+          c.style.display = match ? "" : "none";
+          if (match) shown++;
+        });
+        if (empty) empty.classList.toggle("hidden", shown !== 0);
+      });
+    });
+  })();
+</script>

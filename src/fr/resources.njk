@@ -1,0 +1,74 @@
+---
+layout: layouts/base.njk
+order: 6
+title: Ressources — Concepts, rapports et une démo en direct
+description: L'ingénierie derrière l'IA souveraine, expliquée au niveau des praticiens — pourquoi de petits modèles spécialisés l'emportent sur le travail régulé, des rapports d'ablation reproductibles sur données publiques suisses, et un modèle de langage que vous pouvez exécuter dans votre propre navigateur.
+---
+{% from "partials/components.njk" import sectionHead, resourceCard, cta %}
+{% set locale = locale or "en" %}
+{% set items = collections.resources | byLocale(locale) %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Ressources</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      L'ingénierie, montrée — pas revendiquée.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      La réflexion derrière l'IA souveraine, la preuve mesurée sur données publiques, et un modèle que vous pouvez exécuter dans votre navigateur dès maintenant.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-14 md:py-20">
+  <div class="mb-10 flex flex-wrap gap-2.5" role="group" aria-label="Filtrer les ressources">
+    {% set pills = [
+      {f:"all", label:"Toutes"},
+      {f:"concept", label:"Concepts"},
+      {f:"report", label:"Rapports"},
+      {f:"demo", label:"Démo"}
+    ] %}
+    {% for p in pills %}
+    <button type="button" data-filter="{{ p.f }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"
+            class="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold text-ink-700 transition hover:border-teal-600 hover:text-teal-700 aria-[pressed=true]:border-teal-600 aria-[pressed=true]:bg-teal-600 aria-[pressed=true]:text-white dark:border-white/15 dark:text-ink-300 dark:hover:text-teal-300 dark:aria-[pressed=true]:bg-teal-600 dark:aria-[pressed=true]:text-white">
+      {{ p.label }}
+    </button>
+    {% endfor %}
+  </div>
+
+  {% if items and items.length %}
+  <div id="resGrid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% for item in items %}
+    {{ resourceCard(item, locale, "Lire") }}
+    {% endfor %}
+  </div>
+  <p id="resEmpty" class="hidden py-10 text-center prose-muted">Rien dans cette catégorie.</p>
+  {% else %}
+  <p class="prose-muted">Rien de publié pour l'instant — les premières ressources arrivent.</p>
+  {% endif %}
+</section>
+
+{{ cta("Cette méthode sur votre tâche ?", "Les concepts et rapports ici tournent sur données publiques. Dans un pilote, la même méthode tourne sur les vôtres — sur vos documents, dans votre juridiction.", {L:"/fr", primary:"Réserver un appel", secondary:"Voir comment ça marche"}) }}
+
+<script>
+  (function () {
+    var grid = document.getElementById("resGrid");
+    if (!grid) return;
+    var pills = Array.prototype.slice.call(document.querySelectorAll("[data-filter]"));
+    var cards = Array.prototype.slice.call(grid.querySelectorAll("[data-restype]"));
+    var empty = document.getElementById("resEmpty");
+    pills.forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var f = pill.getAttribute("data-filter");
+        pills.forEach(function (x) { x.setAttribute("aria-pressed", x === pill ? "true" : "false"); });
+        var shown = 0;
+        cards.forEach(function (c) {
+          var match = f === "all" || c.getAttribute("data-restype") === f;
+          c.style.display = match ? "" : "none";
+          if (match) shown++;
+        });
+        if (empty) empty.classList.toggle("hidden", shown !== 0);
+      });
+    });
+  })();
+</script>

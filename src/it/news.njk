@@ -1,50 +1,16 @@
 ---
-layout: layouts/base.njk
-order: 6
-title: News
-description: Rapporti, benchmark e note di sysf.io — evidenza riproducibile dietro un'IA sovrana e specializzata per compito per organizzazioni regolamentate svizzere e UE.
+eleventyExcludeFromCollections: true
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
-{% set locale = locale or "en" %}
-{% set posts = collections.writing | byLocale(locale) %}
-
-<section class="border-b border-ink-900/10 dark:border-white/10">
-  <div class="container-x py-16 md:py-24">
-    <p class="eyebrow">News</p>
-    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Rapporti, benchmark e note.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Preferiamo mostrare il lavoro anziché descriverlo: valutazioni riproducibili su dati pubblici, harness open source, ogni numero verificabile.
-    </p>
-  </div>
-</section>
-
-<section class="container-x py-16 md:py-24">
-  {% if posts and posts.length %}
-  <div class="divide-y divide-ink-900/10 border-t border-ink-900/10 dark:divide-white/10 dark:border-white/10">
-    {% for post in posts %}
-    <article class="group grid gap-4 py-10 md:grid-cols-12 md:gap-8">
-      <div class="md:col-span-3">
-        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-swiss">{{ post.data.kicker or "Nota" }}</div>
-        <time class="mt-2 block text-sm text-ink-500" datetime="{{ post.data.date }}">{{ post.data.date | readableDate(locale) }}</time>
-      </div>
-      <div class="md:col-span-8 md:col-start-4">
-        <h2 class="text-xl font-bold tracking-tightest text-ink-900 md:text-2xl dark:text-white">
-          <a href="{{ post.url }}" class="hover:text-swiss">{{ post.data.listTitle or post.data.title }}</a>
-        </h2>
-        <p class="mt-3 max-w-2xl text-base prose-muted">{{ post.data.blurb or post.data.description }}</p>
-        <a href="{{ post.url }}" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-swiss">
-          Leggi il rapporto
-          <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p class="prose-muted">Ancora nulla di pubblicato — i primi rapporti sono in arrivo.</p>
-  {% endif %}
-</section>
-
-{{ cta("Lo volete sul vostro compito?", "I rapporti qui vengono eseguiti su dati pubblici. In un Pilot lo stesso metodo viene eseguito sui vostri — sui vostri documenti, nella vostra giurisdizione.", {L:"/it", primary:"Prenota una call", secondary:"Scopri come funziona"}) }}
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/it/resources/">
+<link rel="canonical" href="https://sysf.io/it/resources/">
+<meta name="robots" content="noindex">
+<title>Spostato in Risorse — sysf.io</title>
+</head>
+<body>
+<p>Rapporti e note ora si trovano in <a href="/it/resources/">Risorse</a>. Reindirizzamento…</p>
+</body>
+</html>

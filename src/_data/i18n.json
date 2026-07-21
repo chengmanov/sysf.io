@@ -100,29 +100,15 @@
         "url": "/pricing/"
       },
       {
-        "label": "Konfigurieren",
-        "url": "/configure/"
-      },
-      {
-        "label": "Konzepte",
-        "url": "/concepts/"
-      },
-      {
-        "label": "Demo",
-        "url": "/demo/"
-      },
-      {
-        "label": "News",
-        "url": "/news/"
-      },
-      {
-        "label": "Über uns",
-        "url": "/about/"
-      },
-      {
-        "label": "Kontakt",
-        "url": "/contact/"
+        "label": "Ressourcen",
+        "url": "/resources/"
       }
+    ],
+    "secondary": [
+      { "label": "Über uns", "url": "/about/" },
+      { "label": "Konfigurieren", "url": "/configure/" },
+      { "label": "Live-Demo", "url": "/demo/" },
+      { "label": "Kontakt", "url": "/contact/" }
     ],
     "footer": {
       "explore": "Entdecken",
@@ -189,29 +175,15 @@
         "url": "/pricing/"
       },
       {
-        "label": "Configurer",
-        "url": "/configure/"
-      },
-      {
-        "label": "Concepts",
-        "url": "/concepts/"
-      },
-      {
-        "label": "Démo",
-        "url": "/demo/"
-      },
-      {
-        "label": "Actualités",
-        "url": "/news/"
-      },
-      {
-        "label": "À propos",
-        "url": "/about/"
-      },
-      {
-        "label": "Contact",
-        "url": "/contact/"
+        "label": "Ressources",
+        "url": "/resources/"
       }
+    ],
+    "secondary": [
+      { "label": "À propos", "url": "/about/" },
+      { "label": "Configurer", "url": "/configure/" },
+      { "label": "Démo", "url": "/demo/" },
+      { "label": "Contact", "url": "/contact/" }
     ],
     "footer": {
       "explore": "Explorer",
@@ -278,29 +250,15 @@
         "url": "/pricing/"
       },
       {
-        "label": "Configura",
-        "url": "/configure/"
-      },
-      {
-        "label": "Concetti",
-        "url": "/concepts/"
-      },
-      {
-        "label": "Demo",
-        "url": "/demo/"
-      },
-      {
-        "label": "News",
-        "url": "/news/"
-      },
-      {
-        "label": "Chi siamo",
-        "url": "/about/"
-      },
-      {
-        "label": "Contatto",
-        "url": "/contact/"
+        "label": "Risorse",
+        "url": "/resources/"
       }
+    ],
+    "secondary": [
+      { "label": "Chi siamo", "url": "/about/" },
+      { "label": "Configura", "url": "/configure/" },
+      { "label": "Demo", "url": "/demo/" },
+      { "label": "Contatto", "url": "/contact/" }
     ],
     "footer": {
       "explore": "Esplora",

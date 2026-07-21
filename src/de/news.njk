@@ -1,50 +1,16 @@
 ---
-layout: layouts/base.njk
-order: 6
-title: News
-description: Berichte, Benchmarks und Notizen von sysf.io — reproduzierbare Evidenz hinter souveräner, aufgabenspezifisch abgestimmter KI für regulierte Schweizer und EU-Organisationen.
+eleventyExcludeFromCollections: true
 ---
-{% from "partials/components.njk" import sectionHead, cta %}
-{% set locale = locale or "en" %}
-{% set posts = collections.writing | byLocale(locale) %}
-
-<section class="border-b border-ink-900/10 dark:border-white/10">
-  <div class="container-x py-16 md:py-24">
-    <p class="eyebrow">News</p>
-    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Berichte, Benchmarks und Notizen.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      Wir zeigen die Arbeit lieber, als sie zu beschreiben: reproduzierbare Evaluationen auf öffentlichen Daten, Harness quelloffen, jede Zahl überprüfbar.
-    </p>
-  </div>
-</section>
-
-<section class="container-x py-16 md:py-24">
-  {% if posts and posts.length %}
-  <div class="divide-y divide-ink-900/10 border-t border-ink-900/10 dark:divide-white/10 dark:border-white/10">
-    {% for post in posts %}
-    <article class="group grid gap-4 py-10 md:grid-cols-12 md:gap-8">
-      <div class="md:col-span-3">
-        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-swiss">{{ post.data.kicker or "Notiz" }}</div>
-        <time class="mt-2 block text-sm text-ink-500" datetime="{{ post.data.date }}">{{ post.data.date | readableDate(locale) }}</time>
-      </div>
-      <div class="md:col-span-8 md:col-start-4">
-        <h2 class="text-xl font-bold tracking-tightest text-ink-900 md:text-2xl dark:text-white">
-          <a href="{{ post.url }}" class="hover:text-swiss">{{ post.data.listTitle or post.data.title }}</a>
-        </h2>
-        <p class="mt-3 max-w-2xl text-base prose-muted">{{ post.data.blurb or post.data.description }}</p>
-        <a href="{{ post.url }}" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-swiss">
-          Bericht lesen
-          <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p class="prose-muted">Noch nichts veröffentlicht — die ersten Berichte sind unterwegs.</p>
-  {% endif %}
-</section>
-
-{{ cta("Wollen Sie das auf Ihrer Aufgabe?", "Die Berichte hier laufen auf öffentlichen Daten. In einem Pilot läuft dieselbe Methode auf Ihren — auf Ihren Dokumenten, in Ihrer Jurisdiktion.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/de/resources/">
+<link rel="canonical" href="https://sysf.io/de/resources/">
+<meta name="robots" content="noindex">
+<title>Verschoben zu Ressourcen — sysf.io</title>
+</head>
+<body>
+<p>Berichte und Notizen finden Sie jetzt unter <a href="/de/resources/">Ressourcen</a>. Weiterleitung…</p>
+</body>
+</html>

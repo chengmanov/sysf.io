@@ -3,21 +3,8 @@ layout: layouts/base.njk
 order: 0
 title: Souveräne Schweizer KI — feinabgestimmtes Apertus, betrieben in Ihrer Jurisdiktion
 description: sysf.io stimmt Apertus — das offene LLM der Schweiz von EPFL, ETH Zürich und CSCS — auf Ihren Dokumenten fein ab und betreibt es in Ihrer Infrastruktur. Offene Gewichte, die Ihre Auditoren prüfen können, keine US-API im Spiel, und das Modell gehört Ihnen.
-faq:
-  - q: Was ist sysf.io?
-    a: sysf.io ist ein Schweizer Engineering-Studio für souveräne KI. Wir stimmen das offene Schweizer Apertus-Modell auf Ihren Daten fein ab und liefern es als produktives System — Retrieval, Agenten und Guardrails, an Ihre Systeme angebunden, betrieben in Schweizer oder EU-Jurisdiktion oder vollständig on-premise. Die Gewichte und die Runbooks gehören Ihnen.
-  - q: Welches Modell nutzen Sie — ist es immer Apertus?
-    a: Apertus ist unsere Vorgabe — das vollständig offene, vollständig transparente mehrsprachige LLM der Schweiz von EPFL, ETH Zürich und CSCS, die einzige Basis, deren Gewichte <em>und</em> Trainingsdaten Ihre Auditoren prüfen können. Aber Souveränität ist nicht nur schweizerisch. Wo Ihre Compliance es erlaubt, kann eine europäische Basis wie Mistral oder eine internationale wie Qwen in die Evaluation eintreten und ausgeliefert werden, wenn sie gewinnt — alle laufen in Ihrer Jurisdiktion, mit Gewichten, die Ihnen gehören. Welches Modell innerhalb der von Ihrer Richtlinie erlaubten Stufe, entscheidet die Evaluation, nicht das Logo. Der <a class="link-underline" href="/de/concepts/small-models/">Modellwahl-Leitfaden</a> zeigt das ganze Spektrum.
-  - q: Verlassen unsere Daten jemals unsere Umgebung?
-    a: Für Production- und Air-gapped-Engagements — nein. Training und Inferenz laufen in Ihrer Umgebung oder Ihrem Rechenzentrum, ohne Drittanbieter-LLM-APIs und ohne Datenabfluss. Pilots laufen in Ihrer Umgebung oder einer dedizierten Single-Tenant-Swiss-Cloud — die Optionen zur Datenverarbeitung stehen auf der <a class="link-underline" href="/de/pricing/">Preisseite</a>.
-  - q: Wieso ist das „compliant by design“?
-    a: Offene Gewichte geben Ihnen Transparenz und Auditierbarkeit; der Betrieb in Ihrer Jurisdiktion adressiert das Schweizer Datenschutzgesetz (DSG/revDSG) und die EU-DSGVO; und dokumentierte Datenherkunft plus Guardrails unterstützen Ihre Pflichten nach dem EU AI Act. Wir liefern die Compliance- und Audit-Dokumentation zusammen mit dem Modell.
-  - q: Was bedeutet „end-to-end“ hier?
-    a: Wir begleiten einen Use Case von der Datenaufbereitung und Feinabstimmung über Evaluation, Guardrails, Deployment und Monitoring bis zur laufenden Iteration. Sie erhalten ein gewartetes Produktivsystem mit Agenten-Orchestrierung, Retrieval (RAG) und an Ihre Systeme angebundenen Tools — plus einen Support- und Wartungsvertrag — keinen Proof-of-Concept, der stecken bleibt.
-  - q: Wie fangen wir an?
-    a: Engagements starten mit einem Pilot mit festem Umfang auf einem einzelnen, wertvollen Use Case — beweisen Sie die Zahlen auf Ihren eigenen Daten und entscheiden Sie dann mit einem Evaluationsbericht in der Hand über die Produktion. Buchen Sie einen Termin, und wir umreissen ihn gemeinsam.
 ---
-{% from "partials/components.njk" import sectionHead, faqList, cta, icon, iconChip %}
+{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
 {% from "partials/charts.njk" import statBand, hbarChart %}
 
 <!-- Hero -->
@@ -30,15 +17,19 @@ faq:
         KI für die Daten,<br />die Sie nicht weggeben dürfen.
       </h1>
       <p class="mt-6 max-w-xl text-lg prose-muted md:text-xl">
-        Wir stimmen <strong class="font-semibold text-ink-900 dark:text-white">Apertus</strong> — das offene LLM der Schweiz von EPFL, ETH Zürich und CSCS — auf Ihren Dokumenten fein ab und betreiben es in Ihrer Infrastruktur: Ihrem Rechenzentrum, Ihrer Schweizer Cloud-Tenancy oder vollständig air-gapped. Offene Gewichte, die Ihre Auditoren prüfen können. Keine US-API im Spiel. Das Modell gehört Ihnen.
+        Wir stimmen <strong class="font-semibold text-ink-900 dark:text-white">Apertus</strong> — das offene LLM der Schweiz — auf Ihren Dokumenten fein ab und betreiben es in Ihrer Infrastruktur. Die Gewichte gehören Ihnen; keine US-API im Spiel.
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/de/contact/" class="btn-primary">Termin buchen</a>
         <a href="/de/configure/" class="btn-secondary">Ihre Lösung konfigurieren</a>
       </div>
-      <p class="mt-6 text-sm text-ink-500">
-        Basiert auf <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — offene Gewichte, trainiert auf dem Alps-Supercomputer in Lugano, bereits im Kanton Tessin mit 94 % Genauigkeit im Einsatz.
-      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+        {% for b in ["Schweizer DSG / DSGVO", "In-jurisdiktional", "Kein Datenabfluss", "Offene Gewichte"] %}
+        <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300">
+          <span class="h-1.5 w-1.5 bg-swiss"></span>{{ b }}
+        </span>
+        {% endfor %}
+      </div>
     </div>
     <div class="md:col-span-5">
       {% include "partials/diagram.njk" %}
@@ -46,66 +37,25 @@ faq:
   </div>
 </section>
 
-<!-- Compliance strip -->
-<section class="border-b border-ink-900/10 bg-white dark:border-white/10 dark:bg-ink-950">
-  <div class="container-x flex flex-wrap items-center gap-x-8 gap-y-3 py-6 text-sm">
-    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">Compliant by design</span>
-    {% for b in ["Schweizer DSG / revDSG", "EU-DSGVO", "EU-AI-Act-Dokumentation", "Schweizer Jurisdiktion", "Kein Datenabfluss", "Offene Gewichte"] %}
-    <span class="inline-flex items-center gap-2 font-medium text-ink-700 dark:text-ink-300">
-      <span class="h-1.5 w-1.5 bg-swiss"></span>{{ b }}
-    </span>
-    {% endfor %}
-  </div>
-</section>
-
 <!-- Proof stats -->
 <section class="container-x py-14 md:py-20">
   {% set stats = [
     {v:"94 %", label:"Produktive Genauigkeit", sub:"Das feinabgestimmte Apertus-8B des Kantons Tessin, im Einsatz auf kantonaler Infrastruktur"},
-    {v:"2×", label:"Fine-Tuning + Retrieval", sub:"Korrekte Antwort + exakte Fundstelle steigt von 22,4 % auf 45,4 %, wenn Fine-Tuning zum Retrieval hinzukommt — öffentlicher FINMA-Benchmark, 183 verifizierte Fragen"},
-    {v:"100 %", label:"Format-Compliance", sub:"Von ~2 % auf 100 % maschinenlesbare Ausgabe nach dem Fine-Tuning — gemessen am selben FINMA-Benchmark"},
-    {v:"0", label:"Byte Datenabfluss", sub:"Keine Drittanbieter-LLM-API in Training oder Inferenz — null Abfluss ist architektonisch, nicht vertraglich"}
+    {v:"22,4 → 45,4 %", label:"Fine-Tuning + Retrieval", sub:"Korrekte Antwort plus exakte Fundstelle im öffentlichen FINMA-Benchmark, wenn Fine-Tuning zum Retrieval hinzukommt"},
+    {v:"100 %", label:"Format-Compliance", sub:"Von ~2 % auf vollständig maschinenlesbare Ausgabe nach dem Fine-Tuning"},
+    {v:"0", label:"Byte Datenabfluss", sub:"Keine Drittanbieter-LLM-API in Training oder Inferenz — null Abfluss ist architektonisch"}
   ] %}
   {{ statBand(stats) }}
 </section>
 
-<!-- Problem / positioning -->
-<section class="container-x py-20 md:py-28">
-  <div class="grid gap-12 md:grid-cols-12">
-    <div class="md:col-span-5">
-      {{ sectionHead("Das Problem", "Frontier-APIs wurden nicht für regulierte Teams gebaut.", "Für Banken, Spitäler, Versicherer und öffentliche Stellen ist externe KI nicht verboten — sie ist langsam und restrisikoreich: Monate an rechtlicher Prüfung, Auftragsverarbeitungsverträge, Unterauftragnehmer-Ketten, und am Ende ein Modell, das Sie noch immer nicht kontrollieren.") }}
-    </div>
-    <div class="md:col-span-6 md:col-start-7">
-      <div class="grid gap-5 sm:grid-cols-2">
-        {% set problems = [
-          {t:"Daten verlassen Ihre Kontrolle", d:"Prompts und Dokumente werden an Drittanbieter-Server in einer anderen Jurisdiktion gesendet."},
-          {t:"Keine Transparenz", d:"Geschlossene Gewichte bedeuten keine Auditierbarkeit — ein No-Go für Regulatoren."},
-          {t:"Vendor-Lock-in", d:"Preise, Verfügbarkeit und Modellverhalten können sich ohne Vorwarnung ändern."},
-          {t:"Steckenbleiben beim PoC", d:"Demos überstehen keine Datenschutz- oder Sicherheitsprüfung."}
-        ] %}
-        {% set problemIcons = ["share-2", "eye-off", "lock", "flask-conical"] %}
-        {% for p in problems %}
-        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          {{ iconChip(problemIcons[loop.index0]) }}
-          <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
-          <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
-        </div>
-        {% endfor %}
-      </div>
-      <p class="mt-6 text-base prose-muted">sysf.io beseitigt den Blocker: ein Modell, das Ihnen <strong class="font-semibold text-ink-900 dark:text-white">gehört</strong> und dort läuft, wo Ihre Daten ohnehin liegen.</p>
-      <p class="mt-4 text-base prose-muted">Die <strong class="font-semibold text-ink-900 dark:text-white">94 % oben</strong> sind der <a class="link-underline" href="https://www.cscs.ch/science/computer-science-hpc/2026/apertus-powers-in-house-ai-translation-for-ticino" target="_blank" rel="noopener">feinabgestimmte Apertus-8B-Übersetzungsdienst des Kantons Tessin</a>, produktiv auf kantonaler Infrastruktur — <a class="link-underline" href="/de/concepts/small-models/">lesen Sie die vollständige Fallstudie</a>.</p>
-    </div>
-  </div>
-</section>
-
-<!-- Proof / measured results -->
+<!-- Measured proof -->
 <section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
   <div class="container-x grid gap-12 md:grid-cols-12 md:items-center">
     <div class="md:col-span-5">
-      {{ sectionHead("Gemessen, nicht versprochen", "Wir beweisen die Zahlen, bevor Sie sich festlegen.", "Eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Q&amp;A zu Schweizer FINMA-Rundschreiben, deterministisch bewertet — kein LLM als Richter. Das Basismodell kennt die Antwort oft, aber erst Fine-Tuning <em>und</em> Retrieval zusammen erreichen die produktive Messlatte: eine korrekte Antwort <strong class='font-semibold text-ink-900 dark:text-white'>mit</strong> der exakten Rechtsfundstelle.") }}
+      {{ sectionHead("Gemessen, nicht versprochen", "Wir beweisen die Zahlen, bevor Sie sich festlegen.", "Eine reproduzierbare Vier-Wege-Ablation von Apertus-8B auf Schweizer FINMA-Q&amp;A, deterministisch bewertet. Erst Fine-Tuning <em>und</em> Retrieval zusammen erreichen die produktive Messlatte.") }}
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="/de/reports/finma-ablation/" class="btn-ghost">Vollständigen Bericht lesen</a>
-        <a href="https://github.com/chengmanov/apertus-swiss-eval/tree/main/finma" class="btn-ghost" target="_blank" rel="noopener">Auf GitHub reproduzieren →</a>
+        <a href="/de/reports/finma-ablation/" class="btn-ghost">Bericht lesen</a>
+        <a href="/de/resources/" class="btn-ghost">Alle Ressourcen</a>
       </div>
     </div>
     <div class="md:col-span-7">
@@ -120,143 +70,101 @@ faq:
         {label:"C · Feinabgestimmt", bars:[{v:44.8, cls:"bg-teal-300"}, {v:1.6, cls:"bg-teal-600"}]},
         {label:"D · Feinabgestimmt + Retrieval", note:"das vollständige System", bars:[{v:80.9, cls:"bg-teal-300"}, {v:45.4, cls:"bg-red-600"}]}
       ] %}
-      {{ hbarChart(groups, legend, "183 menschlich verifizierte Fragen über 10 FINMA-Rundschreiben (DE + EN). Die produktive Messlatte — Antwort <strong class='text-ink-700 dark:text-ink-300'>und</strong> exakte Fundstelle — steigt nur dann von 22,4 % auf 45,4 %, wenn Fine-Tuning und Retrieval kombiniert werden (D).") }}
+      {{ hbarChart(groups, legend, "183 menschlich verifizierte Fragen über 10 FINMA-Rundschreiben (DE + EN). Die produktive Messlatte steigt nur dann von 22,4 % auf 45,4 %, wenn Fine-Tuning und Retrieval kombiniert werden.") }}
     </div>
   </div>
 </section>
 
-<!-- Six pillars -->
-<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+<!-- Why sysf.io -->
+<section class="border-t border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
-    {{ sectionHead("Warum sysf.io", "Sechs Gründe, warum diese Architektur die Compliance-Prüfung besteht.") }}
-    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-      {% set pillars = [
-        {n:"01", t:"Schweizerisch von Grund auf", d:"Basiert auf Apertus, dem souveränen offenen LLM der Schweiz — offene Gewichte und dokumentierte Trainingsdaten, keine Blackbox."},
-        {n:"02", t:"Compliant by design", d:"Gebaut für das Schweizer DSG/revDSG und die EU-DSGVO, mit der Dokumentation, die Ihre EU-AI-Act-Pflichten verlangen. Die Audit-Akte — Datenherkunft, Evaluationsbericht, Guardrail-Testergebnisse — wird mit dem Modell geliefert."},
-        {n:"03", t:"Souverän & privat", d:"Läuft dort, wo Ihre Daten liegen — Ihrem Rechenzentrum, Ihrer Schweizer Cloud-Tenancy oder einer einzelnen GPU in Workstation-Klasse (ein feinabgestimmtes 8B braucht ~4,5 GB bei 4-Bit). Nirgends eine US-API."},
-        {n:"04", t:"Auf Ihren Daten angepasst", d:"Domänen-Fine-Tuning plus RAG und agentische Tools auf Ihrem eigenen Korpus, Ihren Systemen und Ihrer Terminologie."},
-        {n:"05", t:"End-to-End-Lieferung", d:"Daten → Fine-Tuning → Evaluation → Deployment → Monitoring → Wartung. Geliefert unter einem Support- und Wartungsvertrag."},
-        {n:"06", t:"Mehrsprachig, inkl. Schweizerisch", d:"Natives Deutsch, Französisch, Italienisch und Rätoromanisch — inklusive Schweizerdeutsch — von einem Modell, das für die Schweiz gebaut und nicht auf sie übersetzt wurde."}
+    {{ sectionHead("Warum sysf.io", "Ein Modell, das Ihnen gehört und dort läuft, wo Ihre Daten liegen.") }}
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {% set why = [
+        {ic:"shield-check", t:"Souverän & privat", d:"Training und Inferenz laufen in Ihrer Infrastruktur — Schweizer oder EU-Jurisdiktion, oder vollständig air-gapped. Null Datenabfluss, keine US-API."},
+        {ic:"clipboard-check", t:"Vor der Zusage gemessen", d:"Jedes Engagement startet mit einer Evaluation aus Ihren eigenen Dokumenten. Sie sehen die Zahlen, bevor die Produktion gebaut wird."},
+        {ic:"key", t:"Bleibt Ihres", d:"Offene Gewichte, auf Ihren Daten feinabgestimmt. Modell, Runbooks und ein dokumentierter Exit-Plan sind Lieferergebnisse — kein Lock-in."}
       ] %}
-      {% for p in pillars %}
+      {% for w in why %}
       <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
-        <div class="font-mono text-sm text-swiss">{{ p.n }}</div>
-        <h3 class="mt-4 text-lg font-semibold text-ink-900 dark:text-white">{{ p.t }}</h3>
-        <p class="mt-2 text-sm prose-muted">{{ p.d }}</p>
+        {{ iconChip(w.ic) }}
+        <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ w.t }}</h3>
+        <p class="mt-2 text-sm prose-muted">{{ w.d }}</p>
       </div>
       {% endfor %}
     </div>
+    <p class="mt-8 text-base prose-muted">Basiert auf <a class="link-underline" href="{{ site.baseModel.url }}" target="_blank" rel="noopener">Apertus</a> — oder einer europäischen oder internationalen Open-Weight-Basis, wo Ihre Compliance es erlaubt. <a class="link-underline" href="/de/platform/">Sehen Sie, wie es end-to-end ausgeliefert wird</a>.</p>
   </div>
 </section>
 
-<!-- Ownership / exit -->
+<!-- Industries -->
 <section class="container-x py-20 md:py-28">
-  <div class="grid gap-12 md:grid-cols-12">
-    <div class="md:col-span-5">
-      {{ sectionHead("Eigentum", "Gebaut, um gefeuert zu werden.", "Alles, was wir bauen, gehört Ihnen. Das ist der Sinn offener Gewichte: kein gemietetes Modell, kein Lock-in, keine Geisel-Verhandlung bei der Verlängerung.") }}
-    </div>
-    <div class="md:col-span-6 md:col-start-7">
-      <div class="grid gap-5 sm:grid-cols-3">
-        {% set owns = [
-          {t:"Die Gewichte gehören Ihnen", d:"Das feinabgestimmte Modell ist Ihres — betreiben Sie es mit uns, ohne uns oder mit jedem Team Ihrer Wahl."},
-          {t:"Sie halten die Runbooks", d:"Datenpipelines, Evaluations-Harness und operative Runbooks sind Lieferergebnisse, keine Geheimnisse."},
-          {t:"Übergabe ist ein Lieferergebnis", d:"Jedes Engagement enthält eine dokumentierte Übergabe. Ihre Exit-Strategie ist Teil des Umfangs, keine Verhandlung."}
-        ] %}
-        {% set ownIcons = ["key", "book-open", "package-check"] %}
-        {% for o in owns %}
-        <div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-ink-950">
-          {{ iconChip(ownIcons[loop.index0]) }}
-          <h3 class="text-base font-semibold text-ink-900 dark:text-white">{{ o.t }}</h3>
-          <p class="mt-2 text-sm prose-muted">{{ o.d }}</p>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
+  {{ sectionHead("Branchen", "Gebaut für die regulierten Sektoren der Schweiz.") }}
+  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% set inds = [
+      {ic:"landmark", t:"Banken & Finanzen", d:"Beratungs-Copiloten, KYC/AML-Verarbeitung, regulatorische Q&A — on-prem, null Datenabfluss."},
+      {ic:"heart-pulse", t:"Gesundheit & Pharma", d:"Klinische Dokumentation und Forschungsassistenten — Patientendaten bleiben in der Schweiz."},
+      {ic:"scale", t:"Recht & Compliance", d:"Mehrsprachige Vertragsanalyse und Rechtsrecherche (DE/FR/IT), anwaltsgeheimnis-sicher."},
+      {ic:"building-2", t:"Staat & Verwaltung", d:"Bürgerdienste und DE/FR/IT-Übersetzung auf der eigenen Infrastruktur der Verwaltung."},
+      {ic:"shield-check", t:"Versicherung", d:"Schadenautomatisierung und Policen-Q&A, verankert in Ihren Dokumenten."},
+      {ic:"factory", t:"Fertigung", d:"On-Premise-Wissens- und Wartungsassistenten für die Werkshalle."}
+    ] %}
+    {% for i in inds %}
+    <a href="/de/industries/" class="group rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-white/10 dark:bg-ink-950">
+      {{ iconChip(i.ic) }}
+      <h3 class="flex items-center justify-between text-base font-semibold text-ink-900 dark:text-white">
+        {{ i.t }}
+        <span class="text-swiss opacity-0 transition-opacity group-hover:opacity-100">{{ icon("arrow-right", "h-4 w-4") }}</span>
+      </h3>
+      <p class="mt-2 text-sm prose-muted">{{ i.d }}</p>
+    </a>
+    {% endfor %}
   </div>
 </section>
 
-<!-- How it works teaser -->
-<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
+<!-- How it works -->
+<section class="border-t border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
   <div class="container-x">
-  {{ sectionHead("Die Plattform", "Von Ihren Daten zu einem Produkt in Produktion.") }}
+  {{ sectionHead("Die Plattform", "Von Ihren Daten zu einem System in Produktion.") }}
   <ol class="mt-12 grid gap-6 md:grid-cols-4">
     {% set steps = [
-      {n:"1", t:"Scoping & Compliance", d:"Use-Case-Discovery und Compliance-Scoping (DSG, DSGVO, EU AI Act)."},
-      {n:"2", t:"Auf Apertus feinabstimmen", d:"Private, in-jurisdiktionale Datenaufbereitung und Domänen-Feinabstimmung."},
-      {n:"3", t:"Orchestrieren", d:"Agenten, RAG und Tools an Ihre Systeme angebunden, mit Guardrails."},
-      {n:"4", t:"Deployen & betreiben", d:"Deployment in Ihrer Tenancy oder Ihrem Rechenzentrum, Monitoring, Evaluation und Iteration unter einem Supportvertrag."}
+      {ic:"search", n:"1", t:"Scoping & Compliance", d:"Use-Case-Discovery und Compliance-Scoping — DSG, DSGVO, EU AI Act."},
+      {ic:"sliders-horizontal", n:"2", t:"Auf Apertus feinabstimmen", d:"Private, in-jurisdiktionale Datenaufbereitung und Domänen-Feinabstimmung."},
+      {ic:"workflow", n:"3", t:"Orchestrieren", d:"Agenten, RAG und Tools an Ihre Systeme angebunden, mit Guardrails."},
+      {ic:"server", n:"4", t:"Deployen & betreiben", d:"Deployment in Ihrer Tenancy, Monitoring und Iteration unter Support."}
     ] %}
-    {% set stepIcons = ["search", "sliders-horizontal", "workflow", "server"] %}
     {% for s in steps %}
     <li class="relative border-t-2 border-swiss pt-5">
-      <span class="mb-3 inline-flex text-teal-700 dark:text-teal-300">{{ icon(stepIcons[loop.index0], "h-6 w-6") }}</span>
+      <span class="mb-3 inline-flex text-teal-700 dark:text-teal-300">{{ icon(s.ic, "h-6 w-6") }}</span>
       <div class="font-mono text-sm text-ink-500">Schritt {{ s.n }}</div>
       <h3 class="mt-2 text-base font-semibold text-ink-900 dark:text-white">{{ s.t }}</h3>
       <p class="mt-2 text-sm prose-muted">{{ s.d }}</p>
     </li>
     {% endfor %}
   </ol>
-  <div class="mt-10 flex flex-wrap gap-3"><a href="/de/platform/" class="btn-ghost">Plattform erkunden</a><a href="/de/concepts/" class="btn-ghost">Die Konzepte dahinter lesen</a></div>
+  <div class="mt-10"><a href="/de/platform/" class="btn-ghost">Plattform erkunden</a></div>
   </div>
 </section>
 
-<!-- Industries teaser -->
-<section class="border-t border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
-  <div class="container-x">
-    {{ sectionHead("Branchen", "Gebaut für die regulierten Sektoren der Schweiz.") }}
-    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {# Icons are Lucide (landmark, heart-pulse, scale, building-2, shield-check, factory) — inlined, no CDN. #}
-      {% set inds = [
-        {t:"Banken & Finanzen", d:"Beratungs-Copiloten, KYC-/AML-Dokumentenverarbeitung, regulatorische Q&A — on-prem, null Datenabfluss.", ic:'<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'},
-        {t:"Gesundheit & Pharma", d:"Klinische Dokumentation und Forschungsassistenten — Patientendaten bleiben in der Schweiz.", ic:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>'},
-        {t:"Recht & Compliance", d:"Mehrsprachige Vertragsanalyse und Rechtsrecherche (DE/FR/IT), anwaltsgeheimnis-sicher.", ic:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'},
-        {t:"Staat & Verwaltung", d:"Bürgerdienste und Dokumentenübersetzung in DE/FR/IT auf der eigenen Infrastruktur der Verwaltung.", ic:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'},
-        {t:"Versicherung", d:"Schadenautomatisierung und Policen-Q&A-Copiloten, verankert in Ihren Dokumenten.", ic:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/>'},
-        {t:"Fertigung", d:"On-Premise-Wissens- und Wartungsassistenten für die Werkshalle.", ic:'<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>'}
-      ] %}
-      {% for i in inds %}
-      <a href="/de/industries/" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md dark:border-white/10 dark:bg-ink-950">
-        <span class="mb-5 inline-grid h-11 w-11 place-items-center rounded-lg bg-teal-50 text-swiss transition-colors group-hover:bg-teal-100 dark:bg-white/5 dark:text-teal-300">
-          <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{{ i.ic | safe }}</svg>
-        </span>
-        <h3 class="flex items-center justify-between text-lg font-semibold text-ink-900 dark:text-white">
-          {{ i.t }}
-          <span class="text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
-        </h3>
-        <p class="mt-2 text-sm prose-muted">{{ i.d }}</p>
-      </a>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Engagement teaser -->
+<!-- Resources teaser -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("Engagement", "Klein starten. Die Zahlen beweisen. Bis air-gapped skalieren.", "Jede Stufe ist souverän — Ihre Daten bleiben in Ihrer Jurisdiktion; die Stufen unterscheiden sich in der Deployment-Tiefe. Der Preis wird pro Engagement umrissen — <a class='link-underline' href='/de/pricing/'>sehen Sie das Modell</a>.") }}
-  <div class="mt-12 grid gap-5 md:grid-cols-3">
-    {% set tiers = [
-      {t:"Pilot", for:"Die Zahlen auf einem Use Case beweisen"},
-      {t:"Production", for:"Der Pilot, gehärtet für den täglichen Einsatz"},
-      {t:"Air-gapped", for:"Reguliert / höchst sensibel"}
+  {{ sectionHead("Ressourcen", "Sehen Sie das Engineering — und führen Sie es selbst aus.", "Das Denken hinter dem Ansatz, der gemessene Beweis auf öffentlichen Daten und ein Modell, das Sie jetzt im Browser ausführen können.") }}
+  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% set res = [
+      {ic:"cpu", k:"Konzept", t:"Kleine Modelle, gemessen.", d:"Warum ein feinabgestimmtes 4–8B eine Frontier-API auf Ihrer Aufgabe schlägt — mit den ehrlichen Grenzen.", u:"/de/concepts/small-models/"},
+      {ic:"bar-chart-3", k:"Bericht", t:"Hilft Fine-Tuning wirklich?", d:"Eine reproduzierbare Ablation auf öffentlichen FINMA-Daten — Fine-Tuning plus Retrieval verdoppelt die Messlatte.", u:"/de/reports/finma-ablation/"},
+      {ic:"play", k:"Demo", t:"Ein Modell in Ihrem Browser.", d:"Ein 1-Bit-Modell mit 1,7 Mrd. Parametern triagiert Nachrichten auf Ihrer GPU — nichts verlässt den Tab.", u:"/de/demo/"}
     ] %}
-    {% set tierIcons = ["flask-conical", "server", "shield"] %}
-    {% for t in tiers %}
-    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
-      {{ iconChip(tierIcons[loop.index0]) }}
-      <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ t.t }}</h3>
-      <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-swiss">{{ t.for }}</p>
-    </div>
+    {% for r in res %}
+    <a href="{{ r.u }}" class="group flex flex-col rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition hover:border-teal-600/40 hover:shadow-md dark:border-white/10 dark:bg-ink-950">
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700 dark:text-teal-300">{{ icon(r.ic, "h-3.5 w-3.5") }}{{ r.k }}</span>
+      <h3 class="mt-4 text-lg font-bold tracking-tightest text-ink-900 group-hover:text-teal-700 dark:text-white dark:group-hover:text-teal-300">{{ r.t }}</h3>
+      <p class="mt-2 flex-1 text-sm prose-muted">{{ r.d }}</p>
+      <span class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-teal-700 dark:text-teal-300">Lesen{{ icon("arrow-right", "h-4 w-4 transition-transform group-hover:translate-x-0.5") }}</span>
+    </a>
     {% endfor %}
   </div>
-  <div class="mt-10"><a href="/de/pricing/" class="btn-ghost">Das Engagement-Modell ansehen</a></div>
+  <div class="mt-10"><a href="/de/resources/" class="btn-ghost">Alle Ressourcen ansehen</a></div>
 </section>
 
-<!-- FAQ -->
-<section class="border-t border-ink-900/10 py-20 dark:border-white/10 md:py-28">
-  <div class="container-x grid gap-12 md:grid-cols-12">
-    <div class="md:col-span-4">{{ sectionHead("FAQ", "Antworten für Evaluierende.") }}</div>
-    <div class="md:col-span-7 md:col-start-6">{{ faqList(faq) }}</div>
-  </div>
-</section>
-
-{{ cta("Bereit, Ihre KI zu besitzen?", "Buchen Sie einen Scoping-Termin. Wir wählen einen Use Case, einigen uns auf die Evaluationsmetriken und umreissen einen Pilot mit festem Umfang, der die Zahlen auf Ihren eigenen Dokumenten beweist.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}
+{{ cta("Bereit, Ihre KI zu besitzen?", "Buchen Sie einen Scoping-Termin. Wir wählen einen Use Case, einigen uns auf die Metriken und umreissen einen Pilot mit festem Umfang, der die Zahlen auf Ihren eigenen Dokumenten beweist.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}

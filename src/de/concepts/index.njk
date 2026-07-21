@@ -1,70 +1,16 @@
 ---
-layout: layouts/base.njk
-title: Konzepte — Die Technik hinter souveräner KI
-description: Die Konzepte hinter dem Ansatz von sysf.io, auf Praktiker-Niveau erklärt — warum kleine, aufgabenspezifisch feinabgestimmte Modelle regulierte Arbeit gewinnen, wie Quantisierung Souveränität bezahlbar macht, Evaluation-First-Lieferung und die souveräne Laufzeitumgebung von der Workstation bis zum Air Gap.
+eleventyExcludeFromCollections: true
 ---
-{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
-
-<section class="border-b border-ink-900/10 dark:border-white/10">
-  <div class="container-x py-16 md:py-24">
-    <p class="eyebrow">Konzepte</p>
-    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      Die Technik hinter dem Versprechen.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      „Souverän, compliant, privat“ — die Homepage jedes Anbieters sagt das. Unsere auch. Diese Seiten erklären das <em>Wie</em> — die tatsächlichen Konzepte, die wir anwenden, in der Tiefe, die Ihre Ingenieure und Evaluierenden prüfen wollen.
-    </p>
-  </div>
-</section>
-
-<section class="container-x py-20 md:py-28">
-  <div class="grid gap-5 md:grid-cols-2">
-    {% set topics = [
-      {
-        u:"/de/concepts/small-models/",
-        k:"Kleine Modelle",
-        t:"Kleine Modelle, gemessen.",
-        d:"Warum ein feinabgestimmtes 4–8B, das Ihre Dokumente kennt, eine Frontier-API schlägt, die sie nie gesehen hat — der Spezialisierungseffekt, die Arbeitsteilung zwischen Fine-Tuning und Retrieval, die Ökonomie und die ehrliche Liste, wo kleine Modelle verlieren."
-      },
-      {
-        u:"/de/concepts/quantization/",
-        k:"Quantisierung",
-        t:"Wie ein Rechenzentrumsmodell in Ihr Büro passt.",
-        d:"Bytes pro Gewicht, der 4-Bit-Produktions-Sweetspot, die 1–2-Bit-Grenze, die Modelle der 27B-Klasse aufs Smartphone bringt, und die KV-Cache-Speicherrechnung, die niemand einplant. Die Technologie, die entscheidet, was Ihre Souveränität kostet."
-      },
-      {
-        u:"/de/concepts/evaluation/",
-        k:"Evaluation",
-        t:"Was wir nicht messen können, liefern wir nicht aus.",
-        d:"Wie das Evaluationsset aus Ihren Dokumenten erstellt wird, bevor ein Modell angefasst wird, die Vier-Wege-Ablation, die zeigt, was jede Komponente bringt — und was nicht — Guardrails wie Features getestet, und das Go/No-Go-Gate, das entscheidet, ob Produktion gebaut wird."
-      },
-      {
-        u:"/de/concepts/sovereign-architecture/",
-        k:"Souveräne Laufzeitumgebung",
-        t:"Von einer Workstation bis zum vollständigen Air Gap.",
-        d:"Die drei Deployment-Formen, der Small-First-Router, der zu einem grösseren lokalen Modell eskaliert — nie in die Cloud — und null Abfluss als Eigenschaft, die Sie an Ihrer eigenen Firewall verifizieren können."
-      },
-      {
-        u:"/de/concepts/orchestration/",
-        k:"Orchestrierung",
-        t:"Wo die Demo zum System wird.",
-        d:"LangChain und LangGraph in der Produktion — was das Framework bietet, die sechs Dinge, die es Ihnen überlässt (RBAC, Audit-Trails, PII-Disziplin, Evaluation, Trace-Residenz, Versionierung), und die Härtung, die aus einer Agenten-Demo ein betreibbares System macht."
-      }
-    ] %}
-    {% set topicIcons = ["cpu", "minimize-2", "clipboard-check", "server", "workflow"] %}
-    {% for t in topics %}
-    <a href="{{ t.u }}" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition hover:border-swiss/40 dark:border-white/10 dark:bg-ink-950">
-      {{ iconChip(topicIcons[loop.index0]) }}
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">{{ t.k }}</p>
-      <h2 class="mt-3 flex items-start justify-between gap-4 text-xl font-bold tracking-tightest text-ink-900 dark:text-white">
-        {{ t.t }}
-        <span class="mt-1 text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
-      </h2>
-      <p class="mt-3 text-sm prose-muted">{{ t.d }}</p>
-    </a>
-    {% endfor %}
-  </div>
-  <p class="mt-10 max-w-2xl text-base prose-muted">Für die Lieferpipeline, in die diese Konzepte einfliessen — von Discovery bis Monitoring, Schritt für Schritt — siehe <a class="link-underline" href="/de/platform/">die Plattform</a>.</p>
-</section>
-
-{{ cta("Prüfen Sie uns bei den Details.", "Bringen Sie Ihre schwierigsten Fragen mit — das Scoping-Gespräch führen Sie mit dem Ingenieur, der das System baut, nicht mit einem Sales-Deck.", {L:"/de", primary:"Termin buchen", secondary:"So funktioniert's"}) }}
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/de/resources/">
+<link rel="canonical" href="https://sysf.io/de/resources/">
+<meta name="robots" content="noindex">
+<title>Verschoben zu Ressourcen — sysf.io</title>
+</head>
+<body>
+<p>Die Konzepte finden Sie jetzt unter <a href="/de/resources/">Ressourcen</a>. Weiterleitung…</p>
+</body>
+</html>

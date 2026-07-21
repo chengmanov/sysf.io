@@ -53,6 +53,28 @@ faq:
   </div>
 </section>
 
+<!-- v3 grammar ladder -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Update · Third iteration (v3)", "Grammar decoding: most of the gain, no training.", "Constraining output to the two-line contract forces any model to emit a parseable answer + citation.") }}
+  <p class="mt-6 max-w-3xl prose-muted">Much of what the fine-tune was buying turns out to be <em>output format</em>. Forcing the two-line contract with a formal grammar — <strong class="text-ink-700 dark:text-ink-300">zero training</strong> — recovers most of it, and separates it from what the model genuinely learned.</p>
+  <div class="mt-8 overflow-x-auto">
+    <table class="w-full min-w-[560px] border-collapse text-sm">
+      <thead><tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+        <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">System (production bar)</th>
+        <th class="py-3 pr-4 font-semibold text-ink-500">PrSG</th>
+        <th class="py-3 pr-4 font-semibold text-ink-500">Δ</th>
+      </tr></thead>
+      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+        <tr><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">base + retrieval</td><td class="py-3 pr-4 text-ink-500">45.0%</td><td class="py-3 pr-4"></td></tr>
+        <tr class="bg-swiss/[0.04]"><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">base + retrieval <strong>+ grammar</strong></td><td class="py-3 pr-4 font-semibold text-swiss">70.0%</td><td class="py-3 pr-4 font-mono text-swiss">+25.0 <span class="text-ink-500">format, free</span></td></tr>
+        <tr><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">fine-tuned + retrieval</td><td class="py-3 pr-4 text-ink-700 dark:text-ink-300">75.0%</td><td class="py-3 pr-4 font-mono text-ink-500">+5.0 <span class="text-ink-500">learned</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-6 max-w-3xl text-sm prose-muted">Constrained decoding is a cheap win worth deploying anywhere. The remaining <strong class="text-ink-700 dark:text-ink-300">+5.0</strong> is what fine-tuning genuinely added here — the exact per-task measurement a Pilot exists to make. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
+</section>
+
+
 
 <section class="container-x py-20 md:py-28">
   {{ sectionHead("The setup", "Four systems, one open model.", "Same Apertus-8B, quantized identically to 4-bit, served identically. The only variable is what we added.") }}

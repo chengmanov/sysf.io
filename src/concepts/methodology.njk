@@ -116,7 +116,7 @@ SOURCE: DSG Art. 25</pre>
 
 <!-- Iterations -->
 <section class="container-x py-20 md:py-28">
-  {{ sectionHead("Three iterations", "What we changed, and what it taught us.", "The same method, run three times across six domains. The instructive parts are the controls.") }}
+  {{ sectionHead("Four iterations", "What we changed, and what it taught us.", "The same method, run four times across six domains. The instructive parts are the controls — and the diagnostics.") }}
   <div class="mt-10 space-y-8 max-w-3xl">
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
       <div class="font-mono text-sm text-swiss">v1</div>
@@ -186,6 +186,39 @@ SOURCE: DSG Art. 25</pre>
         </table>
       </div>
       <p class="mt-5 text-sm prose-muted"><strong class="text-ink-900 dark:text-white">The reading is exactly the evaluation-first point.</strong> Constrained decoding is a cheap win that belongs in every deployment. The remaining gap to the fine-tuned system is what the model genuinely <em>learned</em> — and it varies sharply by domain: substantial for DSG (+17), small for HMG and PrSG (~+5), and none for VVG. That is precisely the measurement a Pilot exists to make: <em>on your task, is the fine-tune worth its cost, or does retrieval plus constrained decoding already clear the bar?</em> Sometimes the honest answer is the cheaper system — and knowing that before you pay for training is the point. (A capacity control keeps it honest: on data-rich DSG more training capacity helped [r=32/4ep 82.6% vs r=16/3ep 73.9%], on HMG it was neutral [both 59.1%], and no setting recovered HMG's v1 score — so training capacity is a second-order knob behind the data, and worth tuning per domain rather than maxing blindly.)</p>
+    </div>
+    <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
+      <div class="font-mono text-sm text-swiss">v4</div>
+      <h3 class="mt-1 text-lg font-semibold text-ink-900 dark:text-white">Diagnose before you build — and decompose the score</h3>
+      <p class="mt-2 text-sm prose-muted">Before touching the model again, we asked a cheaper question: <em>how often is the correct article even in the retrieved context?</em> A one-script diagnostic (retrieval recall@k) answered it — the gold article is in the top-5 <strong class="text-ink-700 dark:text-ink-300">90–100%</strong> of the time. So retrieval is <em>not</em> the bottleneck. The model was mis-citing an article it already had in front of it — picking a plausible distractor from the retrieved set. The fix needs no training at all: <strong class="text-ink-700 dark:text-ink-300">constrain the citation to the top-ranked retrieved article.</strong> Citation accuracy then simply equals retrieval recall@1:</p>
+      <div class="mt-5 overflow-x-auto">
+        <table class="w-full min-w-[560px] border-collapse text-sm">
+          <thead><tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-2 pr-4 font-semibold text-ink-900 dark:text-white">Domain</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">best prior</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">+ top-1 citation</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">Δ</th>
+          </tr></thead>
+          <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+            {% set v4 = [
+              {d:"VVG", a:"56.2%", b:"93.8%", g:"+37.6", c:"text-swiss"},
+              {d:"OR", a:"52.3%", b:"58.1%", g:"+5.8", c:"text-swiss"},
+              {d:"DSG", a:"82.6%", b:"87.0%", g:"+4.4", c:"text-swiss"},
+              {d:"PrSG", a:"75.0%", b:"75.0%", g:"answer-limited", c:"text-ink-500"},
+              {d:"HMG", a:"68.2%", b:"68.2%", g:"recall@1-limited", c:"text-ink-500"}
+            ] %}
+            {% for x in v4 %}
+            <tr>
+              <td class="py-2 pr-4 font-medium text-ink-900 dark:text-white">{{ x.d }}</td>
+              <td class="py-2 pr-4 text-ink-500">{{ x.a }}</td>
+              <td class="py-2 pr-4 font-semibold text-ink-900 dark:text-white">{{ x.b }}</td>
+              <td class="py-2 pr-4 font-mono {{ x.c }}">{{ x.g }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-5 text-sm prose-muted"><strong class="text-ink-900 dark:text-white">This decomposes the score into three independent levers, each with a clear owner.</strong> <em>Format</em> is grammar decoding (free, 100%). <em>Citation</em> is retrieval recall@1 once you cite the top hit (free, and 100% for VVG/PrSG). <em>Answer</em> is what's left for the model and its data. Each domain now says exactly what to fix next: VVG and PrSG are answer-limited (a bigger model or better data); HMG and OR are recall@1-limited (a re-ranker — their gold is retrieved, just not ranked first). The headline: <strong class="text-ink-700 dark:text-ink-300">VVG went from 18.8% (v1 base+retrieval) to 93.8% almost entirely through system design</strong> — measurement, constrained decoding, and citing the top hit — not training. The most valuable thing an evaluation harness produces is not a score; it is knowing which of the three levers to pull.</p>
     </div>
   </div>
 </section>

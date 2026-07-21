@@ -74,6 +74,12 @@ faq:
   <p class="mt-6 max-w-3xl text-sm prose-muted">Constrained decoding is a cheap win worth deploying anywhere. The remaining <strong class="text-ink-700 dark:text-ink-300">+5.0</strong> is what fine-tuning genuinely added here — the exact per-task measurement a Pilot exists to make. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
 </section>
 
+<!-- v4 diagnose + decompose -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Update · Fourth iteration (v4)", "Diagnose the ceiling — here it's the answer, not the citation.", "The diagnostic tells each domain which lever to pull next. For PrSG the honest answer is: not this one.") }}
+  <p class="mt-6 max-w-3xl prose-muted">The retrieval diagnostic shows the correct article is at rank&nbsp;1 <strong class="text-ink-700 dark:text-ink-300">100%</strong> of the time for PrSG — citation is already perfect where the answer is right, so forcing the top-1 citation changes nothing (<strong class="text-ink-700 dark:text-ink-300">75.0% → 75.0%</strong>). That is the useful result: PrSG is <strong class="text-ink-700 dark:text-ink-300">answer-limited</strong>, not citation-limited. Of the three levers — format (grammar), citation (recall@1), answer (the model) — only the last still has headroom here, so the next step is a stronger model or better data, not more retrieval tricks. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
+</section>
+
 
 
 <section class="container-x py-20 md:py-28">

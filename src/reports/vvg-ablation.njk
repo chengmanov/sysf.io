@@ -74,6 +74,26 @@ faq:
   <p class="mt-6 max-w-3xl text-sm prose-muted">Constrained decoding is a cheap win worth deploying anywhere. The remaining <strong class="text-ink-700 dark:text-ink-300">+0.0</strong> is what fine-tuning genuinely added here — the exact per-task measurement a Pilot exists to make. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
 </section>
 
+<!-- v4 diagnose + decompose -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Update · Fourth iteration (v4)", "Diagnose the ceiling, then cite the top hit.", "The last gap was not the model knowing less — it was the model citing the wrong retrieved article.") }}
+  <p class="mt-6 max-w-3xl prose-muted">A one-script retrieval diagnostic shows the correct article is in BM25's top-5 <strong class="text-ink-700 dark:text-ink-300">100%</strong> of the time for VVG — and at rank&nbsp;1 every time. So retrieval was never the bottleneck; the model was mis-citing an article it already had in front of it. Constraining the citation to the <strong class="text-ink-700 dark:text-ink-300">top-ranked retrieved article</strong> — again, zero training — closes it:</p>
+  <div class="mt-8 overflow-x-auto">
+    <table class="w-full min-w-[560px] border-collapse text-sm">
+      <thead><tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+        <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">System (production bar)</th>
+        <th class="py-3 pr-4 font-semibold text-ink-500">VVG</th>
+        <th class="py-3 pr-4 font-semibold text-ink-500">Δ</th>
+      </tr></thead>
+      <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+        <tr><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">base + retrieval + grammar (v3)</td><td class="py-3 pr-4 text-ink-500">56.2%</td><td class="py-3 pr-4"></td></tr>
+        <tr class="bg-swiss/[0.04]"><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">+ <strong>top-1 citation</strong></td><td class="py-3 pr-4 font-semibold text-swiss">93.8%</td><td class="py-3 pr-4 font-mono text-swiss">+37.6 <span class="text-ink-500">citation, free</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-6 max-w-3xl text-sm prose-muted">This decomposes the score into three independent levers — <strong class="text-ink-700 dark:text-ink-300">format</strong> (grammar), <strong class="text-ink-700 dark:text-ink-300">citation</strong> (retrieval recall@1), and <strong class="text-ink-700 dark:text-ink-300">answer</strong> (the model) — each with a clear owner. VVG went from <strong class="text-ink-700 dark:text-ink-300">18.8%</strong> (v1 base+retrieval) to <strong class="text-ink-700 dark:text-ink-300">93.8%</strong> almost entirely through system design, not training. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
+</section>
+
 
 
 <section class="container-x py-20 md:py-28">

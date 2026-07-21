@@ -74,6 +74,12 @@ faq:
   <p class="mt-6 max-w-3xl text-sm prose-muted">Constrained decoding is a cheap win worth deploying anywhere. The remaining <strong class="text-ink-700 dark:text-ink-300">+4.6</strong> is what fine-tuning genuinely added here — the exact per-task measurement a Pilot exists to make. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
 </section>
 
+<!-- v4 diagnose + decompose -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Update · Fourth iteration (v4)", "Diagnose the ceiling — here it's retrieval ranking.", "The diagnostic points HMG at a re-ranker, not another round of training.") }}
+  <p class="mt-6 max-w-3xl prose-muted">For HMG the correct article is in BM25's top-5 <strong class="text-ink-700 dark:text-ink-300">90.9%</strong> of the time but at rank&nbsp;1 only <strong class="text-ink-700 dark:text-ink-300">72.7%</strong>. Forcing the top-1 citation therefore can't beat that ceiling (<strong class="text-ink-700 dark:text-ink-300">68.2% → 68.2%</strong>): HMG is <strong class="text-ink-700 dark:text-ink-300">recall@1-limited</strong>. The gold article <em>is</em> being retrieved — it is just not ranked first — so the lever with headroom is a <strong class="text-ink-700 dark:text-ink-300">re-ranker</strong> over the retrieved set, not more fine-tuning. Naming that precisely, per domain, is the whole point of the diagnostic. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
+</section>
+
 
 
 <section class="container-x py-20 md:py-28">

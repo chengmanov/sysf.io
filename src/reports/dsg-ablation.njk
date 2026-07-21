@@ -74,6 +74,12 @@ faq:
   <p class="mt-6 max-w-3xl text-sm prose-muted">Constrained decoding is a cheap win worth deploying anywhere. The remaining <strong class="text-ink-700 dark:text-ink-300">+17.4</strong> is what fine-tuning genuinely added here — the exact per-task measurement a Pilot exists to make. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
 </section>
 
+<!-- v4 diagnose + decompose -->
+<section class="container-x py-20 md:py-28">
+  {{ sectionHead("Update · Fourth iteration (v4)", "Diagnose the ceiling, then cite the top hit.", "A retrieval diagnostic separates what the model gets wrong from what retrieval never surfaced.") }}
+  <p class="mt-6 max-w-3xl prose-muted">The correct article is in BM25's top-5 <strong class="text-ink-700 dark:text-ink-300">95.7%</strong> of the time and at rank&nbsp;1 <strong class="text-ink-700 dark:text-ink-300">89.1%</strong> — so retrieval is not the limit; the model was mis-citing an article it already had. Constraining the citation to the <strong class="text-ink-700 dark:text-ink-300">top-ranked retrieved article</strong> (no training) lifts the production bar from <strong class="text-ink-700 dark:text-ink-300">82.6% → 87.0%</strong> (+4.4). This decomposes the score into three independent levers — format (grammar), citation (retrieval recall@1), answer (the model) — each with a clear owner. Full method: <a class="link-underline" href="/concepts/methodology/">the methodology</a>.</p>
+</section>
+
 
 
 <section class="container-x py-20 md:py-28">

@@ -29,7 +29,7 @@ faq:
   {% set industries = [
     {
       k:"Banking & Finance",
-      p:"Client-identifying data (CID) and Art. 47 banking secrecy don't forbid external AI — they make it a months-long legal project. We deploy fine-tuned models inside your environment instead, with the data residency, audit trail and documented exit plan your second line of defence and FINMA outsourcing due diligence will actually test.",
+      p:"Art. 47 banking secrecy doesn't forbid external AI — it turns it into a months-long legal project. We deploy fine-tuned models inside your environment instead, with the data residency, audit trail and exit plan your second line of defence will actually test.",
       cases:[
         "Client-advisory copilots grounded in your product and policy documents",
         "KYC / AML document processing and screening support",
@@ -40,7 +40,7 @@ faq:
     },
     {
       k:"Healthcare & Pharma",
-      p:"Hospital AI fails in the review, not in the demo. Special-category data under Art. 5 nFADP and Art. 9 GDPR stays inside your clinical network — integrated with your KIS via HL7/FHIR, and designed to your cantonal data-protection law, not only the federal FADP. We deliberately stay outside MDR/MepV scope: no diagnostic or triage functionality.",
+      p:"Hospital AI fails in the review, not the demo. Special-category data stays inside your clinical network, integrated via HL7/FHIR and designed to your cantonal data-protection law — and deliberately outside MDR/MepV scope: no diagnostic or triage functionality.",
       cases:[
         "Discharge letters and clinical reports drafted from structured notes (DE/FR/IT)",
         "Clinical coding support (CHOP / ICD-10)",
@@ -62,7 +62,7 @@ faq:
     },
     {
       k:"Government & Public Sector",
-      p:"This already works: the Canton of Ticino runs a fine-tuned Apertus-8B translation system on its own infrastructure — 94% accuracy after fine-tuning on cantonal data. The same playbook — fine-tune on your corpus, measure before go-live, deploy on infrastructure you control — applies to your canton or municipality.",
+      p:"This already works: the Canton of Ticino runs a fine-tuned Apertus-8B translation service on its own infrastructure — 94% accuracy after fine-tuning on cantonal data. The same playbook applies to your canton or municipality.",
       cases:[
         "Multilingual citizen-service assistants (DE / FR / IT / RM)",
         "Internal knowledge and procedure assistants for staff",
@@ -73,7 +73,7 @@ faq:
     },
     {
       k:"Insurance",
-      p:"Your claims teams re-key data from scanned forms, medical reports and broker mail all day — documents too sensitive for a US API. We deploy grounded models inside your environment that classify, extract and draft against your core systems (Guidewire, Syrius, SAP FS-CM), structured as a FINMA-compliant outsourcing from day one.",
+      p:"Your claims teams re-key data from scanned forms, medical reports and broker mail all day — documents too sensitive for a US API. We deploy grounded models inside your environment that classify, extract and draft against your core systems, as a FINMA-compliant outsourcing from day one.",
       cases:[
         "Claims intake, triage and document automation",
         "Policy and coverage Q&A copilots for agents and customers",
@@ -84,7 +84,7 @@ faq:
     },
     {
       k:"Manufacturing & Industrial",
-      p:"Process parameters, failure histories and supplier specs are competitive IP — and most of it sits in file shares and binders nobody searches. We deploy assistants over your manuals, SOPs, maintenance logs and machine documentation on hardware inside the plant network — a workstation-class machine (24–48 GB VRAM) is enough at the edge — so nothing crosses the site boundary or reaches a cloud API.",
+      p:"Process parameters, failure histories and supplier specs are competitive IP buried in file shares nobody searches. We deploy assistants over your manuals, SOPs and machine documentation on a workstation inside the plant network — nothing crosses the site boundary.",
       cases:[
         "Maintenance and troubleshooting copilots on the shop floor",
         "Knowledge assistants over manuals, SOPs and specs",

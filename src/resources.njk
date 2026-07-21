@@ -1,0 +1,76 @@
+---
+layout: layouts/base.njk
+order: 6
+title: Resources — Concepts, Reports and a Live Demo
+description: The engineering behind sovereign AI, explained at practitioner depth — why small task-tuned models win regulated work, reproducible ablation reports on public Swiss data, and a language model you can run in your own browser.
+---
+{% from "partials/components.njk" import sectionHead, resourceCard, cta %}
+{% set locale = locale or "en" %}
+{% set items = collections.resources | byLocale(locale) %}
+
+<section class="border-b border-ink-900/10 dark:border-white/10">
+  <div class="container-x py-16 md:py-24">
+    <p class="eyebrow">Resources</p>
+    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
+      The engineering, shown — not claimed.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
+      The thinking behind sovereign AI, the measured proof it works on public data, and a model you can run right now in your browser.
+    </p>
+  </div>
+</section>
+
+<section class="container-x py-14 md:py-20">
+  <!-- Filter pills — no-JS default shows all -->
+  <div class="mb-10 flex flex-wrap gap-2.5" role="group" aria-label="Filter resources">
+    {% set pills = [
+      {f:"all", label:"All"},
+      {f:"concept", label:"Concepts"},
+      {f:"report", label:"Reports"},
+      {f:"demo", label:"Demo"}
+    ] %}
+    {% for p in pills %}
+    <button type="button" data-filter="{{ p.f }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"
+            class="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold text-ink-700 transition hover:border-teal-600 hover:text-teal-700 aria-[pressed=true]:border-teal-600 aria-[pressed=true]:bg-teal-600 aria-[pressed=true]:text-white dark:border-white/15 dark:text-ink-300 dark:hover:text-teal-300 dark:aria-[pressed=true]:bg-teal-600 dark:aria-[pressed=true]:text-white">
+      {{ p.label }}
+    </button>
+    {% endfor %}
+  </div>
+
+  {% if items and items.length %}
+  <div id="resGrid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% for item in items %}
+    {{ resourceCard(item, locale, "Read") }}
+    {% endfor %}
+  </div>
+  <p id="resEmpty" class="hidden py-10 text-center prose-muted">Nothing in this category yet.</p>
+  {% else %}
+  <p class="prose-muted">Nothing published yet — the first resources are on the way.</p>
+  {% endif %}
+</section>
+
+{{ cta("Want this method on your task?", "The concepts and reports here run on public data. In a Pilot the same method runs on yours — on your documents, in your jurisdiction.") }}
+
+<script>
+  // Client-side type filter. Progressive enhancement: with JS off, every card shows.
+  (function () {
+    var grid = document.getElementById("resGrid");
+    if (!grid) return;
+    var pills = Array.prototype.slice.call(document.querySelectorAll("[data-filter]"));
+    var cards = Array.prototype.slice.call(grid.querySelectorAll("[data-restype]"));
+    var empty = document.getElementById("resEmpty");
+    pills.forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var f = pill.getAttribute("data-filter");
+        pills.forEach(function (x) { x.setAttribute("aria-pressed", x === pill ? "true" : "false"); });
+        var shown = 0;
+        cards.forEach(function (c) {
+          var match = f === "all" || c.getAttribute("data-restype") === f;
+          c.style.display = match ? "" : "none";
+          if (match) shown++;
+        });
+        if (empty) empty.classList.toggle("hidden", shown !== 0);
+      });
+    });
+  })();
+</script>

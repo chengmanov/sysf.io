@@ -19,6 +19,9 @@
         {% for item in t.nav %}
         <li><a class="text-ink-700 hover:text-swiss dark:text-ink-300 dark:hover:text-white" href="{{ L }}{{ item.url }}">{{ item.label }}</a></li>
         {% endfor %}
+        {% if t.secondary %}{% for item in t.secondary %}
+        <li><a class="text-ink-700 hover:text-swiss dark:text-ink-300 dark:hover:text-white" href="{{ L }}{{ item.url }}">{{ item.label }}</a></li>
+        {% endfor %}{% endif %}
       </ul>
     </div>
 

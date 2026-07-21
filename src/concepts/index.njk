@@ -1,76 +1,16 @@
 ---
-layout: layouts/base.njk
-title: Concepts — The Engineering Behind Sovereign AI
-description: The concepts behind sysf.io's approach, explained at practitioner depth — why small task-tuned models win regulated work, how quantization makes sovereignty affordable, evaluation-first delivery, and the sovereign runtime from workstation to air gap.
+eleventyExcludeFromCollections: true
 ---
-{% from "partials/components.njk" import sectionHead, cta, icon, iconChip %}
-
-<section class="border-b border-ink-900/10 dark:border-white/10">
-  <div class="container-x py-16 md:py-24">
-    <p class="eyebrow">Concepts</p>
-    <h1 class="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tightest text-ink-900 md:text-5xl dark:text-white">
-      The engineering behind the promise.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg prose-muted md:text-xl">
-      "Sovereign, compliant, private" — every vendor's homepage says it. Ours does too. These pages explain <em>how</em> — the actual concepts we apply, at the depth your engineers and evaluators will want to check.
-    </p>
-  </div>
-</section>
-
-<section class="container-x py-20 md:py-28">
-  <div class="grid gap-5 md:grid-cols-2">
-    {% set topics = [
-      {
-        u:"/concepts/small-models/",
-        k:"Small models",
-        t:"Small models, measured.",
-        d:"Why a fine-tuned 4–8B that knows your documents beats a frontier API that has never seen them — the specialisation effect, the fine-tuning vs. retrieval division of labour, the economics, and the honest list of where small models lose."
-      },
-      {
-        u:"/concepts/quantization/",
-        k:"Quantization",
-        t:"How a datacentre model fits in your office.",
-        d:"Bytes per weight, the 4-bit production sweet spot, the 1–2 bit frontier that puts 27B-class models on a phone, and the KV-cache memory bill nobody budgets for. The technology that decides what your sovereignty costs."
-      },
-      {
-        u:"/concepts/evaluation/",
-        k:"Evaluation",
-        t:"If we can't measure it, we don't ship it.",
-        d:"How the evaluation set gets built from your documents before any model is touched, the four-way ablation that shows what each component buys — and what it doesn't — guardrails tested like features, and the go/no-go gate that decides whether production gets built."
-      },
-      {
-        u:"/concepts/methodology/",
-        k:"Methodology",
-        t:"The full method — including what didn't work.",
-        d:"The machinery behind the promise: a deterministic four-arm ablation with no LLM judge, RAG-aware fine-tuning, contamination control, Wilson intervals — and three published iterations across six Swiss legal domains showing that task-matched data, not training budget, moves the number. The negative results are on the page too."
-      },
-      {
-        u:"/concepts/sovereign-architecture/",
-        k:"Sovereign runtime",
-        t:"From one workstation to a full air gap.",
-        d:"The three deployment shapes, the small-first router that escalates to a larger local model — never to a cloud — and zero egress as a property you can verify at your own firewall."
-      },
-      {
-        u:"/concepts/orchestration/",
-        k:"Orchestration",
-        t:"Where the demo becomes a system.",
-        d:"LangChain and LangGraph in production — what the framework provides, the six things it leaves to you (RBAC, audit trails, PII discipline, evaluation, trace residency, versioning), and the hardening that turns an agent demo into an operable system."
-      }
-    ] %}
-    {% set topicIcons = ["cpu", "minimize-2", "clipboard-check", "flask-conical", "server", "workflow"] %}
-    {% for t in topics %}
-    <a href="{{ t.u }}" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition hover:border-swiss/40 dark:border-white/10 dark:bg-ink-950">
-      {{ iconChip(topicIcons[loop.index0]) }}
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">{{ t.k }}</p>
-      <h2 class="mt-3 flex items-start justify-between gap-4 text-xl font-bold tracking-tightest text-ink-900 dark:text-white">
-        {{ t.t }}
-        <span class="mt-1 text-swiss opacity-0 transition-opacity group-hover:opacity-100">→</span>
-      </h2>
-      <p class="mt-3 text-sm prose-muted">{{ t.d }}</p>
-    </a>
-    {% endfor %}
-  </div>
-  <p class="mt-10 max-w-2xl text-base prose-muted">For the delivery pipeline these concepts plug into — discovery to monitoring, step by step — see <a class="link-underline" href="/platform/">the platform</a>.</p>
-</section>
-
-{{ cta("Check us on the details.", "Bring your hardest questions — the scoping call is with the engineer who builds the system, not a sales deck.") }}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/resources/">
+<link rel="canonical" href="https://sysf.io/resources/">
+<meta name="robots" content="noindex">
+<title>Moved to Resources — sysf.io</title>
+</head>
+<body>
+<p>The concepts now live in <a href="/resources/">Resources</a>. Redirecting…</p>
+</body>
+</html>

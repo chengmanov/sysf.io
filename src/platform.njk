@@ -35,7 +35,7 @@ faq:
   <div class="mt-12 grid gap-5 md:grid-cols-2">
     {% set steps = [
       {n:"01", t:"Discovery & compliance scoping", d:"We map the use case, data sources and the regulatory frame (FADP/nFADP, GDPR, EU AI Act), and define success metrics and guardrail requirements up front."},
-      {n:"02", t:"Private, in-jurisdiction data prep", d:"Documents are deduplicated, formatted and split into training and evaluation sets where they already live, with a documented lineage record. Nothing is shipped to an external service. PII handling is designed in from the start."},
+      {n:"02", t:"Private, in-jurisdiction data prep", d:"Documents are deduplicated, formatted and split into train/eval sets where they already live, with a documented lineage record. Nothing ships to an external service; PII handling is designed in."},
       {n:"03", t:"Fine-tuning on Apertus", d:"We fine-tune Switzerland's open Apertus model on your corpus to teach your domain, terminology, formats and tasks — validated against a retrieval-only baseline, with full transparency over weights and data lineage."},
       {n:"04", t:"Agent & RAG orchestration", d:"Agents, retrieval-augmented generation and tool calls into your systems, so answers are grounded in your current documents — with citations — and the system executes calls against your internal APIs."},
       {n:"05", t:"Evaluation & guardrails", d:'A use-case-specific eval set, safety and PII guardrails, and output constraints. We report quality against agreed metrics before go-live. The same harness produced our public <a class="link-underline" href="/reports/finma-ablation/">FINMA ablation</a>.'},
@@ -77,8 +77,7 @@ faq:
         </li>
         {% endfor %}
       </ul>
-      <p class="mt-6 text-sm text-ink-500">Model-agnostic by design: fully-Swiss Apertus by default, or a European (Mistral) or international (Llama, Qwen) open-weight base where your compliance allows — whichever wins your evaluation, all running on your own infrastructure. See the <a class="link-underline" href="/concepts/small-models/">base-model spectrum</a>.</p>
-      <p class="mt-3 text-sm text-ink-500">Want the depth behind each layer? The <a class="link-underline" href="/concepts/">concepts pages</a> cover small models, quantization, evaluation and the sovereign runtime in detail.</p>
+      <p class="mt-6 text-sm text-ink-500">Model-agnostic by design — Apertus by default, or a European or international open-weight base where your compliance allows, whichever wins your evaluation. The <a class="link-underline" href="/concepts/small-models/">base-model spectrum</a> and the depth behind each layer live in <a class="link-underline" href="/resources/">Resources</a>.</p>
     </div>
     <div class="md:col-span-5 md:col-start-8">
       {% include "partials/diagram.njk" %}
@@ -93,7 +92,7 @@ faq:
     {% set comp = [
       {t:"Swiss FADP / nFADP", d:"In-jurisdiction processing and clear data lineage keep personal data under Swiss law and control."},
       {t:"EU GDPR", d:"Data minimisation, purpose limitation and residency handled by design for EU operations."},
-      {t:"EU AI Act", d:"The Act classifies by use-case risk and puts transparency duties on the model's provider — it doesn't restrict a base by country of origin. Apertus goes furthest, with publicly documented training data no closed model offers; whichever base you choose, we add the risk-classification worksheet and the technical documentation the Act requires."}
+      {t:"EU AI Act", d:"The Act classifies by use-case risk and puts transparency duties on the provider — it doesn't restrict a base by country of origin. Whichever base you choose, we add the risk-classification worksheet and technical documentation it requires."}
     ] %}
     {% set compIcons = ["shield-check", "shield", "file-check"] %}
     {% for c in comp %}

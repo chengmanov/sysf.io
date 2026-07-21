@@ -25,29 +25,15 @@
         "url": "/pricing/"
       },
       {
-        "label": "Configure",
-        "url": "/configure/"
-      },
-      {
-        "label": "Concepts",
-        "url": "/concepts/"
-      },
-      {
-        "label": "Demo",
-        "url": "/demo/"
-      },
-      {
-        "label": "News",
-        "url": "/news/"
-      },
-      {
-        "label": "About",
-        "url": "/about/"
-      },
-      {
-        "label": "Contact",
-        "url": "/contact/"
+        "label": "Resources",
+        "url": "/resources/"
       }
+    ],
+    "secondary": [
+      { "label": "About", "url": "/about/" },
+      { "label": "Configure", "url": "/configure/" },
+      { "label": "Live demo", "url": "/demo/" },
+      { "label": "Contact", "url": "/contact/" }
     ],
     "footer": {
       "explore": "Explore",

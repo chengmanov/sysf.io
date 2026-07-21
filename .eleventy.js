@@ -39,6 +39,23 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => new Date(b.data.date) - new Date(a.data.date))
   );
 
+  // Resources collection — the unified knowledge library (concepts + reports +
+  // demo + notes). Any page with a `resType` joins it. Ordered for the "All"
+  // view: concepts first (by resOrder), then demo, then reports (newest first).
+  eleventyConfig.addCollection("resources", (collectionApi) => {
+    const rank = { concept: 0, demo: 1, report: 2, note: 3 };
+    return collectionApi
+      .getAll()
+      .filter((item) => item.data.resType)
+      .sort((a, b) => {
+        const ra = rank[a.data.resType] ?? 9;
+        const rb = rank[b.data.resType] ?? 9;
+        if (ra !== rb) return ra - rb;
+        if (a.data.date && b.data.date) return new Date(b.data.date) - new Date(a.data.date);
+        return (a.data.resOrder || 0) - (b.data.resOrder || 0);
+      });
+  });
+
   // Readable date for post listings, e.g. "19 July 2026" — locale-aware.
   const DATE_LOCALES = { en: "en-GB", de: "de-CH", fr: "fr-CH", it: "it-CH" };
   eleventyConfig.addFilter("readableDate", (value, loc) => {

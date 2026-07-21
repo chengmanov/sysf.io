@@ -9,6 +9,7 @@
   "x": '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   "check": '<path d="M20 6 9 17l-5-5"/>',
   "arrow-right": '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  "play": '<polygon points="6 3 20 12 6 21 6 3"/>',
   "share-2": '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>',
   "eye-off": '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>',
   "lock": '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
@@ -51,6 +52,25 @@
 {# Teal feature-card chip housing a Lucide icon — the site's standard section/feature marker. #}
 {% macro iconChip(name, cls) %}
 <span class="mb-5 inline-grid h-11 w-11 place-items-center rounded-lg bg-teal-50 text-teal-700 dark:bg-white/5 dark:text-teal-300 {{ cls }}">{{ icon(name, "h-[22px] w-[22px]") }}</span>
+{% endmacro %}
+
+{#
+  Resource-library card. `item` is a collection entry carrying resType/kicker/blurb;
+  reports also carry `date`. Cards filter client-side by their data-restype; no-JS
+  shows everything. readLabel is the localised "Read" verb.
+#}
+{% macro resourceCard(item, locale, readLabel) %}
+{%- set typeIcon = { "concept": "cpu", "report": "bar-chart-3", "demo": "play", "note": "file-check" } -%}
+<a href="{{ item.url }}" data-restype="{{ item.data.resType }}"
+   class="resource-card group flex flex-col rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition hover:border-teal-600/40 hover:shadow-md dark:border-white/10 dark:bg-ink-950">
+  <div class="mb-4 flex items-center justify-between gap-3">
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700 dark:text-teal-300">{{ icon(typeIcon[item.data.resType] or "file-check", "h-3.5 w-3.5") }}{{ item.data.kicker }}</span>
+    {% if item.data.date %}<time class="font-mono text-[11px] text-ink-500" datetime="{{ item.data.date }}">{{ item.data.date | readableDate(locale) }}</time>{% endif %}
+  </div>
+  <h3 class="text-lg font-bold leading-snug tracking-tightest text-ink-900 group-hover:text-teal-700 dark:text-white dark:group-hover:text-teal-300">{{ item.data.listTitle or item.data.title }}</h3>
+  <p class="mt-2 flex-1 text-sm prose-muted">{{ item.data.blurb or item.data.description }}</p>
+  <span class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-teal-700 dark:text-teal-300">{{ readLabel or "Read" }}{{ icon("arrow-right", "h-4 w-4 transition-transform group-hover:translate-x-0.5") }}</span>
+</a>
 {% endmacro %}
 
 {% macro sectionHead(eyebrow, heading, sub) %}

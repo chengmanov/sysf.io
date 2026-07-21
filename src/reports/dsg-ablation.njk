@@ -30,6 +30,29 @@ faq:
   </div>
 </section>
 
+<!-- v2 second iteration -->
+<section class="border-y border-ink-900/10 bg-ink-900/[0.02] py-20 dark:border-white/10 dark:bg-white/[0.02] md:py-28">
+  <div class="container-x">
+    {{ sectionHead("Update · Second iteration (v2)", "What another round of training changed.", "Same eval set, same deterministic scorer — only the training changed.") }}
+    <p class="mt-6 max-w-3xl prose-muted">v2 replaced the topic/section-identification SFT with genuine grounded factual Q&A (Claude-authored per non-eval article, then deterministically grounding-filtered), growing the training set from 302 to 542 examples, and retrained at LoRA r=32 / 4 epochs. Retrieval held at k=5 (unchanged), so the delta is attributable to training.</p>
+    <div class="mt-8 overflow-x-auto">
+      <table class="w-full min-w-[560px] border-collapse text-sm">
+        <thead><tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+          <th class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">Metric (arm D)</th>
+          <th class="py-3 pr-4 font-semibold text-ink-500">v1</th>
+          <th class="py-3 pr-4 font-semibold text-ink-500">v2</th>
+          <th class="py-3 pr-4 font-semibold text-ink-500">Δ</th>
+        </tr></thead>
+        <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+          <tr class="bg-swiss/[0.04]"><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">Answer + citation (production bar)</td><td class="py-3 pr-4 text-ink-500">54.3%</td><td class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">82.6%</td><td class="py-3 pr-4 font-mono font-semibold text-swiss">+28.3</td></tr><tr class=""><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">Answer correct</td><td class="py-3 pr-4 text-ink-500">60.9%</td><td class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">93.5%</td><td class="py-3 pr-4 font-mono font-semibold text-swiss">+32.6</td></tr><tr class=""><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">Citation correct</td><td class="py-3 pr-4 text-ink-500">82.6%</td><td class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">84.8%</td><td class="py-3 pr-4 font-mono font-semibold text-swiss">+2.2</td></tr><tr class=""><td class="py-3 pr-4 font-medium text-ink-900 dark:text-white">Emits required format</td><td class="py-3 pr-4 text-ink-500">93.5%</td><td class="py-3 pr-4 font-semibold text-ink-900 dark:text-white">100.0%</td><td class="py-3 pr-4 font-mono font-semibold text-swiss">+6.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-6 max-w-3xl text-sm prose-muted">The production bar rose 54.3% → 82.6% (+28.3). Task-matched data is the lever.</p>
+  </div>
+</section>
+
+
 <section class="container-x py-20 md:py-28">
   {{ sectionHead("The setup", "Four systems, one open model.", "Same Apertus-8B, quantized identically to 4-bit, served identically. The only variable is what we added.") }}
   <div class="mt-10 grid gap-5 md:grid-cols-4">

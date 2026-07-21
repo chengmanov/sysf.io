@@ -39,6 +39,12 @@ description: The concepts behind sysf.io's approach, explained at practitioner d
         d:"How the evaluation set gets built from your documents before any model is touched, the four-way ablation that shows what each component buys — and what it doesn't — guardrails tested like features, and the go/no-go gate that decides whether production gets built."
       },
       {
+        u:"/concepts/methodology/",
+        k:"Methodology",
+        t:"The full method — including what didn't work.",
+        d:"The machinery behind the promise: a deterministic four-arm ablation with no LLM judge, RAG-aware fine-tuning, contamination control, Wilson intervals — and three published iterations across six Swiss legal domains showing that task-matched data, not training budget, moves the number. The negative results are on the page too."
+      },
+      {
         u:"/concepts/sovereign-architecture/",
         k:"Sovereign runtime",
         t:"From one workstation to a full air gap.",
@@ -51,7 +57,7 @@ description: The concepts behind sysf.io's approach, explained at practitioner d
         d:"LangChain and LangGraph in production — what the framework provides, the six things it leaves to you (RBAC, audit trails, PII discipline, evaluation, trace residency, versioning), and the hardening that turns an agent demo into an operable system."
       }
     ] %}
-    {% set topicIcons = ["cpu", "minimize-2", "clipboard-check", "server", "workflow"] %}
+    {% set topicIcons = ["cpu", "minimize-2", "clipboard-check", "flask-conical", "server", "workflow"] %}
     {% for t in topics %}
     <a href="{{ t.u }}" class="group rounded-lg border border-neutral-200 bg-white p-8 shadow-sm transition hover:border-swiss/40 dark:border-white/10 dark:bg-ink-950">
       {{ iconChip(topicIcons[loop.index0]) }}

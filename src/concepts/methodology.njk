@@ -157,8 +157,35 @@ SOURCE: DSG Art. 25</pre>
     </div>
     <div class="rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-950">
       <div class="font-mono text-sm text-swiss">v3</div>
-      <h3 class="mt-1 text-lg font-semibold text-ink-900 dark:text-white">Isolate the lever, remove a free failure mode</h3>
-      <p class="mt-2 text-sm prose-muted">v2 changed two things at once for the winners (richer data <em>and</em> r=32/4-epochs). v3 disentangles them: retrain the four data-domains at the lighter <strong class="text-ink-700 dark:text-ink-300">r=16 / 3 epochs</strong> on the same richer data, to confirm the gains are the data and to recover the capacity-driven citation dip on the already-strong domains. In parallel, output is generated under a <strong class="text-ink-700 dark:text-ink-300">formal grammar</strong> that constrains it to the two-line contract, removing malformed output as a failure mode for free. Diagnostics track the retrieval ceiling (how often the gold unit is actually in context) to tell whether remaining errors are the retriever's or the model's. <span class="text-ink-500">Results are being finalised and will appear on the per-domain report pages.</span></p>
+      <h3 class="mt-1 text-lg font-semibold text-ink-900 dark:text-white">Separate format from knowledge — and find a free lever</h3>
+      <p class="mt-2 text-sm prose-muted">A fine-tuned model helps for two different reasons: it learns to <em>emit the required format</em>, and it learns the <em>domain facts</em>. v3 separates them. Output is generated under a <strong class="text-ink-700 dark:text-ink-300">formal grammar</strong> that constrains it to the two-line contract — so any model, base or fine-tuned, is forced to produce a parseable answer + citation. That single change, with <strong class="text-ink-700 dark:text-ink-300">no training at all</strong>, lifts the base+retrieval system by +25 to +41 points:</p>
+      <div class="mt-5 overflow-x-auto">
+        <table class="w-full min-w-[560px] border-collapse text-sm">
+          <thead><tr class="border-b border-ink-900/15 text-left dark:border-white/15">
+            <th class="py-2 pr-4 font-semibold text-ink-900 dark:text-white">Domain</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">base+RAG</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">+ grammar</th>
+            <th class="py-2 pr-4 font-semibold text-ink-500">fine-tuned+RAG</th>
+          </tr></thead>
+          <tbody class="divide-y divide-ink-900/10 dark:divide-white/10">
+            {% set g = [
+              {d:"DSG", a:"37.0%", b:"65.2%", c:"82.6%"},
+              {d:"HMG", a:"22.7%", b:"63.6%", c:"68.2%"},
+              {d:"VVG", a:"18.8%", b:"56.2%", c:"56.2%"},
+              {d:"PrSG", a:"45.0%", b:"70.0%", c:"75.0%"}
+            ] %}
+            {% for x in g %}
+            <tr>
+              <td class="py-2 pr-4 font-medium text-ink-900 dark:text-white">{{ x.d }}</td>
+              <td class="py-2 pr-4 text-ink-500">{{ x.a }}</td>
+              <td class="py-2 pr-4 font-semibold text-swiss">{{ x.b }}</td>
+              <td class="py-2 pr-4 text-ink-700 dark:text-ink-300">{{ x.c }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-5 text-sm prose-muted"><strong class="text-ink-900 dark:text-white">The reading is exactly the evaluation-first point.</strong> Constrained decoding is a cheap win that belongs in every deployment. The remaining gap to the fine-tuned system is what the model genuinely <em>learned</em> — and it varies sharply by domain: substantial for DSG (+17), small for HMG and PrSG (~+5), and none for VVG. That is precisely the measurement a Pilot exists to make: <em>on your task, is the fine-tune worth its cost, or does retrieval plus constrained decoding already clear the bar?</em> Sometimes the honest answer is the cheaper system — and knowing that before you pay for training is the point. (A companion control confirms the intuition holds the other way too: on the data-rich domains more training capacity still helped, so capacity should scale with data, not be maxed blindly.)</p>
     </div>
   </div>
 </section>
